@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(icacls:*)",
+      "Bash(cd \"D:/work/2 unziptoastudio/alnoorway/android\" && JAVA_HOME=\"C:/Program Files/Android/Android Studio/jbr\" ./gradlew bundleRelease 2>&1)",
+      "Bash(cd \"D:/work/2 unziptoastudio/alnoorway/android\" && JAVA_HOME=\"C:/Program Files/Android/Android Studio/jbr\" ./gradlew clean bundleRelease 2>&1)",
+      "Bash(head:*)",
+      "Bash(grep:*)",
+      "Bash(\"C:/Program Files/Android/Android Studio/jbr/bin/keytool\":*)"
+    ]
+  }
+}
