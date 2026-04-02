@@ -12,8 +12,10 @@ import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import InterestsSelector from "@/components/InterestsSelector";
 import Breadcrumb from "@/components/Breadcrumb";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Settings() {
+  const { t } = useLanguage()
   const [user, setUser] = useState(null);
   const [darkMode, setDarkMode] = useState(localStorage.getItem('darkMode') === 'true');
   const [fontSize, setFontSize] = useState(localStorage.getItem('fontSize') || 'medium');
@@ -68,12 +70,12 @@ export default function Settings() {
       if (error) throw error;
     },
     onSuccess: () => {
-      alert('تم حفظ التغييرات بنجاح');
+      alert(t('profileSuccessMessage'));
       loadUser();
     },
     onError: (error) => {
-        console.log("Error updating user:", error);
-        alert('حدث خطأ أثناء حفظ التغييرات');
+      console.log("Error updating user:", error);
+      alert(t('profileErrorMessage'));
     }
   });
 
@@ -119,49 +121,25 @@ export default function Settings() {
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
         handleNotificationChange('push', true);
-        alert('تم تفعيل الإشعارات بنجاح');
+        alert(t('notificationsSuccessPush'));
       } else {
-        alert('لم يتم منح إذن الإشعارات');
+        alert(t('notificationsErrorPush'));
       }
     }
   };
 
   const languageOptions = [
-    { value: 'ar', label: 'العربية', flag: '🇸🇦' },
-    { value: 'en', label: 'English', flag: '🇬🇧' },
-    { value: 'fr', label: 'Français', flag: '🇫🇷' },
-    { value: 'ur', label: 'اردو', flag: '🇵🇰' },
+    { value: 'ar', label: t('languagesAr'), flag: '🇸🇦' },
+    { value: 'en', label: t('languagesEn'), flag: '🇬🇧' },
+    { value: 'fr', label: t('languagesFr'), flag: '🇫🇷' },
+    { value: 'ur', label: t('languagesUr'), flag: '🇵🇰' },
   ];
-
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 p-4 md:p-6 flex items-center justify-center">
-        <Card className="border-0 shadow-xl bg-white/95 backdrop-blur-sm rounded-3xl max-w-md w-full mx-4">
-          <CardContent className="p-6 md:p-12 text-center">
-            <SettingsIcon className="w-12 h-12 md:w-16 md:h-16 text-gray-300 mx-auto mb-6" />
-            <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
-              يرجى تسجيل الدخول
-            </h3>
-            <p className="text-gray-600 mb-8 text-sm md:text-base">
-              سجل الدخول للوصول إلى إعداداتك
-            </p>
-            <button
-              onClick={() => window.location.href = '/auth'}
-              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 py-4 md:py-6 text-base md:text-lg rounded-2xl text-white font-semibold"
-            >
-              تسجيل الدخول
-            </button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 p-4 md:p-6">
       <div className="max-w-4xl mx-auto">
         <div className="mb-4">
-          <Breadcrumb items={[{ label: "الإعدادات" }]} />
+          <Breadcrumb items={[{ label: t('settingsBreadcrumb') }]} />
         </div>
 
         <motion.div
@@ -173,19 +151,19 @@ export default function Settings() {
             <SettingsIcon className="w-6 h-6 md:w-8 md:h-8 text-white" />
           </div>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 md:mb-4">
-            الإعدادات
+            {t('settingsTitle')}
           </h1>
           <p className="text-base md:text-lg lg:text-xl text-gray-600 px-4">
-            تخصيص تجربتك في التطبيق
+            {t('settingsSubtitle')}
           </p>
         </motion.div>
 
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="grid w-full grid-cols-4 mb-6 md:mb-8">
-            <TabsTrigger value="profile" className="text-xs md:text-sm">الحساب</TabsTrigger>
-            <TabsTrigger value="notifications" className="text-xs md:text-sm">الإشعارات</TabsTrigger>
-            <TabsTrigger value="appearance" className="text-xs md:text-sm">المظهر</TabsTrigger>
-            <TabsTrigger value="interests" className="text-xs md:text-sm">الاهتمامات</TabsTrigger>
+            <TabsTrigger value="profile" className="text-xs md:text-sm">{t('settingsTabProfile')}</TabsTrigger>
+            <TabsTrigger value="notifications" className="text-xs md:text-sm">{t('settingsTabNotifications')}</TabsTrigger>
+            <TabsTrigger value="appearance" className="text-xs md:text-sm">{t('settingsTabAppearance')}</TabsTrigger>
+            <TabsTrigger value="interests" className="text-xs md:text-sm">{t('settingsTabInterests')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="profile">
@@ -193,12 +171,12 @@ export default function Settings() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                   <User className="w-5 h-5 text-blue-600" />
-                  معلومات الحساب
+                  {t('profileTitle')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="name" className="text-sm md:text-base">الاسم الكامل</Label>
+                  <Label htmlFor="name" className="text-sm md:text-base">{t('profileFullName')}</Label>
                   <Input
                     id="name"
                     value={user?.full_name || ''}
@@ -207,7 +185,7 @@ export default function Settings() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="email" className="text-sm md:text-base">البريد الإلكتروني</Label>
+                  <Label htmlFor="email" className="text-sm md:text-base">{t('profileEmail')}</Label>
                   <Input
                     id="email"
                     value={user?.email || ''}
@@ -221,7 +199,7 @@ export default function Settings() {
                   disabled={updateUserMutation.isLoading}
                 >
                   <Save className="w-4 h-4 ml-2" />
-                  {updateUserMutation.isLoading ? 'جاري الحفظ...' : 'حفظ التغييرات'}
+                  {updateUserMutation.isLoading ? t('profileSaving') : t('profileSaveBtn')}
                 </Button>
               </CardContent>
             </Card>
@@ -229,39 +207,39 @@ export default function Settings() {
             <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm mt-6">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg md:text-xl text-red-600">
-                  <Shield className="w-5 h-5" />
-                  تغيير كلمة المرور
+                  <div className="w-5 h-5" />
+                  {t('passwordTitle')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="new-password">كلمة المرور الجديدة</Label>
+                  <Label htmlFor="new-password">{t('passwordNewLabel')}</Label>
                   <Input
                     id="new-password"
                     type="password"
-                    placeholder="أدخل كلمة المرور الجديدة"
+                    placeholder={t('passwordPlaceholder')}
                     className="mt-2"
                     onChange={(e) => window.newPassword = e.target.value}
                   />
                 </div>
                 <Button
                   onClick={async () => {
-                     const newPass = window.newPassword;
-                     if (!newPass || newPass.length < 6) {
-                        alert("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
-                        return;
-                     }
-                     try {
-                        const { error } = await supabase.auth.updateUser({ password: newPass });
-                        if (error) throw error;
-                        alert("تم تحديث كلمة المرور بنجاح");
-                     } catch(e) {
-                        alert("خطأ في تحديث كلمة المرور: " + e.message);
-                     }
+                    const newPass = window.newPassword;
+                    if (!newPass || newPass.length < 6) {
+                      alert(t('passwordErrorLength'));
+                      return;
+                    }
+                    try {
+                      const { error } = await supabase.auth.updateUser({ password: newPass });
+                      if (error) throw error;
+                      alert(t('passwordSuccess'));
+                    } catch (e) {
+                      alert(t('passwordErrorGeneral') + e.message);
+                    }
                   }}
                   className="bg-red-500 hover:bg-red-600 text-white w-full"
                 >
-                  تحديث كلمة المرور
+                  {t('passwordUpdateBtn')}
                 </Button>
               </CardContent>
             </Card>
@@ -272,14 +250,14 @@ export default function Settings() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                   <Bell className="w-5 h-5 text-purple-600" />
-                  إعدادات الإشعارات
+                  {t('notificationsTitle')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <p className="font-medium text-sm md:text-base">إشعارات المتصفح</p>
-                    <p className="text-xs md:text-sm text-gray-500">تلقي إشعارات في المتصفح</p>
+                    <p className="font-medium text-sm md:text-base">{t('notificationsBrowserTitle')}</p>
+                    <p className="text-xs md:text-sm text-gray-500">{t('notificationsBrowserDesc')}</p>
                   </div>
                   {notifications.push ? (
                     <Switch
@@ -292,14 +270,14 @@ export default function Settings() {
                       onClick={requestNotificationPermission}
                       className="bg-purple-500 hover:bg-purple-600 text-xs md:text-sm"
                     >
-                      تفعيل
+                      {t('notificationsActivateBtn')}
                     </Button>
                   )}
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <p className="font-medium text-sm md:text-base">إشعارات البريد الإلكتروني</p>
-                    <p className="text-xs md:text-sm text-gray-500">تلقي الإشعارات عبر البريد</p>
+                    <p className="font-medium text-sm md:text-base">{t('notificationsEmailTitle')}</p>
+                    <p className="text-xs md:text-sm text-gray-500">{t('notificationsEmailDesc')}</p>
                   </div>
                   <Switch
                     checked={notifications.email}
@@ -308,8 +286,8 @@ export default function Settings() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <p className="font-medium text-sm md:text-base">تحديثات الفتاوى</p>
-                    <p className="text-xs md:text-sm text-gray-500">إشعار عند الرد على فتواك</p>
+                    <p className="font-medium text-sm md:text-base">{t('notificationsFatwaTitle')}</p>
+                    <p className="text-xs md:text-sm text-gray-500">{t('notificationsFatwaDesc')}</p>
                   </div>
                   <Switch
                     checked={notifications.fatwa_updates}
@@ -318,8 +296,8 @@ export default function Settings() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <p className="font-medium text-sm md:text-base">محتوى جديد</p>
-                    <p className="text-xs md:text-sm text-gray-500">إشعار عند إضافة محتوى جديد</p>
+                    <p className="font-medium text-sm md:text-base">{t('notificationsContentTitle')}</p>
+                    <p className="text-xs md:text-sm text-gray-500">{t('notificationsContentDesc')}</p>
                   </div>
                   <Switch
                     checked={notifications.new_content}
@@ -328,8 +306,8 @@ export default function Settings() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <p className="font-medium text-sm md:text-base">البث المباشر</p>
-                    <p className="text-xs md:text-sm text-gray-500">إشعار عند بدء بث مباشر</p>
+                    <p className="font-medium text-sm md:text-base">{t('notificationsLiveTitle')}</p>
+                    <p className="text-xs md:text-sm text-gray-500">{t('notificationsLiveDesc')}</p>
                   </div>
                   <Switch
                     checked={notifications.live_streams}
@@ -338,8 +316,8 @@ export default function Settings() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <p className="font-medium text-sm md:text-base">مواعيد اللقاءات</p>
-                    <p className="text-xs md:text-sm text-gray-500">تذكير بمواعيد اللقاءات المجدولة</p>
+                    <p className="font-medium text-sm md:text-base">{t('notificationsMeetingsTitle')}</p>
+                    <p className="text-xs md:text-sm text-gray-500">{t('notificationsMeetingsDesc')}</p>
                   </div>
                   <Switch
                     checked={notifications.scheduled_meetings}
@@ -356,35 +334,35 @@ export default function Settings() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                     {darkMode ? <Moon className="w-5 h-5 text-indigo-600" /> : <Sun className="w-5 h-5 text-amber-500" />}
-                    إعدادات المظهر
+                    {t('appearanceTitle')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
-                      <p className="font-medium text-sm md:text-base">الوضع الليلي</p>
-                      <p className="text-xs md:text-sm text-gray-500">تفعيل المظهر الداكن</p>
+                      <p className="font-medium text-sm md:text-base">{t('appearanceDarkMode')}</p>
+                      <p className="text-xs md:text-sm text-gray-500">{t('appearanceDarkModeDesc')}</p>
                     </div>
                     <Switch
                       checked={darkMode}
                       onCheckedChange={handleDarkModeToggle}
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="fontSize" className="flex items-center gap-2 mb-2 text-sm md:text-base">
                       <Type className="w-4 h-4" />
-                      حجم الخط
+                      {t('appearanceFontSize')}
                     </Label>
                     <Select value={fontSize} onValueChange={handleFontSizeChange}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="small">صغير</SelectItem>
-                        <SelectItem value="medium">متوسط</SelectItem>
-                        <SelectItem value="large">كبير</SelectItem>
-                        <SelectItem value="xlarge">كبير جداً</SelectItem>
+                        <SelectItem value="small">{t('appearanceFontSmall')}</SelectItem>
+                        <SelectItem value="medium">{t('appearanceFontMedium')}</SelectItem>
+                        <SelectItem value="large">{t('appearanceFontLarge')}</SelectItem>
+                        <SelectItem value="xlarge">{t('appearanceFontXLarge')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -395,7 +373,7 @@ export default function Settings() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                     <Globe className="w-5 h-5 text-emerald-600" />
-                    اللغة
+                    {t('appearanceLanguage')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -415,7 +393,7 @@ export default function Settings() {
                     </SelectContent>
                   </Select>
                   <p className="text-xs md:text-sm text-gray-500 mt-2">
-                    سيتم إعادة تحميل التطبيق عند تغيير اللغة
+                    {t('appearanceLanguageReloadHint')}
                   </p>
                 </CardContent>
               </Card>
@@ -427,12 +405,12 @@ export default function Settings() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                   <Heart className="w-5 h-5 text-rose-600" />
-                  إدارة الاهتمامات
+                  {t('interestsTitle')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-xs md:text-sm text-gray-600 mb-4 md:mb-6">
-                  اختر المواضيع التي تهمك لتحصل على توصيات أفضل
+                  {t('interestsSubtitle')}
                 </p>
                 <InterestsSelector userEmail={user?.email} />
               </CardContent>
@@ -450,7 +428,7 @@ export default function Settings() {
               variant="ghost"
               className="w-full text-white hover:bg-white/20 hover:text-white text-sm md:text-base"
             >
-              تسجيل الخروج
+              {t('settingsLogout')}
             </Button>
           </CardContent>
         </Card>

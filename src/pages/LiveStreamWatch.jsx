@@ -11,8 +11,10 @@ import RatingWidget from "@/components/RatingWidget";
 import VideoPlayer from "@/components/VideoPlayer";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function LiveStreamWatch() {
+  const { t } = useLanguage();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
   const [stream, setStream] = useState(null);
@@ -45,9 +47,9 @@ export default function LiveStreamWatch() {
   if (!stream) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 gap-4">
-        <h1 className="text-2xl font-bold text-gray-900">البث غير موجود</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t("stream_not_found")}</h1>
         <Link to={createPageUrl("LiveStreams")}>
-          <Button>العودة للقائمة</Button>
+          <Button>{t("back_to_list")}</Button>
         </Link>
       </div>
     );
@@ -59,7 +61,7 @@ export default function LiveStreamWatch() {
         <div className="mb-4">
           <Link to={createPageUrl("LiveStreams")} className="inline-flex items-center text-gray-600 hover:text-purple-600 transition-colors">
             <ArrowRight className="w-5 h-5 ml-2" />
-            عودة للبث المباشر
+            {t("back_to_list")}
           </Link>
         </div>
 
@@ -67,15 +69,15 @@ export default function LiveStreamWatch() {
           {/* Video Section */}
           <div className="lg:col-span-2 space-y-4">
             <div className="aspect-video bg-black rounded-xl overflow-hidden shadow-lg relative">
-              <VideoPlayer 
-                url={stream.is_live ? stream.stream_url : (stream.recording_url || stream.stream_url)} 
-                title={stream.title} 
+              <VideoPlayer
+                url={stream.is_live ? stream.stream_url : (stream.recording_url || stream.stream_url)}
+                title={stream.title}
               />
               {stream.is_live && (
                 <div className="absolute top-4 right-4 z-10">
                   <Badge className="bg-red-600 text-white animate-pulse">
                     <Radio className="w-3 h-3 ml-1" />
-                    مباشر الآن
+                    {t("live_now")}
                   </Badge>
                 </div>
               )}
@@ -100,11 +102,11 @@ export default function LiveStreamWatch() {
                 <div className="flex items-center gap-6 text-sm text-gray-500 border-t pt-4">
                   <div className="flex items-center gap-1">
                     <Users className="w-4 h-4" />
-                    <span>{stream.viewers_count} مشاهد</span>
+                    <span>{stream.viewers_count} {t("viewers")}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Clock className="w-4 h-4" />
-                    <span>{stream.is_live ? "بدأ البث" : "مجدول"}</span>
+                    <span>{stream.is_live ? t("live_now") : t("scheduled")}</span>
                   </div>
                 </div>
 
@@ -124,10 +126,10 @@ export default function LiveStreamWatch() {
           {/* Chat Section */}
           <div className="lg:col-span-1">
             <div className="h-[calc(100vh-100px)] sticky top-6">
-              <CommentsSection 
-                contentType="live_stream" 
-                contentId={stream.id} 
-                contentTitle={stream.title} 
+              <CommentsSection
+                contentType="live_stream"
+                contentId={stream.id}
+                contentTitle={stream.title}
               />
             </div>
           </div>

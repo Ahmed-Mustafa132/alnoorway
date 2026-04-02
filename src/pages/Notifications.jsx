@@ -7,8 +7,10 @@ import { Bell, CheckCircle, Trash2, BellOff, Video, BookOpen, MessageSquare, Cal
 import { motion } from "framer-motion";
 import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Notifications() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const queryClient = useQueryClient();
@@ -109,16 +111,16 @@ export default function Notifications() {
             <CardContent className="p-8 md:p-12 text-center">
               <BellOff className="w-16 h-16 text-gray-300 mx-auto mb-6" />
               <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
-                يرجى تسجيل الدخول
+                {t('notifications_please_login')}
               </h3>
               <p className="text-gray-600 mb-8">
-                سجل الدخول لمشاهدة إشعاراتك
+                {t('notifications_login_to_see')}
               </p>
               <Link to="/auth">
                 <Button
                   className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 py-5 md:py-6 px-8 md:px-10 text-base md:text-lg rounded-2xl"
                 >
-                  تسجيل الدخول
+                  {t('notifications_login_button')}
                 </Button>
               </Link>
             </CardContent>
@@ -138,16 +140,16 @@ export default function Notifications() {
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-100 to-orange-100 px-6 py-3 rounded-full mb-6">
             <Sparkles className="w-5 h-5 text-amber-600" />
-            <span className="text-amber-800 font-semibold">الإشعارات</span>
+            <span className="text-amber-800 font-semibold">{t('notifications_title')}</span>
           </div>
-          
+
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            إشعاراتك
+            {t('notifications_your_notifications')}
           </h1>
-          
+
           {unreadCount > 0 && (
             <p className="text-base md:text-lg text-white/90">
-              لديك {unreadCount} إشعار غير مقروء
+              {t('notifications_unread_count', { count: unreadCount })}
             </p>
           )}
         </motion.div>
@@ -161,7 +163,7 @@ export default function Notifications() {
               className="bg-white/95 backdrop-blur-sm hover:bg-white text-sm md:text-base rounded-2xl"
             >
               <CheckCircle className="w-4 h-4 ml-2" />
-              تعليم الكل كمقروء
+              {t('notifications_mark_all_read')}
             </Button>
             <Button
               onClick={() => deleteAllMutation.mutate()}
@@ -170,7 +172,7 @@ export default function Notifications() {
               className="bg-white/95 backdrop-blur-sm hover:bg-white text-red-600 border-red-200 text-sm md:text-base rounded-2xl"
             >
               <Trash2 className="w-4 h-4 ml-2" />
-              حذف الكل
+              {t('notifications_delete_all')}
             </Button>
           </div>
         )}
@@ -186,41 +188,36 @@ export default function Notifications() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <Card className={`border-0 shadow-lg hover:shadow-xl transition-all ${
-                    notification.is_read ? 'bg-white/90' : 'bg-white/95'
-                  } backdrop-blur-sm rounded-3xl`}>
+                  <Card className={`border-0 shadow-lg hover:shadow-xl transition-all ${notification.is_read ? 'bg-white/90' : 'bg-white/95'
+                    } backdrop-blur-sm rounded-3xl`}>
                     <CardContent className="p-4 md:p-6">
                       <div className="flex items-start gap-3 md:gap-4">
-                        <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                          notification.is_read 
-                            ? 'bg-gray-100' 
-                            : 'bg-gradient-to-br from-amber-400 to-orange-600'
-                        } shadow-md`}>
-                          <Icon className={`w-5 h-5 md:w-6 md:h-6 ${
-                            notification.is_read ? 'text-gray-500' : 'text-white'
-                          }`} />
+                        <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${notification.is_read
+                          ? 'bg-gray-100'
+                          : 'bg-gradient-to-br from-amber-400 to-orange-600'
+                          } shadow-md`}>
+                          <Icon className={`w-5 h-5 md:w-6 md:h-6 ${notification.is_read ? 'text-gray-500' : 'text-white'
+                            }`} />
                         </div>
-                        
+
                         <div className="flex-1 min-w-0">
-                          <h3 className={`text-base md:text-lg font-bold mb-1 md:mb-2 ${
-                            notification.is_read ? 'text-gray-700' : 'text-gray-900'
-                          }`}>
+                          <h3 className={`text-base md:text-lg font-bold mb-1 md:mb-2 ${notification.is_read ? 'text-gray-700' : 'text-gray-900'
+                            }`}>
                             {notification.title}
                           </h3>
-                          <p className={`text-sm md:text-base leading-relaxed mb-2 md:mb-3 ${
-                            notification.is_read ? 'text-gray-500' : 'text-gray-700'
-                          }`}>
+                          <p className={`text-sm md:text-base leading-relaxed mb-2 md:mb-3 ${notification.is_read ? 'text-gray-500' : 'text-gray-700'
+                            }`}>
                             {notification.message}
                           </p>
                           <div className="flex flex-wrap items-center gap-2 md:gap-3">
                             <span className="text-xs md:text-sm text-gray-500">
                               {new Date(notification.created_date).toLocaleDateString('ar-SA')}
                             </span>
-                            
+
                             {notification.link && (
                               <Link to={notification.link}>
                                 <Button size="sm" variant="link" className="text-amber-600 hover:text-amber-700 p-0 h-auto text-xs md:text-sm">
-                                  عرض التفاصيل ←
+                                  {t('notifications_view_details')} ←
                                 </Button>
                               </Link>
                             )}
@@ -260,10 +257,10 @@ export default function Notifications() {
               <CardContent className="p-8 md:p-12 text-center">
                 <Bell className="w-16 h-16 text-gray-300 mx-auto mb-6" />
                 <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3">
-                  لا توجد إشعارات
+                  {t('notifications_no_notifications')}
                 </h3>
                 <p className="text-gray-600 text-sm md:text-base">
-                  ستظهر هنا جميع الإشعارات الجديدة
+                  {t('notifications_no_notifications_desc')}
                 </p>
               </CardContent>
             </Card>

@@ -11,12 +11,14 @@ import CommentsSection from "../components/CommentsSection";
 import RatingWidget from "../components/RatingWidget";
 import { Button } from "@/components/ui/button";
 import Breadcrumb from "../components/Breadcrumb";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Lectures() {
+  const { t } = useLanguage();
   const urlParams = new URLSearchParams(window.location.search);
   const categoryParam = urlParams.get('category');
   const lectureIdParam = urlParams.get('id');
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState(categoryParam || "all");
@@ -42,12 +44,12 @@ export default function Lectures() {
   }, [lectureIdParam, lectures]);
 
   const filteredLectures = lectures.filter(lecture => {
-    const matchesSearch = lecture.title?.includes(searchQuery) || 
-                         lecture.speaker?.includes(searchQuery) ||
-                         lecture.topic?.includes(searchQuery);
+    const matchesSearch = lecture.title?.includes(searchQuery) ||
+      lecture.speaker?.includes(searchQuery) ||
+      lecture.topic?.includes(searchQuery);
     const matchesType = selectedType === "all" || lecture.type === selectedType;
     const matchesCategory = selectedCategory === "all" || lecture.category === selectedCategory;
-    
+
     return matchesSearch && matchesType && matchesCategory;
   });
 
@@ -57,30 +59,30 @@ export default function Lectures() {
         <div className="max-w-5xl mx-auto">
           <div className="mb-4">
             <Breadcrumb items={[
-              { label: "مكتبة المحاضرات", link: "/lectures" },
+              { label: t('lectures'), link: "/lectures" },
               { label: selectedLecture.title }
             ]} />
           </div>
 
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => setSelectedLecture(null)}
             className="mb-6"
           >
             <ArrowRight className="w-5 h-5 ml-2" />
-            العودة إلى المحاضرات
+            {t('back_to_lectures')}
           </Button>
 
           <div className="space-y-6">
             <LectureCard lecture={selectedLecture} isDetailView={true} />
-            
-            <RatingWidget 
-              contentType="lecture" 
-              contentId={selectedLecture.id} 
+
+            <RatingWidget
+              contentType="lecture"
+              contentId={selectedLecture.id}
             />
 
-            <CommentsSection 
-              contentType="lecture" 
+            <CommentsSection
+              contentType="lecture"
               contentId={selectedLecture.id}
               contentTitle={selectedLecture.title}
             />
@@ -100,14 +102,14 @@ export default function Lectures() {
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-emerald-100 px-6 py-3 rounded-full mb-6">
             <Video className="w-5 h-5 text-blue-600" />
-            <span className="text-blue-800 font-semibold">المكتبة المرئية والصوتية</span>
+            <span className="text-blue-800 font-semibold">{t('lectures_library')}</span>
           </div>
-          
+
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            مكتبة المحاضرات
+            {t('lectures_library')}
           </h1>
           <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
-            استمع وشاهد محاضرات إسلامية قيّمة
+            {t('lectures_desc')}
           </p>
         </motion.div>
 
@@ -116,7 +118,7 @@ export default function Lectures() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
               <div className="relative">
                 <Input
-                  placeholder="ابحث عن محاضرة..."
+                  placeholder={t('search_lectures')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pr-10 w-full"
@@ -126,24 +128,24 @@ export default function Lectures() {
 
               <Select value={selectedType} onValueChange={setSelectedType}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="نوع المحاضرة" />
+                  <SelectValue placeholder={t('content_type')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">جميع الأنواع</SelectItem>
-                  <SelectItem value="audio">صوتية</SelectItem>
-                  <SelectItem value="video">مرئية</SelectItem>
+                  <SelectItem value="all">{t('all_types')}</SelectItem>
+                  <SelectItem value="audio">{t('audio')}</SelectItem>
+                  <SelectItem value="video">{t('video')}</SelectItem>
                 </SelectContent>
               </Select>
 
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="التصنيف" />
+                  <SelectValue placeholder={t('category')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">جميع التصنيفات</SelectItem>
-                  <SelectItem value="learn_islam">التعرف على الإسلام</SelectItem>
-                  <SelectItem value="repentance">التوبة</SelectItem>
-                  <SelectItem value="general">عام</SelectItem>
+                  <SelectItem value="all">{t('all_categories')}</SelectItem>
+                  <SelectItem value="learn_islam">{t('learn_islam')}</SelectItem>
+                  <SelectItem value="repentance">{t('repentance')}</SelectItem>
+                  <SelectItem value="general">{t('general')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -153,7 +155,7 @@ export default function Lectures() {
         {isLoading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-            <p className="text-gray-500 mt-4">جاري التحميل...</p>
+            <p className="text-gray-500 mt-4">{t('loading')}</p>
           </div>
         ) : filteredLectures.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
@@ -179,10 +181,10 @@ export default function Lectures() {
                 <Video className="w-12 h-12 md:w-16 md:h-16 text-gray-300 mx-auto mb-4" />
               )}
               <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
-                لا توجد محاضرات
+                {t('no_lectures_found')}
               </h3>
               <p className="text-gray-600">
-                {searchQuery ? "لم نجد نتائج لبحثك" : "لا توجد محاضرات متاحة حالياً"}
+                {searchQuery ? t('no_results') : t('no_lectures')}
               </p>
             </CardContent>
           </Card>

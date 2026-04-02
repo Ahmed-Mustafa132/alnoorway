@@ -9,7 +9,6 @@ import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
-
 export default function Profile() {
   const { t, language, changeLanguage } = useLanguage();
   const [user, setUser] = useState(null);
@@ -161,7 +160,7 @@ export default function Profile() {
             <Card className="border-0 shadow-lg bg-white/95 backdrop-blur-sm rounded-3xl">
               <CardContent className="p-6 space-y-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">اللغة المفضلة</label>
+                  <label className="text-sm font-medium text-gray-700">{t('language')}</label>
                   <Select value={language} onValueChange={changeLanguage}>
                     <SelectTrigger>
                       <SelectValue />
@@ -189,8 +188,8 @@ export default function Profile() {
                           }
                         }}
                         className={`px-3 py-1 rounded-full text-sm transition-all ${interests.includes(topic)
-                            ? 'bg-purple-600 text-white'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          ? 'bg-purple-600 text-white'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                           }`}
                       >
                         {topic}
@@ -272,16 +271,16 @@ export default function Profile() {
             <CardContent className="p-8 md:p-12">
               <User className="w-16 h-16 text-gray-300 mx-auto mb-6" />
               <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
-                غير مسجل دخول
+                {t('please_login_to_access_account')}
               </h3>
               <p className="text-gray-600 mb-8">
-                يرجى تسجيل الدخول للوصول إلى حسابك وميزاته
+                {t('login_to_view_stats_and_preferences')}
               </p>
               <Link to="/auth">
                 <Button
                   className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 py-5 md:py-6 text-base md:text-lg rounded-2xl"
                 >
-                  تسجيل الدخول
+                  {t('login')}
                 </Button>
               </Link>
             </CardContent>

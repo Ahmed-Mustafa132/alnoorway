@@ -8,8 +8,10 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import Breadcrumb from "@/components/Breadcrumb";
 import LectureCard from "@/components/LectureCard";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Recommendations() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [recommendations, setRecommendations] = useState({ lectures: [], stories: [], fatwas: [], books: [] });
 
@@ -155,38 +157,13 @@ export default function Recommendations() {
     return score;
   };
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-700 via-purple-600 to-indigo-800 p-4 md:p-6 flex items-center justify-center">
-        <Card className="border-0 shadow-xl bg-white/95 backdrop-blur-sm rounded-3xl max-w-md w-full mx-4">
-          <CardContent className="p-6 md:p-12 text-center">
-            <Sparkles className="w-12 h-12 md:w-16 md:h-16 text-gray-300 mx-auto mb-6" />
-            <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
-              يرجى تسجيل الدخول
-            </h3>
-            <p className="text-gray-600 mb-8 text-sm md:text-base">
-              سجل الدخول للحصول على توصيات مخصصة بناءً على اهتماماتك
-            </p>
-            <Link to="/auth">
-              <button
-                className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 py-4 md:py-6 text-base md:text-lg rounded-2xl text-white font-semibold"
-              >
-                تسجيل الدخول
-              </button>
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   const isLoading = lecturesLoading || storiesLoading || fatwasLoading || booksLoading;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-700 via-purple-600 to-indigo-800 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-4">
-          <Breadcrumb items={[{ label: "التوصيات المخصصة" }]} />
+          <Breadcrumb items={[{ label: t('Personalized_recommendations') }]} />
         </div>
 
         <motion.div
@@ -196,21 +173,24 @@ export default function Recommendations() {
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-100 to-indigo-100 px-4 md:px-6 py-2 md:py-3 rounded-full mb-4 md:mb-6">
             <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-purple-600" />
-            <span className="text-purple-800 font-semibold text-sm md:text-base">مخصص لك</span>
+            <span className="text-purple-800 font-semibold text-sm md:text-base">
+              {t('personalized_for_you')}
+            </span>
           </div>
-          
+
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 md:mb-4 px-4">
-            توصيات مخصصة لك
+            {t('recommendations_title')}
           </h1>
+
           <p className="text-base md:text-lg lg:text-xl text-white/90 max-w-2xl mx-auto px-4">
-            محتوى منتقى بعناية بناءً على اهتماماتك وسجل تصفحك
+            {t('recommendations_description')}
           </p>
         </motion.div>
 
         {isLoading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
-            <p className="text-white mt-4">جاري تحميل التوصيات...</p>
+            <p className="text-white mt-4">{t('loading_recommendations')}</p>
           </div>
         ) : (
           <div className="space-y-8">
@@ -218,7 +198,9 @@ export default function Recommendations() {
               <div>
                 <div className="flex items-center gap-3 mb-4 px-2">
                   <Video className="w-5 h-5 md:w-6 md:h-6 text-white" />
-                  <h2 className="text-xl md:text-2xl font-bold text-white">محاضرات مقترحة</h2>
+                  <h2 className="text-xl md:text-2xl font-bold text-white">
+                    {t('suggested_lectures')}
+                  </h2>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {recommendations.lectures.map((lecture, index) => (
@@ -240,7 +222,9 @@ export default function Recommendations() {
               <div>
                 <div className="flex items-center gap-3 mb-4 px-2">
                   <Heart className="w-5 h-5 md:w-6 md:h-6 text-white" />
-                  <h2 className="text-xl md:text-2xl font-bold text-white">قصص ملهمة</h2>
+                  <h2 className="text-xl md:text-2xl font-bold text-white">
+                    {t('inspiring_stories')}
+                  </h2>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {recommendations.stories.map((story, index) => (
@@ -255,9 +239,13 @@ export default function Recommendations() {
                           <CardContent className="p-4">
                             <div className="flex items-start gap-2 mb-2">
                               <Star className="w-4 h-4 text-purple-600 flex-shrink-0 mt-1" />
-                              <h3 className="font-bold text-gray-900 text-sm md:text-base line-clamp-2">{story.title}</h3>
+                              <h3 className="font-bold text-gray-900 text-sm md:text-base line-clamp-2">
+                                {story.title}
+                              </h3>
                             </div>
-                            <p className="text-xs md:text-sm text-gray-600 line-clamp-3">{story.excerpt || story.content?.substring(0, 100)}</p>
+                            <p className="text-xs md:text-sm text-gray-600 line-clamp-3">
+                              {story.excerpt || story.content?.substring(0, 100)}
+                            </p>
                           </CardContent>
                         </Card>
                       </Link>
@@ -271,7 +259,9 @@ export default function Recommendations() {
               <div>
                 <div className="flex items-center gap-3 mb-4 px-2">
                   <BookOpen className="w-5 h-5 md:w-6 md:h-6 text-white" />
-                  <h2 className="text-xl md:text-2xl font-bold text-white">كتب مقترحة</h2>
+                  <h2 className="text-xl md:text-2xl font-bold text-white">
+                    {t('suggested_books')}
+                  </h2>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                   {recommendations.books.map((book, index) => (
@@ -289,7 +279,9 @@ export default function Recommendations() {
                             )}
                             <div className="flex items-start gap-2 mb-2">
                               <Star className="w-4 h-4 text-purple-600 flex-shrink-0 mt-1" />
-                              <h3 className="font-bold text-gray-900 text-xs md:text-sm line-clamp-2">{book.title}</h3>
+                              <h3 className="font-bold text-gray-900 text-xs md:text-sm line-clamp-2">
+                                {book.title}
+                              </h3>
                             </div>
                             <p className="text-xs text-gray-600 truncate">{book.author}</p>
                           </CardContent>

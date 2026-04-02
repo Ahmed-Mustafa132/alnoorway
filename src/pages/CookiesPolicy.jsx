@@ -22,7 +22,7 @@ export default function CookiesPolicy() {
         </div>
 
         {/* Back to Home Button */}
-        <button 
+        <button
           onClick={() => navigate('/')}
           className="inline-flex items-center text-orange-600 hover:text-orange-700 mb-6 group"
         >
@@ -49,7 +49,7 @@ export default function CookiesPolicy() {
                   ما هي الكوكيز؟
                 </h2>
                 <p className="text-gray-800">
-                  الكوكيز (Cookies) هي ملفات نصية صغيرة يتم تخزينها على جهازك عند زيارة المواقع الإلكترونية. 
+                  الكوكيز (Cookies) هي ملفات نصية صغيرة يتم تخزينها على جهازك عند زيارة المواقع الإلكترونية.
                   تساعد هذه الملفات في حفظ تفضيلاتك وتحسين أداء الموقع.
                 </p>
               </div>
@@ -109,7 +109,7 @@ export default function CookiesPolicy() {
               </div>
 
               <p className="text-sm text-gray-600 pt-4 border-t border-gray-200">
-                <strong>آخر تحديث:</strong> يناير 2026<br/>
+                <strong>آخر تحديث:</strong> يناير 2026<br />
                 <strong>للاستفسارات:</strong> يرجى التواصل معنا عبر صفحة التواصل
               </p>
             </div>
@@ -135,7 +135,7 @@ export default function CookiesPolicy() {
                   What are Cookies?
                 </h2>
                 <p className="text-gray-800">
-                  Cookies are small text files stored on your device when you visit websites. 
+                  Cookies are small text files stored on your device when you visit websites.
                   These files help save your preferences and improve website performance.
                 </p>
               </div>
@@ -195,7 +195,7 @@ export default function CookiesPolicy() {
               </div>
 
               <p className="text-sm text-gray-600 pt-4 border-t border-gray-200">
-                <strong>Last Updated:</strong> January 2026<br/>
+                <strong>Last Updated:</strong> January 2026<br />
                 <strong>Contact Us:</strong> Please reach out via our Contact page
               </p>
             </div>
@@ -204,7 +204,7 @@ export default function CookiesPolicy() {
 
         {/* Back to Home at Bottom */}
         <div className="text-center mt-8">
-          <button 
+          <button
             onClick={() => navigate('/')}
             className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg hover:shadow-xl"
           >

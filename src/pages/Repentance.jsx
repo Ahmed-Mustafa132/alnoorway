@@ -31,7 +31,7 @@ export default function Repentance() {
     {
       icon: Users,
       title: t('contact_scholar'),
-      description: "احصل على إرشاد شخصي من علماء متخصصين",
+      description: t('contact_scholar_desc'),
       color: "from-emerald-100 to-emerald-200",
       image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612644/Contact_an_Islamic_mufti_glg2c4.png",
       link: createPageUrl("ContactScholar"),
@@ -41,7 +41,7 @@ export default function Repentance() {
     {
       icon: Video,
       title: t('lectures_library'),
-      description: "استمع لمحاضرات عن التوبة والرجوع إلى الله",
+      description: t('lectures_library_desc'),
       color: "from-rose-100 to-rose-200",
       image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612733/lectures_y0spuf.png",
       link: createPageUrl("Lectures?category=repentance")

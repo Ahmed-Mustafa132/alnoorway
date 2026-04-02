@@ -6,8 +6,10 @@ import { Heart, Trash2, Video, BookOpen, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
+import { useLanguage } from "@/contexts/LanguageContext";
 export default function Favorites() {
+  const { t } = useLanguage();
+
   const [user, setUser] = useState(null);
   const queryClient = useQueryClient();
 
@@ -52,7 +54,7 @@ export default function Favorites() {
   const fatwasFavorites = favorites.filter(f => f.item_type === 'fatwa');
 
   const getIcon = (type) => {
-    switch(type) {
+    switch (type) {
       case 'lecture': return Video;
       case 'story': return BookOpen;
       case 'fatwa': return MessageSquare;
@@ -61,7 +63,7 @@ export default function Favorites() {
   };
 
   const getColor = (type) => {
-    switch(type) {
+    switch (type) {
       case 'lecture': return 'from-purple-400 to-purple-600';
       case 'story': return 'from-amber-400 to-amber-600';
       case 'fatwa': return 'from-emerald-400 to-emerald-600';
@@ -94,7 +96,7 @@ export default function Favorites() {
                 className="text-red-500 hover:text-red-700 hover:bg-red-50"
               >
                 <Trash2 className="w-4 h-4 ml-2" />
-                إزالة من المفضلة
+                {t('delete_favorite')}
               </Button>
             </div>
           </div>
@@ -115,25 +117,25 @@ export default function Favorites() {
             <Heart className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-            المفضلة
+            {t('favorites_title')}
           </h1>
           <p className="text-xl text-gray-600">
-            المحتوى الذي قمت بحفظه
+            {t('favorites_content')}
           </p>
         </motion.div>
 
         {isLoading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-600 mx-auto"></div>
-            <p className="text-gray-500 mt-4">جاري التحميل...</p>
+            <p className="text-gray-500 mt-4">{t('loading')}</p>
           </div>
         ) : favorites.length > 0 ? (
           <Tabs defaultValue="all" className="w-full">
             <TabsList className="grid w-full grid-cols-4 mb-8 max-w-2xl mx-auto">
-              <TabsTrigger value="all">الكل ({favorites.length})</TabsTrigger>
-              <TabsTrigger value="lectures">محاضرات ({lecturesFavorites.length})</TabsTrigger>
-              <TabsTrigger value="stories">قصص ({storiesFavorites.length})</TabsTrigger>
-              <TabsTrigger value="fatwas">فتاوى ({fatwasFavorites.length})</TabsTrigger>
+              <TabsTrigger value="all">{t('all')} ({favorites.length})</TabsTrigger>
+              <TabsTrigger value="lectures">{t('lectures')} ({lecturesFavorites.length})</TabsTrigger>
+              <TabsTrigger value="stories">{t('stories')} ({storiesFavorites.length})</TabsTrigger>
+              <TabsTrigger value="fatwas">{t('fatwas')} ({fatwasFavorites.length})</TabsTrigger>
             </TabsList>
 
             <TabsContent value="all" className="grid md:grid-cols-2 gap-6">
@@ -146,7 +148,7 @@ export default function Favorites() {
               ) : (
                 <div className="col-span-2 text-center py-12">
                   <Video className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-600">لا توجد محاضرات مفضلة</p>
+                  <p className="text-gray-600">{t('no_lectures_favorite')}</p>
                 </div>
               )}
             </TabsContent>
@@ -157,7 +159,7 @@ export default function Favorites() {
               ) : (
                 <div className="col-span-2 text-center py-12">
                   <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-600">لا توجد قصص مفضلة</p>
+                  <p className="text-gray-600">{t('no_stories_favorite')}</p>
                 </div>
               )}
             </TabsContent>
@@ -168,7 +170,7 @@ export default function Favorites() {
               ) : (
                 <div className="col-span-2 text-center py-12">
                   <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-600">لا توجد فتاوى مفضلة</p>
+                  <p className="text-gray-600">{t('no_fatwas_favorite')}</p>
                 </div>
               )}
             </TabsContent>
@@ -178,10 +180,10 @@ export default function Favorites() {
             <CardContent className="p-12 text-center">
               <Heart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                لا توجد مفضلات بعد
+                {t('no_favorites')}
               </h3>
               <p className="text-gray-600">
-                ابدأ بحفظ المحاضرات والقصص والفتاوى المفضلة لديك
+                {t('no_favorites_content')}
               </p>
             </CardContent>
           </Card>

@@ -204,7 +204,7 @@ export default function Home() {
       {/* Offline Banner */}
       {!isOnline && (
         <div className="fixed top-0 left-0 right-0 z-50 bg-red-600 text-white text-center py-3 px-4 text-sm font-bold shadow-lg">
-          ❌ لا يوجد اتصال بالإنترنت، تحقق من الشبكة وحاول مرة أخرى
+          {t('offline_message')}
         </div>
       )}
 
@@ -215,7 +215,7 @@ export default function Home() {
           <div className="flex items-center justify-center py-6">
             <div className="flex items-center gap-3 bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full">
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-white font-medium">جاري التحميل...</span>
+              <span className="text-white font-medium">{t('loading')}</span>
             </div>
           </div>
         )}
@@ -224,9 +224,9 @@ export default function Home() {
         {hasError && !isLoading && (
           <div className="text-center py-4 mb-4">
             <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-4 inline-block">
-              <p className="text-white font-medium mb-2">حدث خطأ، حاول مرة أخرى</p>
+              <p className="text-white font-medium mb-2">{t('error')}</p>
               <button onClick={loadData} className="bg-white text-teal-700 px-5 py-2 rounded-xl font-bold text-sm hover:bg-gray-100 transition-colors">
-                إعادة المحاولة
+                {t('try_again')}
               </button>
             </div>
           </div>
@@ -236,7 +236,7 @@ export default function Home() {
         <div className="flex flex-col md:flex-row items-center gap-3 max-w-3xl mx-auto mb-8 pt-4">
           <div className="relative flex-1 w-full">
             <Input
-              placeholder="ابحث..."
+              placeholder={t('search_placeholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}

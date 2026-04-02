@@ -25,7 +25,7 @@ export default function LearnIslam() {
     {
       icon: Users,
       title: t('contact_preacher'),
-      description: "احصل على إرشاد شخصي من دعاة متخصصين",
+      description: t('contact_preacher_desc'),
       color: "from-emerald-100 to-emerald-200",
       image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612685/Islamic_preacher_zuhvhn.png",
       link: createPageUrl("ContactPreacher")

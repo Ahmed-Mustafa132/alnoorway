@@ -5,8 +5,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookOpen, Video, FileText, Play, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Content() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("articles");
 
   return (
@@ -19,14 +21,14 @@ export default function Content() {
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-indigo-100 px-6 py-3 rounded-full mb-6">
             <Sparkles className="w-5 h-5 text-blue-600" />
-            <span className="text-blue-800 font-semibold">مكتبة المحتوى</span>
+            <span className="text-blue-800 font-semibold">{t('content_library')}</span>
           </div>
-          
+
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            المحتوى
+            {t('content_title')}
           </h1>
           <p className="text-lg md:text-xl text-white/90">
-            استكشف مكتبتنا من المقالات والفيديوهات
+            {t('content_description')}
           </p>
         </motion.div>
 
@@ -35,11 +37,11 @@ export default function Content() {
             <TabsList className="bg-white/95 backdrop-blur-sm shadow-lg">
               <TabsTrigger value="articles" className="gap-2">
                 <FileText className="w-4 h-4" />
-                المقالات
+                {t('content_articles')}
               </TabsTrigger>
               <TabsTrigger value="videos" className="gap-2">
                 <Video className="w-4 h-4" />
-                الفيديوهات
+                {t('content_videos')}
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -53,9 +55,9 @@ export default function Content() {
                   <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center mb-4 md:mb-6 mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg">
                     <BookOpen className="w-8 h-8 md:w-10 md:h-10 text-white" />
                   </div>
-                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">قصص ملهمة</h3>
+                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3"> {t('story')}</h3>
                   <p className="text-gray-600 text-base md:text-lg">
-                    اقرأ قصص المهتدين والتائبين
+                    {t('content_inspiring_stories')}
                   </p>
                 </CardContent>
               </Card>
@@ -67,9 +69,9 @@ export default function Content() {
                   <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center mb-4 md:mb-6 mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg">
                     <FileText className="w-8 h-8 md:w-10 md:h-10 text-white" />
                   </div>
-                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">الفتاوى</h3>
+                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">{t('fatwas')}</h3>
                   <p className="text-gray-600 text-base md:text-lg">
-                    تصفح الفتاوى الشرعية
+                    {t('content_fatwas')}
                   </p>
                 </CardContent>
               </Card>
@@ -85,7 +87,7 @@ export default function Content() {
                   </div>
                   <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">المحاضرات</h3>
                   <p className="text-gray-600 text-base md:text-lg">
-                    شاهد واستمع للمحاضرات الإسلامية
+                    {t('content_lectures')}
                   </p>
                 </CardContent>
               </Card>

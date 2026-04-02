@@ -43,7 +43,7 @@ export default function Login() {
 
       navigate('/');
     } catch (err) {
-      setError(err.message || "فشل تسجيل الدخول");
+      setError(err.message || t("login_failed"));
     } finally {
       setLoading(false);
     }
@@ -59,14 +59,14 @@ export default function Login() {
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-indigo-100 px-6 py-3 rounded-full mb-6">
             <Sparkles className="w-5 h-5 text-blue-600" />
-            <span className="text-blue-800 font-semibold">منصة النور الطريق</span>
+            <span className="text-blue-800 font-semibold">{t("platform_name")}</span>
           </div>
         </div>
 
         <Card className="border-0 shadow-2xl bg-white dark:bg-slate-800/95 backdrop-blur-sm rounded-3xl transition-colors duration-300">
           <CardHeader className="pb-4">
             <CardTitle className="text-2xl font-bold text-center text-gray-900 dark:text-white transition-colors duration-300">
-              تسجيل الدخول
+              {t("login_title")}
             </CardTitle>
           </CardHeader>
 
@@ -85,7 +85,7 @@ export default function Login() {
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
                 <Label htmlFor="email" className="text-gray-700 dark:text-gray-300 font-medium mb-2 block transition-colors duration-300">
-                  البريد الإلكتروني
+                  {t("email")}
                 </Label>
                 <Input
                   id="email"
@@ -101,7 +101,7 @@ export default function Login() {
 
               <div>
                 <Label htmlFor="password" className="text-gray-700 dark:text-gray-300 font-medium mb-2 block transition-colors duration-300">
-                  كلمة المرور
+                  {t("password")}
                 </Label>
                 <Input
                   id="password"
@@ -123,12 +123,12 @@ export default function Login() {
                 {loading ? (
                   <div className="flex items-center gap-2">
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    <span>جاري التحميل...</span>
+                    <span>{t("loading")}</span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
                     <LogIn className="w-5 h-5" />
-                    <span>تسجيل الدخول</span>
+                    <span>{t("login")}</span>
                   </div>
                 )}
               </Button>
@@ -136,7 +136,7 @@ export default function Login() {
 
             <div className="mt-6 text-center">
               <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium">
-                ليس لديك حساب؟ إنشاء حساب جديد
+                {t("no_account")}
               </Link>
             </div>
           </CardContent>

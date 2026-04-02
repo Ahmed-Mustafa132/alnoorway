@@ -430,8 +430,8 @@ export default function Fatwa() {
           ) : (
             <div className="col-span-full text-center py-12 bg-white/50 rounded-3xl border border-dashed border-gray-300">
               <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 text-lg">لا توجد نتائج</p>
-              <p className="text-sm text-gray-400">جرب كلمات مفتاحية مختلفة</p>
+              <p className="text-gray-500 text-lg">{t('no_fatwas_found')}</p>
+              <p className="text-sm text-gray-400">{t('try_anuther_keywords')}</p>
             </div>
           )}
         </div>

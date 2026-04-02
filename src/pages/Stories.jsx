@@ -3,18 +3,20 @@ import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Heart, BookOpen } from "lucide-react";
+import { Heart, BookOpen, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import StoryCard from "@/components/StoryCard";
 import CommentsSection from "@/components/CommentsSection";
 import RatingWidget from "@/components/RatingWidget";
 import ShareButtons from "@/components/ShareButtons";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Stories() {
+  const { t, isRtl } = useLanguage();
   const urlParams = new URLSearchParams(window.location.search);
   const typeParam = urlParams.get('type');
-  
+
   const [selectedType, setSelectedType] = useState(typeParam || "all");
   const [selectedStory, setSelectedStory] = useState(null);
 
@@ -28,8 +30,8 @@ export default function Stories() {
     initialData: [],
   });
 
-  const filteredStories = selectedType === "all" 
-    ? stories 
+  const filteredStories = selectedType === "all"
+    ? stories
     : stories.filter(story => story.category === selectedType);
 
   // عرض القصة المختارة
@@ -37,20 +39,21 @@ export default function Stories() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-rose-50 p-6 md:p-12">
         <div className="max-w-5xl mx-auto">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => setSelectedStory(null)}
-            className="mb-6"
+            className="mb-6 flex items-center gap-2"
           >
-            ← العودة إلى القصص
+             <ChevronRight className={`w-4 h-4 ${isRtl ? '' : 'rotate-180'}`} />
+            {t('storiesBackBtn')}
           </Button>
 
           <div className="space-y-6">
             <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
               {selectedStory.image_url && (
                 <div className="h-64 overflow-hidden rounded-t-xl">
-                  <img 
-                    src={selectedStory.image_url} 
+                  <img
+                    src={selectedStory.image_url}
                     alt={selectedStory.title}
                     className="w-full h-full object-cover"
                   />
@@ -59,16 +62,16 @@ export default function Stories() {
               <CardContent className="p-8 space-y-6">
                 <div className="flex items-center justify-between">
                   <h1 className="text-3xl font-bold text-gray-900">{selectedStory.title}</h1>
-                  <ShareButtons 
+                  <ShareButtons
                     title={selectedStory.title}
-                    description={selectedStory.excerpt || 'قصة ملهمة'}
+                    description={selectedStory.excerpt || t('storiesDefaultExcerpt')}
                   />
                 </div>
 
                 {selectedStory.author && (
                   <div className="flex items-center gap-2 text-gray-600">
                     <Heart className="w-5 h-5" />
-                    <span className="font-semibold">صاحب القصة:</span>
+                    <span className="font-semibold">{t('storiesAuthorLabel')}:</span>
                     <span>{selectedStory.author}</span>
                   </div>
                 )}
@@ -87,13 +90,13 @@ export default function Stories() {
               </CardContent>
             </Card>
 
-            <RatingWidget 
-              contentType="story" 
-              contentId={selectedStory.id} 
+            <RatingWidget
+              contentType="story"
+              contentId={selectedStory.id}
             />
 
-            <CommentsSection 
-              contentType="story" 
+            <CommentsSection
+              contentType="story"
               contentId={selectedStory.id}
               contentTitle={selectedStory.title}
             />
@@ -112,27 +115,27 @@ export default function Stories() {
           className="text-center mb-12"
         >
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-            قصص ملهمة
+            {t('storiesMainTitle')}
           </h1>
           <p className="text-xl text-gray-600">
-            رحلات إيمانية حقيقية تلامس القلوب
+            {t('storiesMainSubtitle')}
           </p>
         </motion.div>
 
         <div className="flex justify-center mb-8">
           <Tabs value={selectedType} onValueChange={setSelectedType}>
-            <TabsList className="bg-white shadow-lg">
+            <TabsList className="bg-white shadow-lg overflow-x-auto">
               <TabsTrigger value="all" className="gap-2">
                 <BookOpen className="w-4 h-4" />
-                جميع القصص
+                {t('storiesTabAll')}
               </TabsTrigger>
               <TabsTrigger value="convert" className="gap-2">
                 <Heart className="w-4 h-4" />
-                قصص المهتدين
+                {t('storiesTabConvert')}
               </TabsTrigger>
               <TabsTrigger value="repentance" className="gap-2">
                 <Heart className="w-4 h-4" />
-                قصص التائبين
+                {t('storiesTabRepentance')}
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -141,7 +144,7 @@ export default function Stories() {
         {isLoading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto"></div>
-            <p className="text-gray-500 mt-4">جاري التحميل...</p>
+            <p className="text-gray-500 mt-4">{t('storiesLoading')}</p>
           </div>
         ) : filteredStories.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -163,10 +166,10 @@ export default function Stories() {
             <CardContent className="p-12 text-center">
               <Heart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                لا توجد قصص حالياً
+                {t('storiesEmptyTitle')}
               </h3>
               <p className="text-gray-600">
-                سنضيف المزيد من القصص الملهمة قريباً
+                {t('storiesEmptyDesc')}
               </p>
             </CardContent>
           </Card>

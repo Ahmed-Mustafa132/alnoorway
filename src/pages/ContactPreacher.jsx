@@ -6,8 +6,9 @@ import { Users, Phone, MessageCircle, Globe, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 import ContactModal from "@/components/ContactModal";
 import OnlineIndicator from "@/components/OnlineIndicator";
-
+import { useLanguage } from "@/contexts/LanguageContext";
 export default function ContactPreacher() {
+  const { t } = useLanguage();
   const [showContactModal, setShowContactModal] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("all");
 
@@ -22,9 +23,9 @@ export default function ContactPreacher() {
   });
 
   const languages = ["الكل", ...new Set(preachers.flatMap(p => p.languages || []))];
-  
-  const filteredPreachers = selectedLanguage === "all" 
-    ? preachers 
+
+  const filteredPreachers = selectedLanguage === "all"
+    ? preachers
     : preachers.filter(p => p.languages?.includes(selectedLanguage));
 
   const isPreacherOnline = (preacher) => {
@@ -41,14 +42,14 @@ export default function ContactPreacher() {
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-100 to-blue-100 px-6 py-3 rounded-full mb-6">
             <Users className="w-5 h-5 text-emerald-600" />
-            <span className="text-emerald-800 font-semibold">تواصل مع داعية</span>
+            <span className="text-emerald-800 font-semibold">{t('available_preachers')}</span>
           </div>
-          
+
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-            الدعاة المتاحون
+            {t('contact_preacher')}
           </h1>
           <p className="text-xl text-gray-600">
-            تواصل مع دعاة متخصصين حول العالم
+            {t('contact_preacher_desc')}
           </p>
         </motion.div>
 
@@ -57,11 +58,10 @@ export default function ContactPreacher() {
             <button
               key={lang}
               onClick={() => setSelectedLanguage(lang === "الكل" ? "all" : lang)}
-              className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ${
-                (selectedLanguage === "all" && lang === "الكل") || selectedLanguage === lang
-                  ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg"
-                  : "bg-white text-gray-700 hover:bg-emerald-50"
-              }`}
+              className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ${(selectedLanguage === "all" && lang === "الكل") || selectedLanguage === lang
+                ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg"
+                : "bg-white text-gray-700 hover:bg-emerald-50"
+                }`}
             >
               {lang}
             </button>
@@ -71,7 +71,7 @@ export default function ContactPreacher() {
         {isLoading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
-            <p className="text-gray-500 mt-4">جاري التحميل...</p>
+            <p className="text-gray-500 mt-4">{t('loading')}</p>
           </div>
         ) : filteredPreachers.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -98,13 +98,12 @@ export default function ContactPreacher() {
                           {preacher.country && (
                             <p className="text-sm text-gray-600">{preacher.country}</p>
                           )}
-                          <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full mt-1 ${
-                            isOnline 
-                              ? 'text-emerald-600 bg-emerald-50' 
-                              : 'text-red-600 bg-red-50'
-                          }`}>
+                          <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full mt-1 ${isOnline
+                            ? 'text-emerald-600 bg-emerald-50'
+                            : 'text-red-600 bg-red-50'
+                            }`}>
                             <OnlineIndicator isOnline={isOnline} size="sm" />
-                            {isOnline ? 'متاح' : 'غير متصل'}
+                            {isOnline ? t('online') : t('offline')}
                           </span>
                         </div>
                       </div>
@@ -134,7 +133,7 @@ export default function ContactPreacher() {
                             className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700"
                           >
                             <Phone className="w-4 h-4" />
-                            اتصال تليفوني
+                            {t('call')}
                           </a>
                         )}
                         {preacher.whatsapp && (
@@ -145,7 +144,7 @@ export default function ContactPreacher() {
                             className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700"
                           >
                             <MessageCircle className="w-4 h-4" />
-                            واتساب
+                            {t('whatsapp')}
                           </a>
                         )}
                         {preacher.email && (
@@ -154,7 +153,7 @@ export default function ContactPreacher() {
                             className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700"
                           >
                             <Mail className="w-4 h-4" />
-                            بريد إلكتروني
+                            {t('email')}
                           </a>
                         )}
                       </div>
@@ -169,10 +168,10 @@ export default function ContactPreacher() {
             <CardContent className="p-12 text-center">
               <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                لا يوجد دعاة متاحون حالياً
+                {t('no_preachers_available')}
               </h3>
               <p className="text-gray-600">
-                يمكنك إرسال طلب وسنتواصل معك قريباً
+                {t('no_preachers_desc')}
               </p>
             </CardContent>
           </Card>

@@ -42,7 +42,7 @@ export default function Chat() {
         receiver_name: selectedConversation.scholar_name,
         message_text: `تم طلب موعد استشارة بتاريخ ${appointmentData.date} الساعة ${appointmentData.time}`
       });
-      alert("تم إرسال طلب الموعد بنجاح");
+      alert(t("appointment_request_sent"));
     },
   });
 
@@ -70,7 +70,7 @@ export default function Chat() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, []);
 
   useEffect(() => {
     if (selectedConversation) {
@@ -185,16 +185,16 @@ export default function Chat() {
           <CardContent className="p-8 md:p-12 text-center">
             <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-6" />
             <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
-              يرجى تسجيل الدخول
+              {t("please_log_in_to_chat")}
             </h3>
             <p className="text-gray-600 mb-8">
-              سجل الدخول لبدء المحادثات مع العلماء والدعاة
+              {t("log_in_to_access_direct_chat")}
             </p>
             <Button
               onClick={() => window.location.href = '/auth'}
               className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 py-5 md:py-6 text-base md:text-lg rounded-2xl"
             >
-              تسجيل الدخول
+              {t("login")}
             </Button>
           </CardContent>
         </Card>
@@ -206,7 +206,7 @@ export default function Chat() {
     <div className="min-h-screen bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-800 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-4">
-          <Breadcrumb items={[{ label: "الدردشة المباشرة" }]} />
+          <Breadcrumb items={[{ label: t("live_chat") }]} />
         </div>
 
         <motion.div
@@ -216,14 +216,14 @@ export default function Chat() {
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-indigo-100 px-6 py-3 rounded-full mb-6">
             <Sparkles className="w-5 h-5 text-blue-600" />
-            <span className="text-blue-800 font-semibold">الدردشة المباشرة</span>
+            <span className="text-blue-800 font-semibold">{t("live_chat")}</span>
           </div>
 
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            محادثاتك
+            {t("your_conversations")}
           </h1>
           <p className="text-base md:text-lg text-white/90">
-            تواصل مباشرة مع العلماء والدعاة
+            {t("chat_with_scholars_description")}
           </p>
         </motion.div>
 
@@ -233,7 +233,7 @@ export default function Chat() {
             <CardContent className="p-4 md:p-6 flex-1 flex flex-col overflow-hidden">
               <div className="relative mb-4 flex-shrink-0">
                 <Input
-                  placeholder="ابحث في المحادثات..."
+                  placeholder={t("search_conversations")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pr-10 rounded-2xl"
@@ -276,7 +276,7 @@ export default function Chat() {
                           </h4>
                           <p className={`text-xs truncate ${selectedConversation?.id === conv.id ? 'text-white/80' : 'text-gray-600'
                             }`}>
-                            {conv.last_message || 'لا توجد رسائل'}
+                            {conv.last_message || t("no_messages_yet")}
                           </p>
                         </div>
                         {conv.unread_count_user > 0 && (
@@ -290,7 +290,7 @@ export default function Chat() {
                 ) : (
                   <div className="text-center py-8">
                     <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-600 text-sm">لا توجد محادثات</p>
+                    <p className="text-gray-600 text-sm">{t("no_conversations_found")}</p>
                   </div>
                 )}
               </div>
@@ -313,7 +313,7 @@ export default function Chat() {
                     </div>
                     <div>
                       <h3 className="font-bold text-lg">{selectedConversation.scholar_name}</h3>
-                      <p className="text-sm text-white/80">{selectedConversation.scholar_type === 'mufti' ? 'مفتي' : selectedConversation.scholar_type === 'preacher' ? 'داعية' : 'محفظ'}</p>
+                      <p className="text-sm text-white/80">{selectedConversation.scholar_type === 'mufti' ? t("mufti") : selectedConversation.scholar_type === 'preacher' ? t("preacher") : t("teacher")}</p>
                     </div>
                   </div>
 
@@ -321,17 +321,17 @@ export default function Chat() {
                     <DialogTrigger asChild>
                       <Button variant="secondary" size="sm" className="gap-2 bg-white/20 hover:bg-white/30 text-white border-0">
                         <CalendarIcon className="w-4 h-4" />
-                        <span className="hidden sm:inline">طلب موعد</span>
+                        <span className="hidden sm:inline">{t("schedule_appointment")}</span>
                       </Button>
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>جدولة موعد استشارة</DialogTitle>
+                        <DialogTitle>{t("schedule_appointment")}</DialogTitle>
                       </DialogHeader>
                       <form onSubmit={handleScheduleSubmit} className="space-y-4 py-4">
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label>التاريخ</Label>
+                            <Label>{t("date")}</Label>
                             <Input
                               type="date"
                               required
@@ -340,7 +340,7 @@ export default function Chat() {
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label>الوقت</Label>
+                            <Label>{t("time")}</Label>
                             <Input
                               type="time"
                               required
@@ -350,7 +350,7 @@ export default function Chat() {
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <Label>ملاحظات</Label>
+                          <Label>{t("notes")}</Label>
                           <Input
                             placeholder="سبب الموعد..."
                             value={appointmentData.notes}
@@ -358,7 +358,7 @@ export default function Chat() {
                           />
                         </div>
                         <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700">
-                          تأكيد الطلب
+                          {t("send_appointment_request")}
                         </Button>
                       </form>
                     </DialogContent>
@@ -403,7 +403,7 @@ export default function Chat() {
                   ) : (
                     <div className="text-center py-8">
                       <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                      <p className="text-gray-600">ابدأ المحادثة</p>
+                      <p className="text-gray-600">{t("start_conversation")}</p>
                     </div>
                   )}
 
@@ -423,7 +423,7 @@ export default function Chat() {
                 <form onSubmit={handleSendMessage} className="p-4 md:p-6 border-t bg-gray-50 rounded-b-3xl flex-shrink-0">
                   <div className="flex gap-2">
                     <Input
-                      placeholder="اكتب رسالتك..."
+                      placeholder={t("type_your_message")}
                       value={messageText}
                       onChange={handleTyping}
                       className="flex-1 rounded-2xl"
@@ -443,10 +443,10 @@ export default function Chat() {
                 <div className="text-center">
                   <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                   <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    اختر محادثة
+                    {t("select_conversation")}
                   </h3>
                   <p className="text-gray-600">
-                    اختر محادثة من القائمة لبدء المحادثة
+                    {t("select_conversation_desc")}
                   </p>
                 </div>
               </div>

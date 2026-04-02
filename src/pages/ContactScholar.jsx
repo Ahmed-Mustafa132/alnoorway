@@ -7,8 +7,10 @@ import { User, Mail, Phone, MessageSquare, BookOpen, Globe, Sparkles } from "luc
 import { motion } from "framer-motion";
 import ContactModal from "@/components/ContactModal";
 import OnlineIndicator from "@/components/OnlineIndicator";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function ContactScholar() {
+  const { t } = useLanguage();
   const [showContactModal, setShowContactModal] = useState(false);
   const [selectedScholar, setSelectedScholar] = useState(null);
 
@@ -26,8 +28,8 @@ export default function ContactScholar() {
   });
 
   const onlineCount = scholars.filter(s => isScholarOnline(s)).length;
-  
-  const displayedScholars = onlineFilter 
+
+  const displayedScholars = onlineFilter
     ? scholars.filter(s => isScholarOnline(s))
     : scholars;
 
@@ -52,34 +54,36 @@ export default function ContactScholar() {
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-100 to-teal-100 px-6 py-3 rounded-full mb-6">
             <User className="w-5 h-5 text-emerald-600" />
-            <span className="text-emerald-800 font-semibold">تواصل مع مفتي</span>
+            <span className="text-emerald-800 font-semibold">{t('contact_mufti')}</span>
           </div>
-          
+
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-            علماؤنا في خدمتك
+            {t('our_muftis')}
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
-            تواصل مباشرة مع علماء موثوقين للحصول على الفتاوى والإرشاد الشرعي
+            {t('contact_mufti_desc')}
           </p>
 
           <div className="flex justify-center gap-4 mb-8">
-             <div 
-               onClick={() => setOnlineFilter(false)}
-               className={`cursor-pointer px-6 py-3 rounded-2xl shadow-sm border transition-all ${!onlineFilter ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-gray-700 border-gray-200 hover:bg-emerald-50'}`}
-             >
-               <span className="block text-2xl font-bold">{scholars.length}</span>
-               <span className="text-sm">إجمالي المفتين</span>
-             </div>
-             <div 
-               onClick={() => setOnlineFilter(true)}
-               className={`cursor-pointer px-6 py-3 rounded-2xl shadow-sm border transition-all ${onlineFilter ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-gray-700 border-gray-200 hover:bg-emerald-50'}`}
-             >
-               <span className="block text-2xl font-bold flex items-center justify-center gap-2">
-                 {onlineCount}
-                 <span className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-400/50"></span>
-               </span>
-               <span className="text-sm">متواجدون الآن</span>
-             </div>
+            <div
+              onClick={() => setOnlineFilter(false)}
+              className={`cursor-pointer px-6 py-3 rounded-2xl shadow-sm border transition-all ${!onlineFilter ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-gray-700 border-gray-200 hover:bg-emerald-50'}`}
+            >
+              <span className="block text-2xl font-bold">{scholars.length}</span>
+              <span className="text-sm">{t('total_muftis')}</span>
+            </div>
+            <div
+              onClick={() => setOnlineFilter(true)}
+              className={`cursor-pointer px-6 py-3 rounded-2xl shadow-sm border transition-all ${onlineFilter ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-gray-700 border-gray-200 hover:bg-emerald-50'}`}
+            >
+              <span className="block text-2xl font-bold flex items-center justify-center gap-2">
+                {onlineCount}
+                <span className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-400/50"></span>
+              </span>
+              <span className="text-sm">
+                {t('online_now')}
+              </span>
+            </div>
           </div>
         </motion.div>
 
@@ -107,13 +111,12 @@ export default function ContactScholar() {
                         </div>
                       </div>
                       <CardTitle className="text-2xl mb-2">{scholar.name}</CardTitle>
-                      <span className={`inline-flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full ${
-                        isOnline 
-                          ? 'text-emerald-600 bg-emerald-50' 
-                          : 'text-red-600 bg-red-50'
-                      }`}>
+                      <span className={`inline-flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full ${isOnline
+                        ? 'text-emerald-600 bg-emerald-50'
+                        : 'text-red-600 bg-red-50'
+                        }`}>
                         <OnlineIndicator isOnline={isOnline} size="sm" />
-                        {isOnline ? 'متاح الآن' : 'غير متصل'}
+                        {isOnline ? t('online') : t('offline')}
                       </span>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -152,7 +155,7 @@ export default function ContactScholar() {
                         className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700"
                       >
                         <MessageSquare className="w-5 h-5 ml-2" />
-                        {isOnline ? 'تواصل الآن' : 'إرسال رسالة'}
+                        {isOnline ? t('contact_now') : t('send_message')}
                       </Button>
                     </CardContent>
                   </Card>
@@ -164,7 +167,7 @@ export default function ContactScholar() {
           <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
             <CardContent className="p-12 text-center">
               <User className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-600">لا يوجد علماء متاحون حالياً</p>
+              <p className="text-gray-600">{t('no_muftis_available')}</p>
             </CardContent>
           </Card>
         )}

@@ -79,8 +79,8 @@ export default function Courses() {
               key={cat.value}
               onClick={() => setSelectedCategory(cat.value)}
               className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ${selectedCategory === cat.value
-                  ? "bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg"
-                  : "bg-white text-gray-700 hover:bg-teal-50"
+                ? "bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg"
+                : "bg-white text-gray-700 hover:bg-teal-50"
                 }`}
             >
               {cat.label}

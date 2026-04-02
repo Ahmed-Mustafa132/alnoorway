@@ -10,8 +10,9 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import CreateStreamModal from "@/components/CreateStreamModal";
-
+import { useLanguage } from "@/contexts/LanguageContext";
 export default function LiveStreams() {
+  const { t } = useLanguage();
   const [filter, setFilter] = useState("all");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [user, setUser] = useState(null);
@@ -35,17 +36,17 @@ export default function LiveStreams() {
   const upcomingStreams = streams.filter(s => !s.is_live && new Date(s.scheduled_time) > now);
   const pastStreams = streams.filter(s => !s.is_live && new Date(s.scheduled_time) <= now && s.recording_url);
 
-  const filteredStreams = filter === "live" ? liveStreams 
-    : filter === "upcoming" ? upcomingStreams 
-    : filter === "past" ? pastStreams 
-    : streams;
+  const filteredStreams = filter === "live" ? liveStreams
+    : filter === "upcoming" ? upcomingStreams
+      : filter === "past" ? pastStreams
+        : streams;
 
   const getCategoryLabel = (category) => {
     const labels = {
-      lecture: "محاضرة",
-      quran_class: "درس قرآن",
-      qa_session: "جلسة أسئلة وأجوبة",
-      special_event: "حدث خاص"
+      lecture: t("lecture"),
+      quran_class: t("quran_class"),
+      qa_session: t("qa_session"),
+      special_event: t("special_event")
     };
     return labels[category] || category;
   };
@@ -60,22 +61,22 @@ export default function LiveStreams() {
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-100 to-pink-100 px-6 py-3 rounded-full mb-6">
             <Radio className="w-5 h-5 text-purple-600" />
-            <span className="text-purple-800 font-semibold">البث المباشر</span>
+            <span className="text-purple-800 font-semibold">{t("live_streams")}</span>
           </div>
-          
+
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-            المحاضرات والدروس المباشرة
+            {t("live_streams_title")}
           </h1>
           <p className="text-xl text-gray-600 mb-6">
-            شاهد البث المباشر للمحاضرات والدروس الإسلامية
+            {t("live_streams_desc")}
           </p>
-          
-          <Button 
+
+          <Button
             onClick={() => setShowCreateModal(true)}
             className="bg-purple-600 hover:bg-purple-700 text-white gap-2"
           >
             <Video className="w-4 h-4" />
-            جدولة بث جديد
+            {t("schedule_new_stream")}
           </Button>
         </motion.div>
 
@@ -85,7 +86,7 @@ export default function LiveStreams() {
             <CardContent className="p-6 text-center">
               <Radio className="w-12 h-12 mx-auto mb-3 animate-pulse" />
               <div className="text-3xl font-bold mb-1">{liveStreams.length}</div>
-              <div className="text-red-100">على الهواء الآن</div>
+              <div className="text-red-100">{t("live_now")}</div>
             </CardContent>
           </Card>
 
@@ -93,7 +94,7 @@ export default function LiveStreams() {
             <CardContent className="p-6 text-center">
               <Calendar className="w-12 h-12 mx-auto mb-3" />
               <div className="text-3xl font-bold mb-1">{upcomingStreams.length}</div>
-              <div className="text-blue-100">قادمة</div>
+              <div className="text-blue-100">{t("upcoming")}</div>
             </CardContent>
           </Card>
 
@@ -101,7 +102,7 @@ export default function LiveStreams() {
             <CardContent className="p-6 text-center">
               <Video className="w-12 h-12 mx-auto mb-3" />
               <div className="text-3xl font-bold mb-1">{pastStreams.length}</div>
-              <div className="text-purple-100">التسجيلات</div>
+              <div className="text-purple-100">{t("past")}</div>
             </CardContent>
           </Card>
         </div>
@@ -110,13 +111,13 @@ export default function LiveStreams() {
         <div className="flex justify-center mb-8">
           <Tabs value={filter} onValueChange={setFilter}>
             <TabsList className="bg-white shadow-lg">
-              <TabsTrigger value="all">الكل</TabsTrigger>
+              <TabsTrigger value="all">{t("all")}</TabsTrigger>
               <TabsTrigger value="live" className="text-red-600">
                 <Radio className="w-4 h-4 ml-1 animate-pulse" />
-                مباشر
+                {t("live_now")}
               </TabsTrigger>
-              <TabsTrigger value="upcoming">قادم</TabsTrigger>
-              <TabsTrigger value="past">التسجيلات</TabsTrigger>
+              <TabsTrigger value="upcoming">{t("upcoming")}</TabsTrigger>
+              <TabsTrigger value="past">{t("past")}</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -140,7 +141,7 @@ export default function LiveStreams() {
                     <div className="absolute top-4 right-4 z-10">
                       <Badge className="bg-red-600 text-white animate-pulse">
                         <Radio className="w-3 h-3 ml-1" />
-                        مباشر الآن
+                        {t("live_now")}[]
                       </Badge>
                     </div>
                   )}
@@ -188,13 +189,13 @@ export default function LiveStreams() {
                     </div>
 
                     {stream.stream_url && (
-                      <Link 
+                      <Link
                         to={createPageUrl("LiveStreamWatch") + `?id=${stream.id}`}
                         className="block"
                       >
                         <Button className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700">
                           <Play className="w-5 h-5 ml-2" />
-                          {stream.is_live ? "انضم للبث المباشر" : stream.recording_url ? "شاهد التسجيل" : "تفاصيل البث"}
+                          {stream.is_live ? t("join_live_stream") : stream.recording_url ? t("watch_recording") : t("stream_details")}
                         </Button>
                       </Link>
                     )}
@@ -208,21 +209,21 @@ export default function LiveStreams() {
             <CardContent className="p-12 text-center">
               <Video className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                لا توجد بثوث حالياً
+                {t("no_streams")}
               </h3>
               <p className="text-gray-600">
-                {filter === "live" && "لا يوجد بث مباشر الآن"}
-                {filter === "upcoming" && "لا توجد بثوث قادمة"}
-                {filter === "past" && "لا توجد تسجيلات متاحة"}
-                {filter === "all" && "لا توجد بثوث متاحة"}
+                {filter === "live" && t("no_live_streams")}
+                {filter === "upcoming" && t("no_upcoming_streams")}
+                {filter === "past" && t("no_past_streams")}
+                {filter === "all" && t("no_streams")}
               </p>
             </CardContent>
           </Card>
         )}
       </div>
-      <CreateStreamModal 
-        open={showCreateModal} 
-        onClose={() => setShowCreateModal(false)} 
+      <CreateStreamModal
+        open={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
         user={user}
       />
     </div>

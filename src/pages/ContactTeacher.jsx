@@ -6,8 +6,10 @@ import { BookOpen, Phone, MessageCircle, Globe, Mail, User } from "lucide-react"
 import { motion } from "framer-motion";
 import ContactModal from "@/components/ContactModal";
 import OnlineIndicator from "@/components/OnlineIndicator";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function ContactTeacher() {
+  const { t } = useLanguage();
   const [showContactModal, setShowContactModal] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("all");
 
@@ -22,9 +24,9 @@ export default function ContactTeacher() {
   });
 
   const languages = ["الكل", ...new Set(teachers.flatMap(t => t.languages || []))];
-  
-  const filteredTeachers = selectedLanguage === "all" 
-    ? teachers 
+
+  const filteredTeachers = selectedLanguage === "all"
+    ? teachers
     : teachers.filter(t => t.languages?.includes(selectedLanguage));
 
   const isTeacherOnline = (teacher) => {
@@ -41,14 +43,14 @@ export default function ContactTeacher() {
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-100 to-blue-100 px-6 py-3 rounded-full mb-6">
             <BookOpen className="w-5 h-5 text-purple-600" />
-            <span className="text-purple-800 font-semibold">تواصل مع محفظ</span>
+            <span className="text-purple-800 font-semibold">{t('contact_teacher')}</span>
           </div>
-          
+
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-            المحفظون المتاحون
+            {t('contact_teacher_title')}
           </h1>
           <p className="text-xl text-gray-600">
-            تواصل مع محفظي القرآن الكريم
+            {t('contact_teacher_subtitle')}
           </p>
         </motion.div>
 
@@ -57,11 +59,10 @@ export default function ContactTeacher() {
             <button
               key={lang}
               onClick={() => setSelectedLanguage(lang === "الكل" ? "all" : lang)}
-              className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ${
-                (selectedLanguage === "all" && lang === "الكل") || selectedLanguage === lang
-                  ? "bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg"
-                  : "bg-white text-gray-700 hover:bg-purple-50"
-              }`}
+              className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ${(selectedLanguage === "all" && lang === "الكل") || selectedLanguage === lang
+                ? "bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg"
+                : "bg-white text-gray-700 hover:bg-purple-50"
+                }`}
             >
               {lang}
             </button>
@@ -97,13 +98,12 @@ export default function ContactTeacher() {
                           {teacher.country && (
                             <p className="text-sm text-gray-600">{teacher.country}</p>
                           )}
-                          <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full mt-1 ${
-                            isOnline 
-                              ? 'text-emerald-600 bg-emerald-50' 
-                              : 'text-red-600 bg-red-50'
-                          }`}>
+                          <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full mt-1 ${isOnline
+                            ? 'text-emerald-600 bg-emerald-50'
+                            : 'text-red-600 bg-red-50'
+                            }`}>
                             <OnlineIndicator isOnline={isOnline} size="sm" />
-                            {isOnline ? 'متاح' : 'غير متصل'}
+                            {isOnline ? t('online') : t('offline')}
                           </span>
                         </div>
                       </div>
@@ -133,7 +133,7 @@ export default function ContactTeacher() {
                             className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700"
                           >
                             <Phone className="w-4 h-4" />
-                            اتصال تليفوني
+                            {t('call')}
                           </a>
                         )}
                         {teacher.whatsapp && (
@@ -144,7 +144,7 @@ export default function ContactTeacher() {
                             className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700"
                           >
                             <MessageCircle className="w-4 h-4" />
-                            واتساب
+                            {t('whatsapp')}
                           </a>
                         )}
                         {teacher.email && (
@@ -153,7 +153,7 @@ export default function ContactTeacher() {
                             className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700"
                           >
                             <Mail className="w-4 h-4" />
-                            بريد إلكتروني
+                            {t('email')}
                           </a>
                         )}
                       </div>
@@ -168,10 +168,10 @@ export default function ContactTeacher() {
             <CardContent className="p-12 text-center">
               <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                لا يوجد محفظون متاحون حالياً
+                {t('no_teachers_available')}
               </h3>
               <p className="text-gray-600">
-                يمكنك إرسال طلب وسنتواصل معك قريباً
+                {t('no_teachers_message')}
               </p>
             </CardContent>
           </Card>
@@ -181,7 +181,7 @@ export default function ContactTeacher() {
       <ContactModal
         open={showContactModal}
         onClose={() => setShowContactModal(false)}
-        requestType="التعرف على الإسلام"
+        requestType={t('learn_islam')}
       />
     </div>
   );

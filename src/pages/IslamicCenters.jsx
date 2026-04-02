@@ -6,8 +6,10 @@ import { Input } from "@/components/ui/input";
 import { MapPin, Search, Phone, Mail, Navigation } from "lucide-react";
 import { motion } from "framer-motion";
 import Breadcrumb from "@/components/Breadcrumb";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function IslamicCenters() {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [userLocation, setUserLocation] = useState(null);
 
@@ -39,11 +41,11 @@ export default function IslamicCenters() {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-      Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
 
@@ -77,7 +79,7 @@ export default function IslamicCenters() {
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-4">
-          <Breadcrumb items={[{ label: "مراكز الدعوة" }]} />
+          <Breadcrumb items={[{ label: t('islamic_centers') }]} />
         </div>
 
         <motion.div
@@ -86,10 +88,10 @@ export default function IslamicCenters() {
           className="text-center mb-8 md:mb-12 pt-4"
         >
           <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold text-gray-900 mb-3 md:mb-4 px-4">
-            مراكز الدعوة
+            {t('islamic_centers')}
           </h1>
           <p className="text-base md:text-lg lg:text-xl text-gray-600 px-4">
-            اعثر على أقرب مركز دعوة في منطقتك
+            {t('find_center_desc')}
           </p>
         </motion.div>
 
@@ -97,7 +99,7 @@ export default function IslamicCenters() {
           <CardContent className="p-4 md:p-6">
             <div className="relative">
               <Input
-                placeholder="ابحث عن مركز حسب الاسم أو المدينة أو الدولة..."
+                placeholder={t('search_placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="text-base md:text-lg py-5 md:py-6 pr-10 md:pr-12 w-full"
@@ -110,7 +112,7 @@ export default function IslamicCenters() {
         {isLoading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-            <p className="text-gray-500 mt-4">جاري التحميل...</p>
+            <p className="text-gray-500 mt-4"> {t('loading')} </p>
           </div>
         ) : sortedCenters.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
@@ -192,10 +194,10 @@ export default function IslamicCenters() {
             <CardContent className="p-8 md:p-12 text-center">
               <MapPin className="w-12 h-12 md:w-16 md:h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
-                لا توجد مراكز
+                {t('no_centers')}
               </h3>
               <p className="text-gray-600 text-sm md:text-base">
-                {searchQuery ? "لم نجد نتائج لبحثك" : "لا توجد مراكز دعوة متاحة حالياً"}
+                {searchQuery ? t('no_results') : t('no_centers_available')}
               </p>
             </CardContent>
           </Card>
