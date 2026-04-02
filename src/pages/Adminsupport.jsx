@@ -4,10 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Mail, Calendar, User, MessageSquare, Trash2, CheckCircle, Clock, ArrowLeft } from 'lucide-react';
-import { useLanguage } from '@/components/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { motion } from 'framer-motion';
+
 
 export default function AdminSupport() {
   const { t } = useLanguage();
@@ -27,16 +28,16 @@ export default function AdminSupport() {
         .order('created_at', { ascending: false });
 
       if (filter === 'pending') {
-        query = query.eq('status', 'معلق');
+        query = query.eq('status', t('pending'));
       } else if (filter === 'replied') {
-        query = query.eq('status', 'تم الرد');
+        query = query.eq('status', t('replied'));
       } else if (filter === 'closed') {
-        query = query.eq('status', 'مغلق');
+        query = query.eq('status', t('closed'));
       }
 
       const { data, error } = await query;
       if (error) throw error;
-      
+
       setRequests(data || []);
     } catch (error) {
       console.error('Error loading requests:', error);
@@ -56,12 +57,12 @@ export default function AdminSupport() {
       loadRequests();
     } catch (error) {
       console.error('Error updating status:', error);
-      alert('حدث خطأ أثناء التحديث');
+      alert(t('errorUpdatingStatus'));
     }
   };
 
   const deleteRequest = async (id) => {
-    if (!confirm('هل أنت متأكد من حذف هذه الرسالة؟')) return;
+    if (!confirm(t('confirmDeleteRequest'))) return;
 
     try {
       const { error } = await supabase
@@ -73,15 +74,15 @@ export default function AdminSupport() {
       loadRequests();
     } catch (error) {
       console.error('Error deleting request:', error);
-      alert('حدث خطأ أثناء الحذف');
+      alert(t('errorDeletingRequest'));
     }
   };
 
   const getStatusBadge = (status) => {
     const statusConfig = {
-      'معلق': { color: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400', icon: Clock },
-      'تم الرد': { color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400', icon: CheckCircle },
-      'مغلق': { color: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400', icon: CheckCircle }
+      [t('pending')]: { color: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400', icon: Clock },
+      [t('replied')]: { color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400', icon: CheckCircle },
+      [t('closed')]: { color: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400', icon: CheckCircle }
     };
 
     const config = statusConfig[status] || statusConfig['معلق'];
@@ -107,10 +108,10 @@ export default function AdminSupport() {
   };
 
   const filterButtons = [
-    { label: 'الكل', value: 'all', count: requests.length },
-    { label: 'معلق', value: 'pending', color: 'bg-amber-600' },
-    { label: 'تم الرد', value: 'replied', color: 'bg-green-600' },
-    { label: 'مغلق', value: 'closed', color: 'bg-gray-600' }
+    { label: t('all'), value: 'all', count: requests.length },
+    { label: t('pending'), value: 'pending', color: 'bg-amber-600' },
+    { label: t('replied'), value: 'replied', color: 'bg-green-600' },
+    { label: t('closed'), value: 'closed', color: 'bg-gray-600' }
   ];
 
   if (loading) {
@@ -128,7 +129,7 @@ export default function AdminSupport() {
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-amber-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-950 p-6 transition-colors duration-300" dir="rtl">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
@@ -136,23 +137,23 @@ export default function AdminSupport() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-300">
-                إدارة رسائل الدعم
+                {t('supportMessages')}
               </h1>
               <p className="text-slate-600 dark:text-gray-400 transition-colors duration-300">
-                إجمالي الرسائل: {requests.length}
+                {t('totalMessages')}: {requests.length}
               </p>
             </div>
             <Link to={createPageUrl('Admin')}>
               <Button variant="outline" className="gap-2">
                 <ArrowLeft className="w-4 h-4" />
-                العودة للوحة الإدارة
+                {t('backToAdmin')}
               </Button>
             </Link>
           </div>
         </motion.div>
 
         {/* Filters */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -205,7 +206,7 @@ export default function AdminSupport() {
                             {getStatusBadge(request.status)}
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center gap-4 text-sm text-slate-600 dark:text-gray-400 mt-3 transition-colors duration-300">
                           <div className="flex items-center gap-1">
                             <Mail className="w-4 h-4" />
@@ -237,25 +238,25 @@ export default function AdminSupport() {
                             className="bg-green-600 hover:bg-green-700"
                           >
                             <CheckCircle className="w-4 h-4 ml-1" />
-                            تم الرد
+                            {t('markAsReplied')}
                           </Button>
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() => updateStatus(request.id, 'مغلق')}
                           >
-                            إغلاق
+                            {t('close')}
                           </Button>
                         </>
                       )}
-                      
+
                       {request.status === 'تم الرد' && (
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => updateStatus(request.id, 'مغلق')}
                         >
-                          إغلاق
+                          {t('close')}
                         </Button>
                       )}
 
@@ -265,7 +266,7 @@ export default function AdminSupport() {
                           variant="outline"
                           onClick={() => updateStatus(request.id, 'معلق')}
                         >
-                          إعادة فتح
+                          {t('open')}
                         </Button>
                       )}
 
@@ -276,7 +277,7 @@ export default function AdminSupport() {
                         onClick={() => deleteRequest(request.id)}
                       >
                         <Trash2 className="w-4 h-4 ml-1" />
-                        حذف
+                        {t('delete')}
                       </Button>
 
                       <a
@@ -284,7 +285,7 @@ export default function AdminSupport() {
                         className="inline-flex items-center px-3 py-2 text-sm rounded-md border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                       >
                         <Mail className="w-4 h-4 ml-1" />
-                        الرد عبر البريد
+                        {t('replyViaEmail')}
                       </a>
                     </div>
                   </CardContent>

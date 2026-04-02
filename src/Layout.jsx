@@ -2,8 +2,8 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Home, BookOpen, Heart, MessageSquare, Menu, Bell, User as UserIcon, Sparkles, Users, GraduationCap, Shield, Star, Settings, Radio, Globe, LogOut } from "lucide-react";
-import { useLanguage } from "@/components/LanguageContext";
-import { LanguageProvider } from "@/components/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import {
   Sidebar,
   SidebarContent,
@@ -24,25 +24,6 @@ import ChatWidget from "@/components/ChatWidget";
 import ExternalLinksHandler from "@/components/ExternalLinksHandler";
 
 // استخدام النصوص العربية مباشرة
-const getNavigationItems = (t) => [
-  { titleKey: "الرئيسية", url: createPageUrl("Home"), icon: Home, color: "text-teal-600" },
-  { titleKey: "تعلم الإسلام", url: createPageUrl("LearnIslam"), icon: BookOpen, color: "text-teal-600" },
-  { titleKey: "التوبة", url: createPageUrl("Repentance"), icon: Heart, color: "text-rose-600" },
-  { titleKey: "الفتاوى", url: createPageUrl("Fatwa"), icon: MessageSquare, color: "text-emerald-600" },
-  { titleKey: "البث المباشر", url: createPageUrl("LiveStreams"), icon: Radio, color: "text-red-600" },
-  { titleKey: "الإصلاح", url: createPageUrl("ReconciliationCommittee"), icon: Users, color: "text-cyan-600" },
-  { titleKey: "المرشد الذكي", url: createPageUrl("AIGuide"), icon: Sparkles, color: "text-emerald-600" },
-  { titleKey: "الدورات", url: createPageUrl("Courses"), icon: GraduationCap, color: "text-teal-600" },
-];
-
-const getQuickLinks = (t) => [
-  { titleKey: "تواصل مع مفتي", url: createPageUrl("ContactScholar"), icon: UserIcon, color: "text-emerald-600" },
-  { titleKey: "تواصل مع داعية", url: createPageUrl("ContactPreacher"), icon: Users, color: "text-teal-600" },
-  { titleKey: "تواصل مع محفظ", url: createPageUrl("ContactTeacher"), icon: BookOpen, color: "text-purple-600" },
-  { titleKey: "دورات القرآن", url: createPageUrl("QuranCourses"), icon: GraduationCap, color: "text-teal-600" },
-  { titleKey: "التوصيات", url: createPageUrl("Recommendations"), icon: Star, color: "text-purple-600" },
-  { titleKey: "الإعدادات", url: createPageUrl("Settings"), icon: Settings, color: "text-gray-600" },
-];
 
 const getBottomNavItems = (t) => [
   { titleKey: "الرئيسية", url: createPageUrl("Home"), icon: Home, color: "from-teal-500 to-teal-600" },
@@ -55,6 +36,26 @@ export default function Layout({ children, currentPageName }) {
 }
 function LayoutContent({ children, currentPageName }) {
   const { changeLanguage, language, t } = useLanguage();
+  const getNavigationItems = () => [
+    { titleKey: t("home"), url: createPageUrl("Home"), icon: Home, color: "text-teal-600" },
+    { titleKey: t("learn_islam"), url: createPageUrl("LearnIslam"), icon: BookOpen, color: "text-teal-600" },
+    { titleKey: t("repentance"), url: createPageUrl("Repentance"), icon: Heart, color: "text-rose-600" },
+    { titleKey: t("fatwa"), url: createPageUrl("Fatwa"), icon: MessageSquare, color: "text-emerald-600" },
+    { titleKey: t("live_streams"), url: createPageUrl("LiveStreams"), icon: Radio, color: "text-red-600" },
+    { titleKey: t("reconciliation"), url: createPageUrl("ReconciliationCommittee"), icon: Users, color: "text-cyan-600" },
+    { titleKey: t("ai_guide"), url: createPageUrl("AIGuide"), icon: Sparkles, color: "text-emerald-600" },
+    { titleKey: t("courses"), url: createPageUrl("Courses"), icon: GraduationCap, color: "text-teal-600" },
+  ];
+
+  const getQuickLinks = (t) => [
+    { titleKey: t("contact_scholar"), url: createPageUrl("ContactScholar"), icon: UserIcon, color: "text-emerald-600" },
+    { titleKey: t("contact_preacher"), url: createPageUrl("ContactPreacher"), icon: Users, color: "text-teal-600" },
+    { titleKey: t("contact_teacher"), url: createPageUrl("ContactTeacher"), icon: BookOpen, color: "text-purple-600" },
+    { titleKey: t("quran_courses"), url: createPageUrl("QuranCourses"), icon: GraduationCap, color: "text-teal-600" },
+    { titleKey: t("recommendations"), url: createPageUrl("Recommendations"), icon: Star, color: "text-purple-600" },
+    { titleKey: t("settings"), url: createPageUrl("Settings"), icon: Settings, color: "text-gray-600" },
+  ];
+
   const location = useLocation();
   const [user, setUser] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
@@ -64,6 +65,7 @@ function LayoutContent({ children, currentPageName }) {
   const navigationItems = React.useMemo(() => getNavigationItems(t), [language]);
   const quickLinks = React.useMemo(() => getQuickLinks(t), [language]);
   const bottomNavItems = React.useMemo(() => getBottomNavItems(t), [language]);
+
 
   React.useEffect(() => {
     loadUser();
@@ -207,7 +209,7 @@ function LayoutContent({ children, currentPageName }) {
             </SidebarGroup>
             <SidebarGroup className="mt-6">
               <SidebarGroupLabel className="px-4 py-2 text-sm font-semibold text-gray-500">
-                روابط سريعة
+                {t("quick_links")}
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
@@ -227,7 +229,7 @@ function LayoutContent({ children, currentPageName }) {
             {!loading && (user?.role === 'admin' || user?.role === 'moderator') && (
               <SidebarGroup className="mt-6">
                 <SidebarGroupLabel className="px-4 py-2 text-sm font-semibold text-red-500">
-                  لوحة التحكم
+                  {t("dashboard")}
                 </SidebarGroupLabel>
                 <SidebarGroupContent>
                   <SidebarMenu>
@@ -235,7 +237,7 @@ function LayoutContent({ children, currentPageName }) {
                       <SidebarMenuButton asChild className={`hover:bg-red-50 hover:text-red-700 transition-all duration-300 rounded-xl ${location.pathname === createPageUrl("Admin") ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md' : ''}`}>
                         <Link to={createPageUrl("Admin")} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-2">
                           <Shield className={`w-4 h-4 ${location.pathname === createPageUrl("Admin") ? 'text-white' : 'text-red-600'}`} />
-                          <span className="text-sm">إدارة المحتوى</span>
+                          <span className="text-sm">{t("content_management")}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -243,7 +245,7 @@ function LayoutContent({ children, currentPageName }) {
                       <SidebarMenuButton asChild className={`hover:bg-red-50 hover:text-red-700 transition-all duration-300 rounded-xl ${location.pathname === createPageUrl("Docs") ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md' : ''}`}>
                         <Link to={createPageUrl("Docs")} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-2">
                           <BookOpen className={`w-4 h-4 ${location.pathname === createPageUrl("Docs") ? 'text-white' : 'text-red-600'}`} />
-                          <span className="text-sm">التوثيق التقني</span>
+                          <span className="text-sm">{t("tech_docs")}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -251,7 +253,7 @@ function LayoutContent({ children, currentPageName }) {
                       <SidebarMenuButton asChild className={`hover:bg-red-50 hover:text-red-700 transition-all duration-300 rounded-xl ${location.pathname === createPageUrl("AdvancedAnalytics") ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md' : ''}`}>
                         <Link to={createPageUrl("AdvancedAnalytics")} onClick={handleLinkClick} className="flex items-center gap-3 px-4 py-2">
                           <Sparkles className={`w-4 h-4 ${location.pathname === createPageUrl("AdvancedAnalytics") ? 'text-white' : 'text-red-600'}`} />
-                          <span className="text-sm">التحليلات المتقدمة</span>
+                          <span className="text-sm">{t("advanced_analytics")}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>

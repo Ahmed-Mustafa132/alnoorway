@@ -3,17 +3,19 @@ import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
+import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from "recharts";
-import { 
-  TrendingUp, Users, Globe, Search, Eye, Download, 
-  ThumbsUp, MessageSquare, BookOpen, Video, FileText 
+import {
+  TrendingUp, Users, Globe, Search, Eye, Download,
+  ThumbsUp, MessageSquare, BookOpen, Video, FileText
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function AdvancedAnalytics() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [dateRange, setDateRange] = useState('7days');
 
@@ -77,10 +79,10 @@ export default function AdvancedAnalytics() {
 
   // تحليل البيانات
   const contentEngagement = [
-    { name: 'محاضرات', views: analyticsEvents.filter(e => e.content_type === 'lecture').length, color: '#8b5cf6' },
-    { name: 'كتب', views: analyticsEvents.filter(e => e.content_type === 'book').length, color: '#3b82f6' },
-    { name: 'فتاوى', views: analyticsEvents.filter(e => e.content_type === 'fatwa').length, color: '#10b981' },
-    { name: 'قصص', views: analyticsEvents.filter(e => e.content_type === 'story').length, color: '#f59e0b' },
+    { name: t('lectures'), views: analyticsEvents.filter(e => e.content_type === 'lecture').length, color: '#8b5cf6' },
+    { name: t('books'), views: analyticsEvents.filter(e => e.content_type === 'book').length, color: '#3b82f6' },
+    { name: t('fatwas'), views: analyticsEvents.filter(e => e.content_type === 'fatwa').length, color: '#10b981' },
+    { name: t('stories'), views: analyticsEvents.filter(e => e.content_type === 'story').length, color: '#f59e0b' },
   ];
 
   const topSearchQueries = analyticsEvents
@@ -96,18 +98,18 @@ export default function AdvancedAnalytics() {
     .map(([query, count]) => ({ query, count }));
 
   const deviceDistribution = [
-    { 
-      name: 'موبايل', 
+    {
+      name: t('mobile'),
       value: analyticsEvents.filter(e => e.device_type === 'mobile').length,
       color: '#8b5cf6'
     },
-    { 
-      name: 'ديسكتوب', 
+    {
+      name: t('desktop'),
       value: analyticsEvents.filter(e => e.device_type === 'desktop').length,
       color: '#3b82f6'
     },
-    { 
-      name: 'تابلت', 
+    {
+      name: t('tablet'),
       value: analyticsEvents.filter(e => e.device_type === 'tablet').length,
       color: '#10b981'
     },
@@ -139,28 +141,28 @@ export default function AdvancedAnalytics() {
 
   const statsCards = [
     {
-      title: "إجمالي المشاهدات",
+      title: t('total_views'),
       value: analyticsEvents.filter(e => e.event_type === 'view').length.toLocaleString(),
       icon: Eye,
       color: "from-blue-500 to-blue-600",
       change: "+12%"
     },
     {
-      title: "عمليات البحث",
+      title: t('search_activities'),
       value: analyticsEvents.filter(e => e.event_type === 'search').length.toLocaleString(),
       icon: Search,
       color: "from-purple-500 to-purple-600",
       change: "+8%"
     },
     {
-      title: "التحميلات",
+      title: t('downloads'),
       value: analyticsEvents.filter(e => e.event_type === 'download').length.toLocaleString(),
       icon: Download,
       color: "from-emerald-500 to-emerald-600",
       change: "+15%"
     },
     {
-      title: "المشاركات",
+      title: t('shares'),
       value: analyticsEvents.filter(e => e.event_type === 'share').length.toLocaleString(),
       icon: Users,
       color: "from-amber-500 to-amber-600",
@@ -184,8 +186,8 @@ export default function AdvancedAnalytics() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">لوحة التحليلات المتقدمة</h1>
-          <p className="text-gray-600">تحليلات شاملة لأداء المنصة وتفاعل المستخدمين</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">{t('advanced_analytics')}</h1>
+          <p className="text-gray-600">{t('advanced_analytics_desc')}</p>
         </motion.div>
 
         {/* بطاقات الإحصائيات */}
@@ -215,17 +217,17 @@ export default function AdvancedAnalytics() {
 
         <Tabs defaultValue="engagement" className="space-y-6">
           <TabsList className="grid grid-cols-2 md:grid-cols-4 gap-2">
-            <TabsTrigger value="engagement">تفاعل المحتوى</TabsTrigger>
-            <TabsTrigger value="search">تحليل البحث</TabsTrigger>
-            <TabsTrigger value="users">تحليل المستخدمين</TabsTrigger>
-            <TabsTrigger value="geography">التوزيع الجغرافي</TabsTrigger>
+            <TabsTrigger value="engagement">{t('content_engagement')}</TabsTrigger>
+            <TabsTrigger value="search">{t('search_analysis')}</TabsTrigger>
+            <TabsTrigger value="users">{t('user_analysis')}</TabsTrigger>
+            <TabsTrigger value="geography">{t('geographical_distribution')}</TabsTrigger>
           </TabsList>
 
           {/* تفاعل المحتوى */}
           <TabsContent value="engagement" className="space-y-6">
             <Card className="border-0 shadow-xl">
               <CardHeader>
-                <CardTitle>تفاعل المستخدمين حسب نوع المحتوى</CardTitle>
+                <CardTitle>{t('content_engagement')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
@@ -235,7 +237,7 @@ export default function AdvancedAnalytics() {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="views" fill="#8b5cf6" name="المشاهدات" />
+                    <Bar dataKey="views" fill="#8b5cf6" name={t('total_views')} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -243,7 +245,7 @@ export default function AdvancedAnalytics() {
 
             <Card className="border-0 shadow-xl">
               <CardHeader>
-                <CardTitle>النشاط اليومي</CardTitle>
+                <CardTitle>{t('daily_activity')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -264,7 +266,7 @@ export default function AdvancedAnalytics() {
           <TabsContent value="search" className="space-y-6">
             <Card className="border-0 shadow-xl">
               <CardHeader>
-                <CardTitle>أكثر عبارات البحث شيوعاً</CardTitle>
+                <CardTitle>{t('most_popular_search_terms')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -279,7 +281,7 @@ export default function AdvancedAnalytics() {
                           <span className="text-sm text-gray-600">{item.count} مرة</span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div 
+                          <div
                             className="bg-gradient-to-r from-purple-500 to-purple-600 h-2 rounded-full transition-all duration-500"
                             style={{ width: `${(item.count / searchData[0].count) * 100}%` }}
                           />
@@ -296,7 +298,7 @@ export default function AdvancedAnalytics() {
           <TabsContent value="users" className="space-y-6">
             <Card className="border-0 shadow-xl">
               <CardHeader>
-                <CardTitle>توزيع الأجهزة</CardTitle>
+                <CardTitle>{t('device_distribution')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
@@ -326,7 +328,7 @@ export default function AdvancedAnalytics() {
           <TabsContent value="geography" className="space-y-6">
             <Card className="border-0 shadow-xl">
               <CardHeader>
-                <CardTitle>أكثر الدول نشاطاً</CardTitle>
+                <CardTitle>{t('most_active_countries')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -337,11 +339,11 @@ export default function AdvancedAnalytics() {
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="font-semibold text-gray-900">{item.country || 'غير محدد'}</span>
-                          <span className="text-sm text-gray-600">{item.count} مستخدم</span>
+                          <span className="font-semibold text-gray-900">{item.country || t('not_specified')}</span>
+                          <span className="text-sm text-gray-600">{item.count} {t('users')}</span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div 
+                          <div
                             className="bg-gradient-to-r from-emerald-500 to-emerald-600 h-2 rounded-full transition-all duration-500"
                             style={{ width: `${(item.count / topCountries[0].count) * 100}%` }}
                           />

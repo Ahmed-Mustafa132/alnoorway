@@ -1,13 +1,13 @@
-import ar from './ar.js';
-import en from './en.js';
-import fr from './fr.js';
-import zh from './zh.js';
+import ar from "./ar.json";
+import en from "./en.json";
+// import fr from './fr.json';
+// import zh from './zh.json';
 
 export const translations = {
   ar,
   en,
-  fr,
-  zh
+  // fr,
+  // zh
 };
 
 export default translations;

@@ -7,13 +7,15 @@ import { Bot, Send, User, Sparkles, Loader2, Video, BookOpen } from "lucide-reac
 import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useLanguage } from "@/contexts/LanguageContext";
 // Removed base44 import
 
 export default function AIGuide() {
+  const { t } = useLanguage();
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: "السلام عليكم ورحمة الله وبركاته! 🌟\n\nمرحباً بك في المرشد الإسلامي الذكي. أنا هنا لمساعدتك في:\n📖 التعرف على أركان الإسلام والإيمان\n🕌 فهم المبادئ والقيم الإسلامية\n📚 معرفة قصص الأنبياء\n💚 الإرشاد نحو المصادر التعليمية\n\nكيف يمكنني مساعدتك اليوم؟"
+      content: t("ai_guide_welcome")
     }
   ]);
   const [input, setInput] = useState("");
@@ -45,14 +47,14 @@ export default function AIGuide() {
       // Fetch Books and User Preferences for deeper context
       const { data: booksList } = await supabase.from('Book').select('*').limit(5);
       const booksContext = booksList?.map(b => `- Book: ${b.title} by ${b.author}`).join("\n") || "";
-      
+
       const { data: { user } } = await supabase.auth.getUser();
       let userContext = "";
       if (user) {
-         const { data: prefs } = await supabase.from('UserPreference').select('*').eq('user_email', user.email);
-         if (prefs && prefs.length > 0) {
-             userContext = `User Interests: ${prefs[0].interested_topics?.join(", ")}`;
-         }
+        const { data: prefs } = await supabase.from('UserPreference').select('*').eq('user_email', user.email);
+        if (prefs && prefs.length > 0) {
+          userContext = `User Interests: ${prefs[0].interested_topics?.join(", ")}`;
+        }
       }
 
       const prompt = `
@@ -95,10 +97,10 @@ export default function AIGuide() {
 
       // Call AI Assistant function via Supabase
       const { data: res, error } = await supabase.functions.invoke('aiAssistant', {
-          body: {
-              action: 'chat',
-              prompt: prompt
-          }
+        body: {
+          action: 'chat',
+          prompt: prompt
+        }
       });
 
       if (error) throw error;
@@ -110,7 +112,7 @@ export default function AIGuide() {
       let recommendations = [];
       const recRegex = /\[\[RECOMMENDATIONS\]\]([\s\S]*?)\[\[\/RECOMMENDATIONS\]\]/;
       const match = res.match(recRegex);
-      
+
       if (match && match[1]) {
         try {
           recommendations = JSON.parse(match[1]);
@@ -120,11 +122,11 @@ export default function AIGuide() {
         }
       }
 
-      const aiMessage = { role: "assistant", content: content, recommendations: recommendations }; 
+      const aiMessage = { role: "assistant", content: content, recommendations: recommendations };
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
       console.error("AI Error:", error);
-      const errorMessage = { role: "assistant", content: "عذراً، حدث خطأ أثناء الاتصال بالمرشد الذكي. يرجى المحاولة مرة أخرى." };
+      const errorMessage = { role: "assistant", content: t("errorAi") };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
@@ -141,10 +143,10 @@ export default function AIGuide() {
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-emerald-100 px-6 py-3 rounded-full mb-4 shadow-sm">
             <Bot className="w-6 h-6 text-emerald-600" />
-            <span className="text-blue-800 font-bold text-lg">المرشد الإسلامي الذكي</span>
+            <span className="text-blue-800 font-bold text-lg">{t("ai_guide")}</span>
           </div>
           <p className="text-white/90 text-lg">
-            اسأل عن الإسلام، العقيدة، الأخلاق، والتاريخ الإسلامي
+            {t("ai_guide_desc")}
           </p>
         </motion.div>
 
@@ -159,25 +161,23 @@ export default function AIGuide() {
                     animate={{ opacity: 1, y: 0 }}
                     className={`flex items-start gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
                   >
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-md ${
-                      msg.role === "user" 
-                        ? "bg-gradient-to-br from-blue-500 to-blue-600" 
-                        : "bg-gradient-to-br from-emerald-500 to-emerald-600"
-                    }`}>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-md ${msg.role === "user"
+                      ? "bg-gradient-to-br from-blue-500 to-blue-600"
+                      : "bg-gradient-to-br from-emerald-500 to-emerald-600"
+                      }`}>
                       {msg.role === "user" ? <User className="w-5 h-5 text-white" /> : <Sparkles className="w-5 h-5 text-white" />}
                     </div>
-                    
-                    <div className={`max-w-[80%] rounded-2xl p-4 shadow-sm ${
-                      msg.role === "user"
-                        ? "bg-blue-50 text-blue-900 rounded-tr-none"
-                        : "bg-white text-gray-800 rounded-tl-none border border-gray-100"
-                    }`}>
+
+                    <div className={`max-w-[80%] rounded-2xl p-4 shadow-sm ${msg.role === "user"
+                      ? "bg-blue-50 text-blue-900 rounded-tr-none"
+                      : "bg-white text-gray-800 rounded-tl-none border border-gray-100"
+                      }`}>
                       <div className="whitespace-pre-wrap leading-relaxed text-sm md:text-base">
                         <ReactMarkdown>{msg.content}</ReactMarkdown>
                       </div>
                       {msg.recommendations && msg.recommendations.length > 0 && (
                         <div className="mt-4 pt-3 border-t border-gray-100">
-                          <p className="text-xs font-bold text-gray-500 mb-2">مصادر مقترحة لك:</p>
+                          <p className="text-xs font-bold text-gray-500 mb-2">{t("recommendations")}</p>
                           <div className="space-y-2">
                             {msg.recommendations.map((rec, i) => (
                               <div key={i} className="bg-gray-50 p-2 rounded-lg text-sm border border-gray-100 hover:bg-emerald-50 transition-colors cursor-pointer">
@@ -215,10 +215,10 @@ export default function AIGuide() {
             <div className="p-4 bg-white border-t border-gray-100">
               <div className="flex gap-2 overflow-x-auto pb-3 mb-2 scrollbar-hide">
                 {[
-                  { text: "ما هي أركان الإسلام؟", icon: "🕌" },
-                  { text: "كيف أتوب إلى الله؟", icon: "💚" },
-                  { text: "قصة النبي يوسف", icon: "📖" },
-                  { text: "فضل الصلاة", icon: "🤲" }
+                  { text: t("what_are_the_pillars_of_islam"), icon: "🕌" },
+                  { text: t("how_do_i_repent_to_allah"), icon: "💚" },
+                  { text: t("the_story_of_prophet_yusuf"), icon: "📖" },
+                  { text: t("the_blessing_of_prayer"), icon: "🤲" }
                 ].map((suggestion, i) => (
                   <button
                     key={i}
@@ -234,12 +234,12 @@ export default function AIGuide() {
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="اكتب سؤالك هنا..."
+                  placeholder={t("ask_ai_placeholder")}
                   className="flex-1 pr-4 pl-12 py-6 text-lg rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
                   disabled={isLoading}
                 />
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={!input.trim() || isLoading}
                   className="absolute left-2 top-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg w-10 h-10 p-0 flex items-center justify-center transition-all"
                 >
@@ -247,7 +247,7 @@ export default function AIGuide() {
                 </Button>
               </form>
               <p className="text-xs text-gray-400 text-center mt-3">
-                ملاحظة: هذا نظام ذكاء اصطناعي للمساعدة العامة، يرجى استشارة العلماء في المسائل الفقهية المعقدة.
+                {t("ai_guide_disclaimer")}
               </p>
             </div>
           </CardContent>

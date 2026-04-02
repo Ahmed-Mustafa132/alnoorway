@@ -7,8 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function AdminDashboard() {
+  const { t } = useLanguage();
+
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -62,7 +65,7 @@ export default function AdminDashboard() {
         .select('id, question, created_date, status, name')
         .order('created_date', { ascending: false })
         .limit(3);
-      
+
       const { data: reconciliations } = await supabase
         .from('ReconciliationRequest')
         .select('id, conflict_type, created_date, status, requester_name')
@@ -78,35 +81,35 @@ export default function AdminDashboard() {
   });
 
   const statCards = [
-    { 
-      title: "المستخدمين النشطين", 
-      value: stats.users, 
-      icon: Users, 
-      color: "text-blue-600", 
-      bg: "bg-blue-100" 
+    {
+      title: t("active_users"),
+      value: stats.users,
+      icon: Users,
+      color: "text-blue-600",
+      bg: "bg-blue-100"
     },
-    { 
-      title: "فتاوى معلقة", 
-      value: stats.pendingFatwas, 
-      icon: MessageSquare, 
-      color: "text-amber-600", 
+    {
+      title: t("pending_fatwas"),
+      value: stats.pendingFatwas,
+      icon: MessageSquare,
+      color: "text-amber-600",
       bg: "bg-amber-100",
       alert: stats.pendingFatwas > 0
     },
-    { 
-      title: "طلبات صلح جديدة", 
-      value: stats.pendingReconciliations, 
-      icon: Heart, 
-      color: "text-rose-600", 
+    {
+      title: t("pending_reconciliations"),
+      value: stats.pendingReconciliations,
+      icon: Heart,
+      color: "text-rose-600",
       bg: "bg-rose-100",
       alert: stats.pendingReconciliations > 0
     },
-    { 
-      title: "مسارات تعلم", 
-      value: stats.activeLearningPaths, 
-      icon: Activity, 
-      color: "text-purple-600", 
-      bg: "bg-purple-100" 
+    {
+      title: t("active_learning_paths"),
+      value: stats.activeLearningPaths,
+      icon: Activity,
+      color: "text-purple-600",
+      bg: "bg-purple-100"
     }
   ];
 
@@ -121,10 +124,10 @@ export default function AdminDashboard() {
 
   const getStatusLabel = (status) => {
     switch (status) {
-      case 'pending': return 'قيد الانتظار';
-      case 'completed': return 'مكتمل';
-      case 'rejected': return 'مرفوض';
-      case 'answered': return 'تمت الإجابة';
+      case 'pending': return t("pending");
+      case 'completed': return t("completed");
+      case 'rejected': return t("rejected");
+      case 'answered': return t("answered");
       default: return status;
     }
   };
@@ -132,15 +135,15 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gray-50/50 p-6" dir="rtl">
       <div className="max-w-7xl mx-auto space-y-8">
-        
+
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">لوحة القيادة</h1>
-            <p className="text-gray-500 mt-1">نظرة عامة على نشاط المنصة والطلبات الواردة</p>
+            <h1 className="text-3xl font-bold text-gray-900">{t("admin_dashboard")}</h1>
+            <p className="text-gray-500 mt-1">{t("admin_dashboard_desc")}</p>
           </div>
           <Link to={createPageUrl("Admin")}>
             <Button variant="outline">
-              إدارة المحتوى الكاملة <ArrowRight className="w-4 h-4 mr-2" />
+              {t("manage_content")} <ArrowRight className="w-4 h-4 mr-2" />
             </Button>
           </Link>
         </div>
@@ -180,9 +183,9 @@ export default function AdminDashboard() {
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-lg flex items-center gap-2">
                 <MessageSquare className="w-5 h-5 text-amber-500" />
-                أحدث طلبات الفتوى
+                {t("recent_fatwa_requests")}
               </CardTitle>
-              <Button variant="ghost" size="sm" className="text-amber-600">عرض الكل</Button>
+              <Button variant="ghost" size="sm" className="text-amber-600">{t("view_all")}</Button>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -220,9 +223,9 @@ export default function AdminDashboard() {
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Heart className="w-5 h-5 text-rose-500" />
-                أحدث طلبات الصلح
+                {t("recent_reconciliation_requests")}
               </CardTitle>
-              <Button variant="ghost" size="sm" className="text-rose-600">عرض الكل</Button>
+              <Button variant="ghost" size="sm" className="text-rose-600">{t("view_all")}</Button>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -249,7 +252,7 @@ export default function AdminDashboard() {
                     </div>
                   ))
                 ) : (
-                  <p className="text-center text-gray-500 py-8">لا توجد طلبات حديثة</p>
+                  <p className="text-center text-gray-500 py-8">{t("no_recent_requests")}</p>
                 )}
               </div>
             </CardContent>
@@ -261,10 +264,10 @@ export default function AdminDashboard() {
           <Card className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white border-0">
             <CardContent className="p-6">
               <Activity className="w-8 h-8 mb-4 opacity-80" />
-              <h3 className="text-lg font-bold mb-2">تقرير الأداء</h3>
-              <p className="text-indigo-100 text-sm mb-4">عرض تقارير تفصيلية عن أداء المنصة وتفاعل المستخدمين</p>
+              <h3 className="text-lg font-bold mb-2">{t("performance_reports")}</h3>
+              <p className="text-indigo-100 text-sm mb-4">{t("performance_reports_desc")}</p>
               <Button variant="secondary" className="w-full bg-white/20 hover:bg-white/30 text-white border-0">
-                عرض التقارير
+                {t("view_reports")}
               </Button>
             </CardContent>
           </Card>
@@ -272,10 +275,10 @@ export default function AdminDashboard() {
           <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-0">
             <CardContent className="p-6">
               <Users className="w-8 h-8 mb-4 opacity-80" />
-              <h3 className="text-lg font-bold mb-2">إدارة المستخدمين</h3>
-              <p className="text-emerald-100 text-sm mb-4">مراجعة حسابات المستخدمين والصلاحيات</p>
+              <h3 className="text-lg font-bold mb-2">{t("manage_users")}</h3>
+              <p className="text-emerald-100 text-sm mb-4">{t("manage_users_desc")}</p>
               <Button variant="secondary" className="w-full bg-white/20 hover:bg-white/30 text-white border-0">
-                إدارة المستخدمين
+                {t("manage_users")}
               </Button>
             </CardContent>
           </Card>
@@ -283,10 +286,10 @@ export default function AdminDashboard() {
           <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0">
             <CardContent className="p-6">
               <FileText className="w-8 h-8 mb-4 opacity-80" />
-              <h3 className="text-lg font-bold mb-2">المحتوى الجديد</h3>
-              <p className="text-purple-100 text-sm mb-4">مراجعة ونشر المحتوى الجديد المقترح</p>
+              <h3 className="text-lg font-bold mb-2">{t("manage_content")}</h3>
+              <p className="text-purple-100 text-sm mb-4">{t("manage_content_desc")}</p>
               <Button variant="secondary" className="w-full bg-white/20 hover:bg-white/30 text-white border-0">
-                مراجعة المحتوى
+                {t("review_content")}
               </Button>
             </CardContent>
           </Card>

@@ -11,7 +11,7 @@ import { createPageUrl } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 import AIRecommendations from "@/components/AIRecommendations";
 import { ArrowRight } from "lucide-react";
-import { useLanguage } from "@/components/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Courses() {
   const { t } = useLanguage();
@@ -21,7 +21,7 @@ export default function Courses() {
 
   useEffect(() => {
     import("@/components/api/supabaseClient").then(({ supabase }) => {
-        supabase.auth.getUser().then(({ data }) => setUser(data.user));
+      supabase.auth.getUser().then(({ data }) => setUser(data.user));
     });
   }, []);
 
@@ -45,8 +45,8 @@ export default function Courses() {
   ];
 
   const filteredCourses = courses.filter(course => {
-    const matchesSearch = course.title?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          course.instructor?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = course.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      course.instructor?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === "all" || course.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
@@ -78,11 +78,10 @@ export default function Courses() {
             <button
               key={cat.value}
               onClick={() => setSelectedCategory(cat.value)}
-              className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ${
-                selectedCategory === cat.value
+              className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 ${selectedCategory === cat.value
                   ? "bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg"
                   : "bg-white text-gray-700 hover:bg-teal-50"
-              }`}
+                }`}
             >
               {cat.label}
             </button>
@@ -121,8 +120,8 @@ export default function Courses() {
                       </div>
                       <Link to={createPageUrl(`CourseView?id=${course.id}`)}>
                         <Button className="bg-teal-600 hover:bg-teal-700 text-white gap-2">
-                           {t('view_course')}
-                           <ArrowRight className="w-4 h-4" />
+                          {t('view_course')}
+                          <ArrowRight className="w-4 h-4" />
                         </Button>
                       </Link>
                     </div>

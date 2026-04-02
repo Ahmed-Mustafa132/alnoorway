@@ -7,7 +7,7 @@ import { Heart, Users, Video, CheckCircle, Sparkles, MessageCircle } from "lucid
 import { motion } from "framer-motion";
 import ContactModal from "@/components/ContactModal";
 import { supabase } from "@/components/api/supabaseClient";
-import { useLanguage } from "@/components/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Repentance() {
   const { t } = useLanguage();
@@ -87,7 +87,7 @@ export default function Repentance() {
             <Heart className="w-5 h-5 text-rose-600" />
             <span className="text-rose-800 font-semibold">{t('repentance')}</span>
           </div>
-          
+
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight">
             {t('repentance_title')}
           </h1>
@@ -191,7 +191,7 @@ export default function Repentance() {
           <Card className="border-0 shadow-2xl bg-gradient-to-br from-rose-500 to-pink-600 text-white overflow-hidden relative rounded-3xl">
             <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full -translate-x-32 -translate-y-32"></div>
             <div className="absolute bottom-0 right-0 w-64 h-64 bg-white/10 rounded-full translate-x-32 translate-y-32"></div>
-            
+
             <CardContent className="p-8 md:p-12 text-center relative z-10">
               <MessageCircle className="w-16 h-16 mx-auto mb-6 text-amber-300" />
               <h2 className="text-2xl md:text-4xl font-bold mb-4">

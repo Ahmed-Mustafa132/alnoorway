@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,6 +7,7 @@ import { BookOpen } from "lucide-react"; // Removed ArrowRight, Download, Heart
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // New imports
 import CommentsSection from "@/components/CommentsSection";
@@ -14,6 +15,7 @@ import RatingWidget from "@/components/RatingWidget";
 import ShareButtons from "@/components/ShareButtons";
 
 export default function BookReader() {
+  const { t } = useLanguage();
   const urlParams = new URLSearchParams(window.location.search);
   const bookId = urlParams.get('id');
 
@@ -33,27 +35,27 @@ export default function BookReader() {
   const [isSummarizing, setIsSummarizing] = useState(false);
 
   const handleSummarize = async () => {
-      setIsSummarizing(true);
-      try {
-          // Use description or first chunk of content for summary if content is large
-          const textToSummarize = book.description + (book.content ? " " + book.content.substring(0, 1000) : "");
-          const { data, error } = await supabase.functions.invoke('aiAssistant', {
-              body: {
-                  action: 'summarize',
-                  text: textToSummarize
-              }
-          });
-          
-          if (error) throw error;
+    setIsSummarizing(true);
+    try {
+      // Use description or first chunk of content for summary if content is large
+      const textToSummarize = book.description + (book.content ? " " + book.content.substring(0, 1000) : "");
+      const { data, error } = await supabase.functions.invoke('aiAssistant', {
+        body: {
+          action: 'summarize',
+          text: textToSummarize
+        }
+      });
 
-          if (data && data.summary) {
-              setSummary(data.summary);
-          }
-      } catch (e) {
-          console.error(e);
-      } finally {
-          setIsSummarizing(false);
+      if (error) throw error;
+
+      if (data && data.summary) {
+        setSummary(data.summary);
       }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsSummarizing(false);
+    }
   };
 
   const handleFontSizeChange = (change) => {
@@ -78,9 +80,9 @@ export default function BookReader() {
         <Card className="max-w-md">
           <CardContent className="p-12 text-center">
             <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">الكتاب غير موجود</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">{t("book_not_found")}</h2>
             <Link to={createPageUrl("Library")}>
-              <Button className="mt-4">العودة إلى المكتبة</Button>
+              <Button className="mt-4">{t("back_to_library")}</Button>
             </Link>
           </CardContent>
         </Card>
@@ -94,70 +96,70 @@ export default function BookReader() {
         <div className="flex items-center justify-between mb-6">
           <Link to={createPageUrl("Library")}>
             <Button variant="outline">
-              ← العودة للمكتبة
+              ← {t("back_to_library")}
             </Button>
           </Link>
 
           <ShareButtons
             title={book.title}
-            description={`كتاب ${book.author}`}
+            description={`${t("book_by")} ${book.author}`}
           />
         </div>
 
         {/* AI Summary Section */}
         <div className="mb-6 flex justify-end">
-            <Button 
-                onClick={handleSummarize} 
-                disabled={isSummarizing || summary}
-                variant="outline"
-                className="gap-2 border-purple-200 text-purple-700 hover:bg-purple-50"
-            >
-                <BookOpen className="w-4 h-4" />
-                {isSummarizing ? "جاري التلخيص..." : "تلخيص الكتاب بالذكاء الاصطناعي"}
-            </Button>
+          <Button
+            onClick={handleSummarize}
+            disabled={isSummarizing || summary}
+            variant="outline"
+            className="gap-2 border-purple-200 text-purple-700 hover:bg-purple-50"
+          >
+            <BookOpen className="w-4 h-4" />
+            {isSummarizing ? t("summarizing") : t("ai_summarize")}
+          </Button>
         </div>
-        
+
         {summary && (
-            <motion.div 
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-6 bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-xl p-6"
-            >
-                <h3 className="text-lg font-bold text-purple-900 dark:text-purple-300 mb-3">ملخص الذكاء الاصطناعي</h3>
-                <p className="text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-line">{summary}</p>
-            </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-xl p-6"
+          >
+            <h3 className="text-lg font-bold text-purple-900 dark:text-purple-300 mb-3">{t("ai_summary")}</h3>
+            <p className="text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-line">{summary}</p>
+          </motion.div>
         )}
 
         <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm overflow-hidden">
           {book.pdf_url ? (
-             <div className="w-full h-[80vh]">
-                <iframe 
-                   src={book.pdf_url} 
-                   className="w-full h-full border-0" 
-                   title={book.title}
-                />
-             </div>
+            <div className="w-full h-[80vh]">
+              <iframe
+                src={book.pdf_url}
+                className="w-full h-full border-0"
+                title={book.title}
+              />
+            </div>
           ) : (
-             <CardContent className="p-8 md:p-12">
-               <div className="mb-8 pb-6 border-b dark:border-gray-700">
-                 <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-3">{book.title}</h1>
-                 <p className="text-xl text-gray-600 dark:text-gray-400 mb-2">{book.author}</p>
-                 {book.pages && <p className="text-sm text-gray-500 dark:text-gray-500">{book.pages} صفحة</p>}
-               </div>
+            <CardContent className="p-8 md:p-12">
+              <div className="mb-8 pb-6 border-b dark:border-gray-700">
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-3">{book.title}</h1>
+                <p className="text-xl text-gray-600 dark:text-gray-400 mb-2">{book.author}</p>
+                {book.pages && <p className="text-sm text-gray-500 dark:text-gray-500">{book.pages} صفحة</p>}
+              </div>
 
-               <div
-                 className="prose prose-lg max-w-none leading-relaxed text-gray-800 dark:text-gray-200"
-                 style={{ fontSize: `${fontSize}px`, lineHeight: '2' }}
-               >
-                 {book.content ? (
-                   <div className="whitespace-pre-wrap">{book.content}</div>
-                 ) : (
-                   <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-                     <p>المحتوى غير متاح للقراءة المباشرة</p>
-                   </div>
-                 )}
-               </div>
-             </CardContent>
+              <div
+                className="prose prose-lg max-w-none leading-relaxed text-gray-800 dark:text-gray-200"
+                style={{ fontSize: `${fontSize}px`, lineHeight: '2' }}
+              >
+                {book.content ? (
+                  <div className="whitespace-pre-wrap">{book.content}</div>
+                ) : (
+                  <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                    <p>{t("content_not_available")}</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
           )}
         </Card>
 

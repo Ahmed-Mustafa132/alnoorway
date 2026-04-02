@@ -4,8 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { User, Mail, LogOut, Shield } from "lucide-react";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Account() {
+  const { t } = useLanguage();
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -50,10 +53,10 @@ export default function Account() {
             <User className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-            حسابي
+            {t('my_profile')}
           </h1>
           <p className="text-xl text-gray-600">
-            إدارة معلوماتك الشخصية
+            {t('manage_profile')}
           </p>
         </motion.div>
 
@@ -61,7 +64,7 @@ export default function Account() {
           <div className="space-y-6">
             <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-2xl">المعلومات الشخصية</CardTitle>
+                <CardTitle className="text-2xl">{t('personal_info')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl">
@@ -69,8 +72,8 @@ export default function Account() {
                     <User className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 mb-1">الاسم الكامل</p>
-                    <p className="text-lg font-semibold text-gray-900">{user.full_name || "غير محدد"}</p>
+                    <p className="text-sm text-gray-500 mb-1">{t('full_name')}</p>
+                    <p className="text-lg font-semibold text-gray-900">{user.full_name || t('not_specified')}</p>
                   </div>
                 </div>
 
@@ -79,7 +82,7 @@ export default function Account() {
                     <Mail className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 mb-1">البريد الإلكتروني</p>
+                    <p className="text-sm text-gray-500 mb-1">{t('email')}</p>
                     <p className="text-lg font-semibold text-gray-900">{user.email}</p>
                   </div>
                 </div>
@@ -89,9 +92,9 @@ export default function Account() {
                     <Shield className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 mb-1">نوع الحساب</p>
+                    <p className="text-sm text-gray-500 mb-1">{t('account_type')}</p>
                     <p className="text-lg font-semibold text-gray-900">
-                      {user.role === 'admin' ? 'مدير' : 'مستخدم'}
+                      {user.role === 'admin' ? t('admin') : t('user')}
                     </p>
                   </div>
                 </div>
@@ -107,7 +110,7 @@ export default function Account() {
                   size="lg"
                 >
                   <LogOut className="w-5 h-5 ml-2" />
-                  تسجيل الخروج
+                  {t('logout')}
                 </Button>
               </CardContent>
             </Card>
@@ -117,16 +120,16 @@ export default function Account() {
             <CardContent className="p-12 text-center">
               <User className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                غير مسجل دخول
+                {t('not_logged_in')}
               </h3>
               <p className="text-gray-600 mb-6">
-                يرجى تسجيل الدخول للوصول إلى حسابك
+                {t('please_login_to_access_account')}
               </p>
               <Button
                 onClick={() => window.location.href = '/auth'}
                 className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700"
               >
-                تسجيل الدخول
+                {t('login')}
               </Button>
             </CardContent>
           </Card>

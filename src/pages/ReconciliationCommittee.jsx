@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Users, Award, Briefcase, GraduationCap, Heart, Sparkles, Shield, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import ReconciliationRequestModal from "@/components/ReconciliationRequestModal";
-import { useLanguage } from "@/components/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function ReconciliationCommittee() {
   const { t } = useLanguage();
@@ -79,7 +79,7 @@ export default function ReconciliationCommittee() {
             <Heart className="w-5 h-5 text-blue-600" />
             <span className="text-blue-800 font-semibold">{t('reconciliation')}</span>
           </div>
-          
+
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight">
             {t('reconciliation_title')}
           </h1>
@@ -259,7 +259,7 @@ export default function ReconciliationCommittee() {
           <Card className="border-0 shadow-2xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white overflow-hidden relative rounded-3xl">
             <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full -translate-x-32 -translate-y-32"></div>
             <div className="absolute bottom-0 right-0 w-64 h-64 bg-white/10 rounded-full translate-x-32 translate-y-32"></div>
-            
+
             <CardContent className="p-8 md:p-12 text-center relative z-10">
               <Sparkles className="w-16 h-16 mx-auto mb-6 text-amber-300" />
               <h2 className="text-2xl md:text-4xl font-bold mb-4">

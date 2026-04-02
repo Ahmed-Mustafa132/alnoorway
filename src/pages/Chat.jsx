@@ -11,8 +11,9 @@ import { motion } from "framer-motion";
 import OnlineIndicator from "@/components/OnlineIndicator";
 import Breadcrumb from "@/components/Breadcrumb";
 import { createPageUrl } from "@/utils";
-
+import { useLanguage } from "@/contexts/LanguageContext";
 export default function Chat() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messageText, setMessageText] = useState("");
@@ -48,7 +49,7 @@ export default function Chat() {
   const handleScheduleSubmit = (e) => {
     e.preventDefault();
     if (!selectedConversation || !user) return;
-    
+
     // Combine date and time
     const scheduledTime = new Date(`${appointmentData.date}T${appointmentData.time}`).toISOString();
 
@@ -120,7 +121,7 @@ export default function Chat() {
 
   const markMessagesAsRead = async () => {
     if (!selectedConversation) return;
-    
+
     try {
       await supabase.from('ChatMessage').update({ is_read: true }).eq('conversation_id', selectedConversation.id).eq('receiver_email', user.email).eq('is_read', false);
 
@@ -217,7 +218,7 @@ export default function Chat() {
             <Sparkles className="w-5 h-5 text-blue-600" />
             <span className="text-blue-800 font-semibold">الدردشة المباشرة</span>
           </div>
-          
+
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
             محادثاتك
           </h1>
@@ -250,36 +251,31 @@ export default function Chat() {
                     <button
                       key={conv.id}
                       onClick={() => setSelectedConversation(conv)}
-                      className={`w-full text-right p-3 rounded-2xl transition-all duration-200 ${
-                        selectedConversation?.id === conv.id
-                          ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg'
-                          : 'hover:bg-gray-50'
-                      }`}
+                      className={`w-full text-right p-3 rounded-2xl transition-all duration-200 ${selectedConversation?.id === conv.id
+                        ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg'
+                        : 'hover:bg-gray-50'
+                        }`}
                     >
                       <div className="flex items-start gap-3">
                         <div className="relative flex-shrink-0">
-                          <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                            selectedConversation?.id === conv.id
-                              ? 'bg-white/20'
-                              : 'bg-gradient-to-br from-blue-400 to-indigo-600'
-                          }`}>
-                            <User className={`w-6 h-6 ${
-                              selectedConversation?.id === conv.id ? 'text-white' : 'text-white'
-                            }`} />
+                          <div className={`w-12 h-12 rounded-full flex items-center justify-center ${selectedConversation?.id === conv.id
+                            ? 'bg-white/20'
+                            : 'bg-gradient-to-br from-blue-400 to-indigo-600'
+                            }`}>
+                            <User className={`w-6 h-6 ${selectedConversation?.id === conv.id ? 'text-white' : 'text-white'
+                              }`} />
                           </div>
                           <div className="absolute -bottom-0.5 -right-0.5">
                             <OnlineIndicator isOnline={Math.random() > 0.5} size="sm" />
                           </div>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className={`font-semibold text-sm truncate ${
-                            selectedConversation?.id === conv.id ? 'text-white' : 'text-gray-900'
-                          }`}>
+                          <h4 className={`font-semibold text-sm truncate ${selectedConversation?.id === conv.id ? 'text-white' : 'text-gray-900'
+                            }`}>
                             {conv.scholar_name}
                           </h4>
-                          <p className={`text-xs truncate ${
-                            selectedConversation?.id === conv.id ? 'text-white/80' : 'text-gray-600'
-                          }`}>
+                          <p className={`text-xs truncate ${selectedConversation?.id === conv.id ? 'text-white/80' : 'text-gray-600'
+                            }`}>
                             {conv.last_message || 'لا توجد رسائل'}
                           </p>
                         </div>
@@ -320,7 +316,7 @@ export default function Chat() {
                       <p className="text-sm text-white/80">{selectedConversation.scholar_type === 'mufti' ? 'مفتي' : selectedConversation.scholar_type === 'preacher' ? 'داعية' : 'محفظ'}</p>
                     </div>
                   </div>
-                  
+
                   <Dialog open={showScheduleModal} onOpenChange={setShowScheduleModal}>
                     <DialogTrigger asChild>
                       <Button variant="secondary" size="sm" className="gap-2 bg-white/20 hover:bg-white/30 text-white border-0">
@@ -336,29 +332,29 @@ export default function Chat() {
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <Label>التاريخ</Label>
-                            <Input 
-                              type="date" 
+                            <Input
+                              type="date"
                               required
                               value={appointmentData.date}
-                              onChange={(e) => setAppointmentData({...appointmentData, date: e.target.value})}
+                              onChange={(e) => setAppointmentData({ ...appointmentData, date: e.target.value })}
                             />
                           </div>
                           <div className="space-y-2">
                             <Label>الوقت</Label>
-                            <Input 
-                              type="time" 
+                            <Input
+                              type="time"
                               required
                               value={appointmentData.time}
-                              onChange={(e) => setAppointmentData({...appointmentData, time: e.target.value})}
+                              onChange={(e) => setAppointmentData({ ...appointmentData, time: e.target.value })}
                             />
                           </div>
                         </div>
                         <div className="space-y-2">
                           <Label>ملاحظات</Label>
-                          <Input 
-                            placeholder="سبب الموعد..." 
+                          <Input
+                            placeholder="سبب الموعد..."
                             value={appointmentData.notes}
-                            onChange={(e) => setAppointmentData({...appointmentData, notes: e.target.value})}
+                            onChange={(e) => setAppointmentData({ ...appointmentData, notes: e.target.value })}
                           />
                         </div>
                         <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700">
@@ -381,16 +377,14 @@ export default function Chat() {
                           key={msg.id}
                           className={`flex ${msg.sender_email === user.email ? 'justify-end' : 'justify-start'}`}
                         >
-                          <div className={`max-w-[70%] rounded-2xl px-4 py-2 ${
-                            msg.sender_email === user.email
-                              ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
-                              : 'bg-gray-100 text-gray-900'
-                          }`}>
+                          <div className={`max-w-[70%] rounded-2xl px-4 py-2 ${msg.sender_email === user.email
+                            ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
+                            : 'bg-gray-100 text-gray-900'
+                            }`}>
                             <p className="text-sm leading-relaxed">{msg.message_text}</p>
                             <div className="flex items-center gap-1 justify-end mt-1">
-                              <p className={`text-xs ${
-                                msg.sender_email === user.email ? 'text-white/70' : 'text-gray-500'
-                              }`}>
+                              <p className={`text-xs ${msg.sender_email === user.email ? 'text-white/70' : 'text-gray-500'
+                                }`}>
                                 {new Date(msg.created_date).toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}
                               </p>
                               {msg.sender_email === user.email && (
@@ -412,7 +406,7 @@ export default function Chat() {
                       <p className="text-gray-600">ابدأ المحادثة</p>
                     </div>
                   )}
-                  
+
                   {isTyping && (
                     <div className="flex justify-start">
                       <div className="bg-gray-100 rounded-2xl px-4 py-2">

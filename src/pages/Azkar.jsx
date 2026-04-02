@@ -5,6 +5,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sun, Moon, Sparkles, Check, RotateCcw } from "lucide-react";
 import { motion } from "framer-motion";
 
+import { useLanguage } from "@/contexts/LanguageContext";
+
 const morningAzkar = [
   { id: 1, text: "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ", count: 1 },
   { id: 2, text: "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ", count: 1 },
@@ -34,6 +36,7 @@ const eveningAzkar = [
 ];
 
 export default function Azkar() {
+  const { t } = useLanguage();
   const [currentMorningIndex, setCurrentMorningIndex] = useState(0);
   const [currentEveningIndex, setCurrentEveningIndex] = useState(0);
   const [morningCounts, setMorningCounts] = useState({});
@@ -42,7 +45,7 @@ export default function Azkar() {
   const handleMorningClick = () => {
     const currentZikr = morningAzkar[currentMorningIndex];
     const currentCount = morningCounts[currentZikr.id] || 0;
-    
+
     if (currentCount + 1 >= currentZikr.count) {
       setMorningCounts({ ...morningCounts, [currentZikr.id]: 0 });
       if (currentMorningIndex < morningAzkar.length - 1) {
@@ -56,7 +59,7 @@ export default function Azkar() {
   const handleEveningClick = () => {
     const currentZikr = eveningAzkar[currentEveningIndex];
     const currentCount = eveningCounts[currentZikr.id] || 0;
-    
+
     if (currentCount + 1 >= currentZikr.count) {
       setEveningCounts({ ...eveningCounts, [currentZikr.id]: 0 });
       if (currentEveningIndex < eveningAzkar.length - 1) {
@@ -83,11 +86,11 @@ export default function Azkar() {
         <TabsList className="grid w-full grid-cols-2 mb-8 max-w-md mx-auto">
           <TabsTrigger value="morning" className="flex items-center gap-2">
             <Sun className="w-5 h-5" />
-            أذكار الصباح
+            {t("morning_azkar")}
           </TabsTrigger>
           <TabsTrigger value="evening" className="flex items-center gap-2">
             <Moon className="w-5 h-5" />
-            أذكار المساء
+            {t("evening_azkar")}
           </TabsTrigger>
         </TabsList>
 
@@ -97,12 +100,12 @@ export default function Azkar() {
               <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <Sun className="w-8 h-8 text-white" />
               </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">أذكار الصباح</h1>
-              <p className="text-gray-600">الذكر {currentMorningIndex + 1} من {morningAzkar.length}</p>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{t("morning_azkar")}</h1>
+              <p className="text-gray-600">{t("zikr_count")} {currentMorningIndex + 1} {t("of")} {morningAzkar.length}</p>
             </div>
 
             {currentMorningIndex < morningAzkar.length ? (
-              <Card 
+              <Card
                 onClick={handleMorningClick}
                 className="border-0 shadow-2xl bg-white/90 backdrop-blur-sm cursor-pointer hover:shadow-3xl transition-all duration-300 hover:scale-[1.02]"
               >
@@ -111,7 +114,7 @@ export default function Azkar() {
                     <p className="text-2xl md:text-3xl leading-relaxed text-gray-800 font-semibold">
                       {morningAzkar[currentMorningIndex].text}
                     </p>
-                    
+
                     <div className="flex items-center justify-center gap-4">
                       <div className="text-6xl font-bold text-amber-600">
                         {(morningCounts[morningAzkar[currentMorningIndex].id] || 0) + 1}
@@ -122,7 +125,7 @@ export default function Azkar() {
                       </div>
                     </div>
 
-                    <p className="text-gray-500 text-lg">اضغط للتكرار</p>
+                    <p className="text-gray-500 text-lg">{t("click_to_repeat")}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -131,17 +134,17 @@ export default function Azkar() {
                 <CardContent className="p-12 text-center">
                   <Check className="w-20 h-20 text-green-500 mx-auto mb-6" />
                   <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                    بارك الله فيك!
+                    {t("well_done")}
                   </h2>
                   <p className="text-xl text-gray-600 mb-8">
-                    أتممت أذكار الصباح
+                    {t("morning_azkar_completed")}
                   </p>
                   <Button
                     onClick={resetMorning}
                     className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-8 py-6 text-lg"
                   >
                     <RotateCcw className="w-5 h-5 ml-2" />
-                    ابدأ من جديد
+                    {t("restart")}
                   </Button>
                 </CardContent>
               </Card>
@@ -155,12 +158,12 @@ export default function Azkar() {
               <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <Moon className="w-8 h-8 text-white" />
               </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">أذكار المساء</h1>
-              <p className="text-gray-600">الذكر {currentEveningIndex + 1} من {eveningAzkar.length}</p>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{t("evening_azkar")}</h1>
+              <p className="text-gray-600"> {t("zikr_count")} {currentEveningIndex + 1} {t("of")} {eveningAzkar.length}</p>
             </div>
 
             {currentEveningIndex < eveningAzkar.length ? (
-              <Card 
+              <Card
                 onClick={handleEveningClick}
                 className="border-0 shadow-2xl bg-white/90 backdrop-blur-sm cursor-pointer hover:shadow-3xl transition-all duration-300 hover:scale-[1.02]"
               >
@@ -169,7 +172,7 @@ export default function Azkar() {
                     <p className="text-2xl md:text-3xl leading-relaxed text-gray-800 font-semibold">
                       {eveningAzkar[currentEveningIndex].text}
                     </p>
-                    
+
                     <div className="flex items-center justify-center gap-4">
                       <div className="text-6xl font-bold text-indigo-600">
                         {(eveningCounts[eveningAzkar[currentEveningIndex].id] || 0) + 1}
@@ -180,7 +183,7 @@ export default function Azkar() {
                       </div>
                     </div>
 
-                    <p className="text-gray-500 text-lg">اضغط للتكرار</p>
+                    <p className="text-gray-500 text-lg">{t("click_to_repeat")}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -189,17 +192,17 @@ export default function Azkar() {
                 <CardContent className="p-12 text-center">
                   <Check className="w-20 h-20 text-green-500 mx-auto mb-6" />
                   <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                    بارك الله فيك!
+                    {t("well_done")}
                   </h2>
                   <p className="text-xl text-gray-600 mb-8">
-                    أتممت أذكار المساء
+                    {t("evening_azkar_completed")}
                   </p>
                   <Button
                     onClick={resetEvening}
                     className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-8 py-6 text-lg"
                   >
                     <RotateCcw className="w-5 h-5 ml-2" />
-                    ابدأ من جديد
+                    {t("restart")}
                   </Button>
                 </CardContent>
               </Card>

@@ -7,8 +7,10 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import ShareButtons from "@/components/ShareButtons";
 import CommentsSection from "@/components/CommentsSection";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function ArticleView() {
+  const { t } = useLanguage();
   const urlParams = new URLSearchParams(window.location.search);
   const articleId = urlParams.get('id');
   const [article, setArticle] = useState(null);
@@ -27,7 +29,7 @@ export default function ArticleView() {
         .select('*')
         .eq('id', articleId)
         .single();
-      
+
       if (error) throw error;
       setArticle(data);
     } catch (error) {
@@ -38,14 +40,14 @@ export default function ArticleView() {
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div></div>;
-  if (!article) return <div className="min-h-screen flex items-center justify-center">المقال غير موجود</div>;
+  if (!article) return <div className="min-h-screen flex items-center justify-center">{t("article_not_found")}</div>;
 
   return (
     <div className="min-h-screen bg-white">
       {/* Header Image */}
       <div className="h-[40vh] md:h-[50vh] relative w-full bg-gray-900">
-        <img 
-          src={article.image_url || "https://placehold.co/1200x600/1e293b/ffffff?text=Article"} 
+        <img
+          src={article.image_url || "https://placehold.co/1200x600/1e293b/ffffff?text=Article"}
           alt={article.title}
           className="w-full h-full object-cover opacity-60"
         />
@@ -61,7 +63,7 @@ export default function ArticleView() {
           <div className="flex items-center gap-6 text-sm md:text-base text-gray-300">
             <div className="flex items-center gap-2">
               <User className="w-4 h-4" />
-              <span>{article.author || 'طريق النور'}</span>
+              <span>{article.author || t("author_not_specified")}</span>
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
@@ -75,7 +77,7 @@ export default function ArticleView() {
         <Link to={createPageUrl("Blog")}>
           <Button variant="ghost" className="mb-8 pl-0 hover:pl-2 transition-all">
             <ArrowRight className="w-4 h-4 ml-2" />
-            العودة للمدونة
+            {t("back_to_blog")}
           </Button>
         </Link>
 
@@ -88,7 +90,7 @@ export default function ArticleView() {
         <div className="border-t pt-8">
           <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
             <Share2 className="w-5 h-5" />
-            مشاركة المقال
+            {t("share_article")}
           </h3>
           <ShareButtons title={article.title} description={article.meta_description} />
         </div>

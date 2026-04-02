@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLanguage } from "@/components/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/components/api/supabaseClient";
 import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,7 +15,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -64,7 +64,7 @@ export default function Register() {
       if (error) throw error;
 
       setSuccess("تم إنشاء الحساب بنجاح! يرجى تفعيل حسابك من البريد الإلكتروني");
-      
+
       setTimeout(() => {
         navigate('/login');
       }, 3000);

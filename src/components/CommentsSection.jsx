@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { MessageCircle, ThumbsUp, Send, User, Globe } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useLanguage } from "./LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function CommentsSection({ contentType, contentId, contentTitle }) {
   const { language } = useLanguage();
@@ -86,10 +86,10 @@ export default function CommentsSection({ contentType, contentId, contentTitle }
           {replyingTo && (
             <div className="bg-blue-50 p-3 rounded-lg flex items-center justify-between">
               <span className="text-sm text-blue-800">الرد على: {replyingTo.user_name}</span>
-              <Button 
-                type="button" 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => setReplyingTo(null)}
               >
                 إلغاء
@@ -104,8 +104,8 @@ export default function CommentsSection({ contentType, contentId, contentTitle }
             disabled={!user}
           />
           <div className="flex justify-end">
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={!user || !commentText.trim() || addCommentMutation.isPending}
               className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
             >
@@ -124,9 +124,9 @@ export default function CommentsSection({ contentType, contentId, contentTitle }
           ) : topLevelComments.length > 0 ? (
             <AnimatePresence>
               {topLevelComments.map((comment, index) => (
-                <CommentItem 
-                  key={comment.id} 
-                  comment={comment} 
+                <CommentItem
+                  key={comment.id}
+                  comment={comment}
                   allComments={comments}
                   onReply={setReplyingTo}
                   index={index}
@@ -203,8 +203,8 @@ function CommentItem({ comment, allComments, onReply, index, currentLanguage }) 
               )}
             </p>
             <div className="flex items-center gap-3">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="sm"
                 className="text-gray-500 hover:text-blue-600"
                 onClick={handleTranslate}
@@ -213,9 +213,9 @@ function CommentItem({ comment, allComments, onReply, index, currentLanguage }) 
                 <Globe className="w-4 h-4 ml-1" />
                 {isTranslating ? "..." : translatedText ? "الأصل" : "ترجمة"}
               </Button>
-              <Button 
+              <Button
                 variant="ghost"
-                size="sm" 
+                size="sm"
                 className="text-blue-600 hover:text-blue-700"
                 onClick={() => onReply(comment)}
               >

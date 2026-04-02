@@ -5,8 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function AuthPage() {
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,14 +25,14 @@ export default function AuthPage() {
           password,
         });
         if (error) throw error;
-        toast.success('تم إنشاء الحساب بنجاح! يرجى التحقق من بريدك الإلكتروني.');
+        toast.success(t('signup_success'));
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
         if (error) throw error;
-        toast.success('تم تسجيل الدخول بنجاح');
+        toast.success(t('login_success'));
         navigate('/');
       }
     } catch (error) {
@@ -45,9 +47,9 @@ export default function AuthPage() {
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/3f7f97347_android-chrome-192x192.png" 
-              alt="طريق النور" 
+            <img
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68ecdfbb3578091a5f1e1c54/3f7f97347_android-chrome-192x192.png"
+              alt="طريق النور"
               className="w-16 h-16"
             />
           </div>
@@ -55,13 +57,13 @@ export default function AuthPage() {
             طريق النور
           </CardTitle>
           <p className="text-sm text-gray-500 mt-4">
-            {isSignUp ? 'إنشاء حساب جديد' : 'تسجيل الدخول للمتابعة'}
+            {isSignUp ? t('create_account') : t('login')}
           </p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleAuth} className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">البريد الإلكتروني</label>
+              <label className="text-sm font-medium text-gray-700"> {t("email")}</label>
               <Input
                 type="email"
                 value={email}
@@ -72,7 +74,7 @@ export default function AuthPage() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">كلمة المرور</label>
+              <label className="text-sm font-medium text-gray-700"> {t("password")}</label>
               <Input
                 type="password"
                 value={password}
@@ -82,7 +84,7 @@ export default function AuthPage() {
               />
             </div>
             <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white" disabled={loading}>
-              {loading ? 'جاري المعالجة...' : (isSignUp ? 'تسجيل جديد' : 'دخول')}
+              {loading ? t('processing') : (isSignUp ? t('signup') : t('login'))}
             </Button>
           </form>
           <div className="mt-4 text-center">
@@ -90,7 +92,7 @@ export default function AuthPage() {
               onClick={() => setIsSignUp(!isSignUp)}
               className="text-sm text-emerald-600 hover:underline"
             >
-              {isSignUp ? 'لديك حساب بالفعل؟ تسجيل الدخول' : 'ليس لديك حساب؟ إنشاء حساب جديد'}
+              {isSignUp ? t('already_have_account') : t('dont_have_account')}
             </button>
           </div>
         </CardContent>

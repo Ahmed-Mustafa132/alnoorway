@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Search, Sparkles, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
 import ArticleCard from "@/components/ArticleCard";
+import { useLanguage } from "@/contexts/LanguageContext";
 // AI Assistant removed from public page
 
 export default function Blog() {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState(null);
 
@@ -26,7 +28,7 @@ export default function Blog() {
     initialData: [],
   });
 
-  const filteredArticles = articles.filter(article => 
+  const filteredArticles = articles.filter(article =>
     article.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     article.content?.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -41,20 +43,20 @@ export default function Blog() {
         >
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-indigo-100 px-6 py-3 rounded-full mb-6">
             <BookOpen className="w-5 h-5 text-blue-600" />
-            <span className="text-blue-800 font-semibold">المدونة الإسلامية</span>
+            <span className="text-blue-800 font-semibold">{t("islamic_blog")}</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-            مقالات ومقالات مختارة
+            {t("selected_articles")}
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            محتوى متجدد يثري معرفتك ويجيب عن تساؤلاتك
+            {t("blog_description")}
           </p>
         </motion.div>
 
         <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-10">
           <div className="relative w-full md:w-96">
             <Input
-              placeholder="ابحث في المقالات..."
+              placeholder={t("search_articles")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pr-10 py-6 text-lg bg-white shadow-sm"
@@ -85,8 +87,8 @@ export default function Blog() {
         ) : (
           <div className="text-center py-20 bg-white/50 rounded-3xl border-2 border-dashed border-gray-200">
             <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-gray-400">لا توجد مقالات منشورة بعد</h3>
-            <p className="text-gray-500 mt-2">تابعنا لقراءة أحدث المقالات قريباً.</p>
+            <h3 className="text-2xl font-bold text-gray-400">{t("no_articles_found")}</h3>
+            <p className="text-gray-500 mt-2">{t("no_articles_description")}</p>
           </div>
         )}
       </div>

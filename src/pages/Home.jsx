@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { BookOpen, Heart, MessageSquare, Users, Globe, Calendar, Library, Video, Search, User, Handshake } from "lucide-react";
 import { supabase } from "@/components/api/supabaseClient";
 import AIRecommendations from "@/components/AIRecommendations";
-import { useLanguage } from "@/components/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const verses = [
   { text: "إِنَّ مَعَ الْعُسْرِ يُسْرًا", ref: "سورة الشرح - آية 6" },
@@ -29,7 +29,7 @@ const hadiths = [
 const allQuotes = [...verses, ...hadiths];
 
 export default function Home() {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const [randomQuote] = useState(() => allQuotes[Math.floor(Math.random() * allQuotes.length)]);
   const [searchQuery, setSearchQuery] = useState("");
   const [onlineCount, setOnlineCount] = useState({ scholars: 0, preachers: 0, teachers: 0 });
@@ -51,7 +51,7 @@ export default function Home() {
     try {
       const saved = localStorage.getItem('appSettings');
       if (saved) setAppSettings(JSON.parse(saved));
-    } catch (e) {}
+    } catch (e) { }
 
     if (navigator.onLine) {
       loadData();
@@ -73,7 +73,7 @@ export default function Home() {
       setUser(data?.user || null);
       await loadOnlineCounts();
       if (data?.user) {
-        trackEvent('view', 'page', 'home').catch(() => {});
+        trackEvent('view', 'page', 'home').catch(() => { });
       }
     } catch (e) {
       console.log('Home load error:', e);
@@ -120,7 +120,7 @@ export default function Home() {
   const handleSearch = () => {
     if (!isOnline) return;
     if (searchQuery.trim()) {
-      trackEvent('search', 'query', searchQuery).catch(() => {});
+      trackEvent('search', 'query', searchQuery).catch(() => { });
       window.location.href = createPageUrl("Search") + `?q=${encodeURIComponent(searchQuery)}`;
     }
   };
@@ -251,7 +251,7 @@ export default function Home() {
           </div>
 
           <Link to={createPageUrl("JoinTeam")} className="w-full md:w-auto">
-            <Button 
+            <Button
               className="w-full md:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg rounded-full px-8 py-6 text-lg whitespace-nowrap"
             >
               <Users className="w-5 h-5 ml-2" />
@@ -276,10 +276,10 @@ export default function Home() {
                 )}
                 {/* To change image size, modify aspect ratio below (e.g. aspect-[16/9] for smaller height) */}
                 <div className="w-full aspect-[7/8] overflow-hidden flex items-center justify-center">
-                  <img 
-                    src={feature.image} 
-                    alt={feature.title} 
-                    className="w-[90%] h-[90%] object-cover group-hover:scale-105 transition-transform duration-500" 
+                  <img
+                    src={feature.image}
+                    alt={feature.title}
+                    className="w-[90%] h-[90%] object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 </div>
                 <CardContent className="p-4 md:p-6 text-center flex-1 flex flex-col justify-center">
@@ -304,13 +304,13 @@ export default function Home() {
                 )}
                 {/* To change image size, modify aspect ratio below */}
                 <div className="w-full aspect-[8/8] overflow-hidden flex items-center justify-center">
-                    {feature.image ? (
-                      <img src={feature.image} alt={feature.title} className="w-[90%] h-[90%] object-cover group-hover:scale-105 transition-transform duration-500" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-white/30">
-                        <feature.icon className={`w-16 h-16 ${feature.iconColor}`} />
-                      </div>
-                    )}
+                  {feature.image ? (
+                    <img src={feature.image} alt={feature.title} className="w-[90%] h-[90%] object-cover group-hover:scale-105 transition-transform duration-500" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-white/30">
+                      <feature.icon className={`w-16 h-16 ${feature.iconColor}`} />
+                    </div>
+                  )}
                 </div>
                 <CardContent className="p-4 md:p-6 text-center flex-1 flex flex-col justify-center">
                   <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1">{feature.title}</h3>

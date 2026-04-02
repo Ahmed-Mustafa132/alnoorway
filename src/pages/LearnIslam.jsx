@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Users, MapPin, Video, Heart, Sparkles, MessageCircle, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import ContactModal from "@/components/ContactModal";
-import { useLanguage } from "@/components/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function LearnIslam() {
   const { t } = useLanguage();
@@ -91,7 +91,7 @@ export default function LearnIslam() {
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-emerald-100 px-6 py-3 rounded-full mb-6">
             <span className="text-blue-800 font-semibold">{t('discover_islam')}</span>
           </div>
-          
+
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
             {t('learn_islam_title')}
           </h1>
@@ -128,7 +128,7 @@ export default function LearnIslam() {
                   </Card>
                 </Link>
               ) : (
-                <Card 
+                <Card
                   onClick={section.action}
                   className={`group hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br ${section.color} overflow-hidden h-full hover:-translate-y-1 cursor-pointer rounded-3xl`}
                 >
@@ -186,7 +186,7 @@ export default function LearnIslam() {
           <Card className="border-0 shadow-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-white overflow-hidden relative rounded-3xl">
             <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full -translate-x-32 -translate-y-32"></div>
             <div className="absolute bottom-0 right-0 w-64 h-64 bg-white/10 rounded-full translate-x-32 translate-y-32"></div>
-            
+
             <CardContent className="p-8 md:p-12 text-center relative z-10">
               <MessageCircle className="w-16 h-16 mx-auto mb-6 text-amber-300" />
               <h2 className="text-2xl md:text-4xl font-bold mb-4">

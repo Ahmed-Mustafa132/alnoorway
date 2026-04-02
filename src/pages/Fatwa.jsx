@@ -15,7 +15,7 @@ import AIFatwaAssistant from "@/components/AIFatwaAssistant";
 import RatingWidget from "@/components/RatingWidget";
 import CommentsSection from "@/components/CommentsSection";
 import ShareButtons from "@/components/ShareButtons";
-import { useLanguage } from "@/components/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Fatwa() {
   const { t } = useLanguage();
@@ -34,38 +34,38 @@ export default function Fatwa() {
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
-       if (data.user) {
-          setUser(data.user);
-          fetchFavorites(data.user.email);
-       }
+      if (data.user) {
+        setUser(data.user);
+        fetchFavorites(data.user.email);
+      }
     });
   }, []);
 
   const fetchFavorites = async (email) => {
-     const { data } = await supabase.from('Favorite').select('item_id').eq('user_email', email).eq('item_type', 'fatwa');
-     if (data) setUserFavorites(data.map(f => f.item_id));
+    const { data } = await supabase.from('Favorite').select('item_id').eq('user_email', email).eq('item_type', 'fatwa');
+    if (data) setUserFavorites(data.map(f => f.item_id));
   };
 
   const toggleFavorite = async (fatwa) => {
-     if (!user) {
-        alert("يرجى تسجيل الدخول");
-        return;
-     }
-     if (userFavorites.includes(fatwa.id)) {
-        // Remove
-        await supabase.from('Favorite').delete().eq('user_email', user.email).eq('item_id', fatwa.id);
-        setUserFavorites(prev => prev.filter(id => id !== fatwa.id));
-     } else {
-        // Add
-        await supabase.from('Favorite').insert({
-           user_email: user.email,
-           item_type: 'fatwa',
-           item_id: fatwa.id,
-           item_title: fatwa.question,
-           item_data: fatwa
-        });
-        setUserFavorites(prev => [...prev, fatwa.id]);
-     }
+    if (!user) {
+      alert("يرجى تسجيل الدخول");
+      return;
+    }
+    if (userFavorites.includes(fatwa.id)) {
+      // Remove
+      await supabase.from('Favorite').delete().eq('user_email', user.email).eq('item_id', fatwa.id);
+      setUserFavorites(prev => prev.filter(id => id !== fatwa.id));
+    } else {
+      // Add
+      await supabase.from('Favorite').insert({
+        user_email: user.email,
+        item_type: 'fatwa',
+        item_id: fatwa.id,
+        item_title: fatwa.question,
+        item_data: fatwa
+      });
+      setUserFavorites(prev => [...prev, fatwa.id]);
+    }
   };
 
   const categories = [
@@ -111,15 +111,15 @@ export default function Fatwa() {
     const matchesSearch = fatwa.question?.toLowerCase().includes(lowerQuery) || fatwa.answer?.toLowerCase().includes(lowerQuery);
     const matchesMufti = !muftiQuery || fatwa.mufti?.toLowerCase().includes(muftiQuery.toLowerCase());
     const matchesCategory = selectedCategory === "all" || fatwa.category === selectedCategory;
-    
+
     let matchesDate = true;
     if (dateFrom && fatwa.created_date) {
-       matchesDate = matchesDate && new Date(fatwa.created_date) >= new Date(dateFrom);
+      matchesDate = matchesDate && new Date(fatwa.created_date) >= new Date(dateFrom);
     }
     if (dateTo && fatwa.created_date) {
-       matchesDate = matchesDate && new Date(fatwa.created_date) <= new Date(dateTo);
+      matchesDate = matchesDate && new Date(fatwa.created_date) <= new Date(dateTo);
     }
-    
+
     return matchesSearch && matchesMufti && matchesCategory && matchesDate;
   });
 
@@ -181,15 +181,15 @@ export default function Fatwa() {
                     size="sm"
                     className="text-emerald-600 hover:bg-emerald-50"
                     onClick={async () => {
-                        try {
-                            const { data, error } = await supabase.functions.invoke('aiAssistant', {
-                                body: { action: 'summarize', text: selectedFatwa.answer }
-                            });
-                            if (error) throw error;
-                            alert("ملخص الجواب:\n" + (data.summary || "تعذر التلخيص"));
-                        } catch (e) {
-                            alert("حدث خطأ أثناء التلخيص");
-                        }
+                      try {
+                        const { data, error } = await supabase.functions.invoke('aiAssistant', {
+                          body: { action: 'summarize', text: selectedFatwa.answer }
+                        });
+                        if (error) throw error;
+                        alert("ملخص الجواب:\n" + (data.summary || "تعذر التلخيص"));
+                      } catch (e) {
+                        alert("حدث خطأ أثناء التلخيص");
+                      }
                     }}
                   >
                     <Sparkles className="w-4 h-4 mr-2" />
@@ -230,30 +230,30 @@ export default function Fatwa() {
           </Card>
 
           <div className="flex gap-4 mb-8">
-             <Button
-                className="flex-1 bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm"
-                onClick={async () => {
-                   const { data: { user } } = await supabase.auth.getUser();
-                   if(!user) { alert('يرجى تسجيل الدخول للحفظ'); return; }
-                   const { error } = await supabase.from('Favorite').insert({
-                      user_email: user.email,
-                      item_type: 'fatwa',
-                      item_id: selectedFatwa.id,
-                      item_title: selectedFatwa.question,
-                      item_data: selectedFatwa
-                   });
-                   if(error) alert('خطأ في الحفظ');
-                   else alert('تم الحفظ في المفضلة');
-                }}
-             >
-                <Heart className="w-4 h-4 mr-2" />
-                حفظ في المفضلة
-             </Button>
-             <ShareButtons title={selectedFatwa.question} url={window.location.href} />
+            <Button
+              className="flex-1 bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm"
+              onClick={async () => {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) { alert('يرجى تسجيل الدخول للحفظ'); return; }
+                const { error } = await supabase.from('Favorite').insert({
+                  user_email: user.email,
+                  item_type: 'fatwa',
+                  item_id: selectedFatwa.id,
+                  item_title: selectedFatwa.question,
+                  item_data: selectedFatwa
+                });
+                if (error) alert('خطأ في الحفظ');
+                else alert('تم الحفظ في المفضلة');
+              }}
+            >
+              <Heart className="w-4 h-4 mr-2" />
+              حفظ في المفضلة
+            </Button>
+            <ShareButtons title={selectedFatwa.question} url={window.location.href} />
           </div>
 
           <RatingWidget contentType="fatwa" contentId={selectedFatwa.id} />
-          
+
           <div className="mt-8">
             <CommentsSection contentType="fatwa" contentId={selectedFatwa.id} />
           </div>
@@ -298,67 +298,67 @@ export default function Fatwa() {
               className="pr-12 py-6 text-lg bg-white/95 dark:bg-gray-800/90 backdrop-blur-sm rounded-full border-0 shadow-lg dark:text-white dark:placeholder-gray-400"
             />
             <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 text-emerald-500" />
-            
+
             <div className="absolute left-2 top-1/2 -translate-y-1/2">
-               <Button 
-                 size="sm" 
-                 variant="ghost" 
-                 onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
-                 className="bg-white/10 text-white hover:bg-white/20 border-white/20"
-               >
-                 {showAdvancedSearch ? t('advanced_search') : t('advanced_search')}
-               </Button>
-               <Button
-                  size="sm"
-                  variant="ghost"
-                  className="mr-2 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-full"
-                  onClick={() => {
-                     // AI Summary for all fatwas context (Demo) - In real app, maybe per fatwa
-                     alert("خاصية التلخيص متاحة عند عرض فتوى محددة.");
-                  }}
-               >
-                  <Sparkles className="w-4 h-4" />
-                  {t('summarize_fatwas')}
-               </Button>
-               <Link to={createPageUrl("Favorites")}>
-                  <Button size="sm" variant="ghost" className="mr-2 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-full">
-                     <Heart className="w-4 h-4" />
-                     {t('favorite_fatwas')}
-                  </Button>
-               </Link>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
+                className="bg-white/10 text-white hover:bg-white/20 border-white/20"
+              >
+                {showAdvancedSearch ? t('advanced_search') : t('advanced_search')}
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="mr-2 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-full"
+                onClick={() => {
+                  // AI Summary for all fatwas context (Demo) - In real app, maybe per fatwa
+                  alert("خاصية التلخيص متاحة عند عرض فتوى محددة.");
+                }}
+              >
+                <Sparkles className="w-4 h-4" />
+                {t('summarize_fatwas')}
+              </Button>
+              <Link to={createPageUrl("Favorites")}>
+                <Button size="sm" variant="ghost" className="mr-2 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-full">
+                  <Heart className="w-4 h-4" />
+                  {t('favorite_fatwas')}
+                </Button>
+              </Link>
             </div>
           </div>
 
           {showAdvancedSearch && (
-             <div className="mt-4 p-4 bg-white/90 backdrop-blur-md rounded-2xl shadow-lg grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                   <label className="text-sm font-medium text-gray-700 mb-1 block">{t('mufti_name')}</label>
-                   <Input 
-                     value={muftiQuery} 
-                     onChange={(e) => setMuftiQuery(e.target.value)}
-                     placeholder={t('mufti_name')}
-                     className="bg-white/80 border-0"
-                   />
-                </div>
-                <div>
-                   <label className="text-sm font-medium text-gray-700 mb-1 block">{t('date_from')}</label>
-                   <Input 
-                     type="date"
-                     value={dateFrom} 
-                     onChange={(e) => setDateFrom(e.target.value)}
-                     className="bg-white/80 border-0"
-                   />
-                </div>
-                <div>
-                   <label className="text-sm font-medium text-gray-700 mb-1 block">{t('date_to')}</label>
-                   <Input 
-                     type="date"
-                     value={dateTo} 
-                     onChange={(e) => setDateTo(e.target.value)}
-                     className="bg-white/80 border-0"
-                   />
-                </div>
-             </div>
+            <div className="mt-4 p-4 bg-white/90 backdrop-blur-md rounded-2xl shadow-lg grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">{t('mufti_name')}</label>
+                <Input
+                  value={muftiQuery}
+                  onChange={(e) => setMuftiQuery(e.target.value)}
+                  placeholder={t('mufti_name')}
+                  className="bg-white/80 border-0"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">{t('date_from')}</label>
+                <Input
+                  type="date"
+                  value={dateFrom}
+                  onChange={(e) => setDateFrom(e.target.value)}
+                  className="bg-white/80 border-0"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">{t('date_to')}</label>
+                <Input
+                  type="date"
+                  value={dateTo}
+                  onChange={(e) => setDateTo(e.target.value)}
+                  className="bg-white/80 border-0"
+                />
+              </div>
+            </div>
           )}
         </div>
 
@@ -367,11 +367,10 @@ export default function Fatwa() {
             <button
               key={cat.value}
               onClick={() => setSelectedCategory(cat.value)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
-                selectedCategory === cat.value
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${selectedCategory === cat.value
                   ? "bg-white text-emerald-700 shadow-lg"
                   : "bg-emerald-800/50 text-white/80 hover:bg-emerald-800"
-              }`}
+                }`}
             >
               {cat.label}
             </button>
@@ -386,7 +385,7 @@ export default function Fatwa() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <Card 
+              <Card
                 className={`group hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br ${action.color} overflow-hidden h-full cursor-pointer`}
                 onClick={action.action}
               >
@@ -397,11 +396,11 @@ export default function Fatwa() {
                       {action.onlineCount} {action.countLabel}
                     </div>
                   )}
-                  
+
                   <div className="w-20 h-20 rounded-2xl bg-white/90 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-110 transition-transform duration-300">
                     <img src={action.image} alt={action.title} className="w-14 h-14 object-contain" />
                   </div>
-                  
+
                   <div className="flex-1 text-right">
                     <h3 className="text-lg font-bold text-gray-800 mb-2">{action.title}</h3>
                     <p className="text-sm text-gray-700">{action.description}</p>
@@ -420,9 +419,9 @@ export default function Fatwa() {
             </div>
           ) : filteredFatwas.length > 0 ? (
             filteredFatwas.map((fatwa, index) => (
-              <FatwaCard 
-                key={fatwa.id} 
-                fatwa={fatwa} 
+              <FatwaCard
+                key={fatwa.id}
+                fatwa={fatwa}
                 onClick={() => setSelectedFatwa(fatwa)}
                 isFavorited={userFavorites.includes(fatwa.id)}
                 onToggleFavorite={() => toggleFavorite(fatwa)}
@@ -438,8 +437,8 @@ export default function Fatwa() {
         </div>
 
         <FatwaRequestModal open={showRequestModal} onClose={() => setShowRequestModal(false)} />
-        <ContactModal 
-          open={showContactModal} 
+        <ContactModal
+          open={showContactModal}
           onClose={() => setShowContactModal(false)}
           requestType="fatwa"
         />
