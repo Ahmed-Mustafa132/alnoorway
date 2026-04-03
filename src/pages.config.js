@@ -16,7 +16,7 @@ import Content from './pages/Content';
 import CookiesPolicy from './pages/CookiesPolicy';
 import CourseView from './pages/CourseView';
 import Courses from './pages/Courses';
-import Docs from './pages/Docs';
+// import Docs from './pages/Docs';
 import Fatwa from './pages/Fatwa';
 import Favorites from './pages/Favorites';
 import Home from './pages/Home';
@@ -63,7 +63,7 @@ export const PAGES = {
     "CookiesPolicy": CookiesPolicy,
     "CourseView": CourseView,
     "Courses": Courses,
-    "Docs": Docs,
+    // "Docs": Docs,
     "Fatwa": Fatwa,
     "Favorites": Favorites,
     "Home": Home,
