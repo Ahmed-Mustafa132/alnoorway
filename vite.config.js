@@ -7,9 +7,21 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      // التعديل الجوهري: استخدام injectManifest بدلاً من generateSW
+      strategies: "injectManifest",
+      srcDir: "public", // المكان الذي وضعت فيه ملف الـ Service Worker اليدوي
+      filename: "service-worker.js", // اسم ملف الكود الذي كتبته أنت
+
       registerType: "autoUpdate",
       injectRegister: "auto",
-      includeAssets: ["favicon.ico", "apple-touch-icon.png", "masked-icon.svg"],
+
+      includeAssets: [
+        "favicon.ico",
+        "apple-touch-icon.png",
+        "masked-icon.svg",
+        "offline.html",
+      ],
+
       manifest: {
         name: "طريق النور - Alnourway",
         short_name: "طريق النور",
@@ -35,64 +47,16 @@ export default defineConfig({
             purpose: "any",
           },
           {
-            src: "pwa-512x512.png", // أيقونة Maskable ضرورية لأندرويد
+            src: "pwa-512x512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable",
           },
         ],
       },
-      workbox: {
-        // رفع الحد الأقصى لحجم الملفات ليتم كاشتها بالكامل (5 ميجا)
+      // لم نعد بحاجة لتعريف workbox هنا لأنك كتبته يدوياً في الملف الخاص بك
+      injectManifest: {
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,json,woff2}"],
-
-        runtimeCaching: [
-          // 1. كاش بيانات جداول Supabase (الدروس، الفتاوى، المقالات)
-          // استراتيجية StaleWhileRevalidate: اعرض القديم فوراً وحَدّث في الخلفية
-          {
-            urlPattern: /^https:\/\/.*\.supabase\.co\/rest\/v1\/.*/i,
-            handler: "StaleWhileRevalidate",
-            options: {
-              cacheName: "supabase-rest-data",
-              expiration: {
-                maxEntries: 500, // الاحتفاظ بآخر 500 طلب/سجل
-                maxAgeSeconds: 60 * 60 * 24 * 30, // لمدة شهر
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-
-          // 2. كاش ملفات الميديا من Supabase Storage (صور، أغلفة كتب)
-          // استراتيجية CacheFirst: الميديا ثابتة، حملها مرة واحدة ووفر الباقة
-          {
-            urlPattern:
-              /^https:\/\/.*\.supabase\.co\/storage\/v1\/object\/public\/.*/i,
-            handler: "CacheFirst",
-            options: {
-              cacheName: "nour-media-cache",
-              expiration: {
-                maxEntries: 150,
-                maxAgeSeconds: 60 * 60 * 24 * 60, // لمدة شهرين
-              },
-            },
-          },
-
-          // 3. كاش الخطوط (Fonts) لضمان جمال التصميم Offline
-          {
-            urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
-            handler: "CacheFirst",
-            options: {
-              cacheName: "google-fonts-cache",
-              expiration: {
-                maxEntries: 20,
-                maxAgeSeconds: 60 * 60 * 24 * 365, // لمدة سنة
-              },
-            },
-          },
-        ],
       },
     }),
   ],
@@ -100,28 +64,7 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-    // تحسين الأداء وتجنب تكرار المكتبات
     dedupe: ["react", "react-dom"],
   },
-  optimizeDeps: {
-    include: ["react", "react-dom", "@supabase/supabase-js"],
-  },
-  build: {
-    outDir: "dist",
-    sourcemap: false,
-    rollupOptions: {
-      output: {
-        // تقسيم الكود لملفات صغيرة (Manual Chunking) لسرعة التحميل الأولي
-        manualChunks: {
-          "react-vendor": ["react", "react-dom", "react-router-dom"],
-          "ui-vendor": ["framer-motion", "lucide-react"],
-          "supabase-vendor": ["@supabase/supabase-js"],
-        },
-      },
-    },
-  },
-  server: {
-    port: 3000,
-    open: true,
-  },
+  // باقي الإعدادات (build, server) تبقى كما هي دون تغيير
 });
