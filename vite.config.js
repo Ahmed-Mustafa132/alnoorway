@@ -7,21 +7,17 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      // التعديل الجوهري: استخدام injectManifest بدلاً من generateSW
       strategies: "injectManifest",
-      srcDir: "public", // المكان الذي وضعت فيه ملف الـ Service Worker اليدوي
-      filename: "service-worker.js", // اسم ملف الكود الذي كتبته أنت
-
+      srcDir: "src",
+      filename: "sw.js",
       registerType: "autoUpdate",
       injectRegister: "auto",
-
       includeAssets: [
         "favicon.ico",
         "apple-touch-icon.png",
         "masked-icon.svg",
         "offline.html",
       ],
-
       manifest: {
         name: "طريق النور - Alnourway",
         short_name: "طريق النور",
@@ -54,17 +50,29 @@ export default defineConfig({
           },
         ],
       },
-      // لم نعد بحاجة لتعريف workbox هنا لأنك كتبته يدوياً في الملف الخاص بك
       injectManifest: {
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
       },
     }),
   ],
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
+    alias: { "@": path.resolve(__dirname, "./src") },
     dedupe: ["react", "react-dom"],
   },
-  // باقي الإعدادات (build, server) تبقى كما هي دون تغيير
+  // أضف هذا الجزء تحت الـ resolve مباشرة لإصلاح مشكلة الحجم الضخم
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("lucide-react")) return "icons";
+            if (id.includes("framer-motion")) return "animations";
+            if (id.includes("@supabase")) return "supabase";
+            return "vendor";
+          }
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+  },
 });
