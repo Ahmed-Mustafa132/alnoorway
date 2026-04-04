@@ -3,7 +3,7 @@
 // 1. تعريف قائمة الملفات التي ينتجها Vite تلقائياً
 // ستقوم أداة Build باستبدال self.__WB_MANIFEST بمصفوفة الملفات الحقيقية
 const precacheManifest = self.__WB_MANIFEST || [];
-const CACHE_NAME = "alnoorway-v6"; // تحديث الإصدار لإجبار متصفح أسامة على التحديث
+const CACHE_NAME = "alnoorway-v5"; // تحديث الإصدار لإجبار متصفح أسامة على التحديث
 
 const APP_SHELL = [
   "/",
