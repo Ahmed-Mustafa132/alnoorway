@@ -18,34 +18,36 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log("Caching Assets...");
-      
-      // تحويل الـ Manifest لروابط نصية
-      const manifestUrls = precacheManifest.map((entry) =>
-        typeof entry === "string" ? entry : entry.url
-      );
 
-      // دمج القوائم وحذف التكرار باستخدام Set (لحل خطأ InvalidStateError)
-      const allAssets = [...APP_SHELL, ...manifestUrls];
-      const uniqueAssets = [...new Set(allAssets)]; 
+      // توحيد جميع الروابط لصيغة المطلقة (Absolute URLs) قبل حذف التكرار
+      const allAssets = [
+        ...APP_SHELL,
+        ...precacheManifest.map((e) => (typeof e === "string" ? e : e.url)),
+      ].map((url) => new URL(url, self.location.origin).href);
+
+      const uniqueAssets = [...new Set(allAssets)];
 
       return cache.addAll(uniqueAssets);
-    })
+    }),
   );
 });
 
 // 3. مرحلة التفعيل: حذف الكاش القديم فوراً
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            console.log("Removing old cache:", key);
-            return caches.delete(key);
-          }
-        })
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(
+          keys.map((key) => {
+            if (key !== CACHE_NAME) {
+              console.log("Removing old cache:", key);
+              return caches.delete(key);
+            }
+          }),
+        ),
       )
-    ).then(() => self.clients.claim())
+      .then(() => self.clients.claim()),
   );
 });
 
@@ -59,7 +61,7 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       fetch(request).catch(() => {
         return caches.match("/index.html") || caches.match("/offline.html");
-      })
+      }),
     );
     return;
   }
@@ -75,14 +77,16 @@ self.addEventListener("fetch", (event) => {
         return (
           cached ||
           fetch(request).then((response) => {
-            if (response.ok) {
+            if (response.ok && request.method === "GET") {
               const clone = response.clone();
-              caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+              caches
+                .open(CACHE_NAME)
+                .then((cache) => cache.put(request, clone));
             }
             return response;
           })
         );
-      })
+      }),
     );
     return;
   }
@@ -92,13 +96,13 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          if (response.status === 200) {
+          if (response.status === 200 && request.method === "GET") {
             const clone = response.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
           }
           return response;
         })
-        .catch(() => caches.match(request))
+        .catch(() => caches.match(request)),
     );
     return;
   }
@@ -116,6 +120,6 @@ self.addEventListener("fetch", (event) => {
           return response;
         })
       );
-    })
+    }),
   );
 });
