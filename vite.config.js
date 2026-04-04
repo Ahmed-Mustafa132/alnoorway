@@ -28,7 +28,6 @@ export default defineConfig({
         orientation: "portrait",
         dir: "rtl",
         lang: "ar",
-        categories: ["education", "religious"],
         icons: [
           {
             src: "pwa-192x192.png",
@@ -59,7 +58,6 @@ export default defineConfig({
     alias: { "@": path.resolve(__dirname, "./src") },
     dedupe: ["react", "react-dom"],
   },
-  // أضف هذا الجزء تحت الـ resolve مباشرة لإصلاح مشكلة الحجم الضخم
   build: {
     rollupOptions: {
       output: {
