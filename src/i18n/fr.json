@@ -14,6 +14,7 @@
 
   "settings": "Paramètres",
   "dashboard": "Tableau de bord",
+  "quick_links": "",
   "content_management": "Gestion du contenu",
   "tech_docs": "Docs Techniques",
   "advanced_analytics": "Analyses",
@@ -371,7 +372,7 @@
   "contact_now": "Contacter maintenant",
   "send_message": "Envoyer un message",
   "no_muftis_available": "Aucun savant disponible",
-  "contact_teacher_itle": "Contacter un Enseignant de Coran",
+  "contact_teacher_title": "Contacter un Enseignant de Coran",
   "contact_teacher_subtitle": "Aide pour la mémorisation et la récitation",
   "no_teachers_available": "Aucun enseignant disponible",
   "no_teachers_message": "Envoyez une demande, nous vous répondrons bientôt",

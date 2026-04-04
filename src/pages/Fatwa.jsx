@@ -292,7 +292,7 @@ export default function Fatwa() {
           <div className="relative">
             <Input
               id="search-input"
-              placeholder={t('search_fatwa_placeholder')}
+              placeholder={t('fatwa_search_placeholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pr-12 py-6 text-lg bg-white/95 dark:bg-gray-800/90 backdrop-blur-sm rounded-full border-0 shadow-lg dark:text-white dark:placeholder-gray-400"

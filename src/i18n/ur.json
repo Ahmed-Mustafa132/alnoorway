@@ -14,6 +14,8 @@
 
   "settings": "ترجیحات",
   "dashboard": "ڈیش بورڈ",
+  "quick_links": "فوری لنکس",
+
   "content_management": "مواد کا انتظام",
   "tech_docs": "تکنیکی دستاویزات",
   "advanced_analytics": "تجزیات",
@@ -372,7 +374,7 @@
   "send_message": "پیغام بھیجیں",
   "no_muftis_available": "فی الحال کوئی عالم دستیاب نہیں ہے",
   "contact_teacher_itle": "قرآن اساتذہ سے رابطہ کریں",
-  "contact_teacher_subtitle": "حفظ اور تلاوت کی رہنمائی کے لیے اساتذہ سے رابطہ کریں",
+  "contact_teacher_title": "حفظ اور تلاوت کی رہنمائی کے لیے اساتذہ سے رابطہ کریں",
   "no_teachers_available": "فی الحال کوئی استاد دستیاب نہیں ہے",
   "no_teachers_message": "آپ درخواست بھیج سکتے ہیں، ہم جلد رابطہ کریں گے",
   "content_library": "مواد کی لائبریری",
