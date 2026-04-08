@@ -1,13 +1,12 @@
-import { CapacitorConfig } from '@capacitor/cli';
+import { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: 'com.osama.alnoorway',
-  appName: 'Alnoorway',
-  webDir: 'dist',
+  appId: "com.osama.alnoorway",
+  appName: "Alnoorway",
+  webDir: "dist",
   server: {
-    url: 'https://www.alnoorway.com',
-    cleartext: true
-  }
+    androidScheme: "https",
+  },
 };
 
 export default config;

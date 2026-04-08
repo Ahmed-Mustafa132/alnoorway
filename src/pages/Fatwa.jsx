@@ -368,8 +368,8 @@ export default function Fatwa() {
               key={cat.value}
               onClick={() => setSelectedCategory(cat.value)}
               className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${selectedCategory === cat.value
-                  ? "bg-white text-emerald-700 shadow-lg"
-                  : "bg-emerald-800/50 text-white/80 hover:bg-emerald-800"
+                ? "bg-white text-emerald-700 shadow-lg"
+                : "bg-emerald-800/50 text-white/80 hover:bg-emerald-800"
                 }`}
             >
               {cat.label}

@@ -1,0 +1,30 @@
+name: iOS Build
+on:
+  push:
+    branches: [ main ] # هيشتغل أول ما تعمل push على main
+
+jobs:
+  build:
+    runs-on: macos-latest # هنا السحر.. GitHub هيشغل جهاز Mac من عنده
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Web Project
+        run: npm run build
+
+      - name: Capacitor Sync
+        run: |
+          npx cap sync ios
+
+      - name: Build iOS App
+        run: |
+          cd ios/App
+          xcodebuild -workspace App.xcworkspace -scheme App -sdk iphoneos -configuration Release archive -archivePath App.xcarchive
