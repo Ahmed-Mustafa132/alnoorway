@@ -5,14 +5,15 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest # هنا السحر.. GitHub هيشغل جهاز Mac من عنده
+    runs-on: macos-latest # تشغيل على سيرفر ماك
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Source Code
+        uses: actions/checkout@v3
 
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 24.6.0  
+          node-version: 20 # نسخة مستقرة لضمان عمل Capacitor بدون مشاكل
 
       - name: Install Dependencies
         run: npm install
@@ -20,11 +21,35 @@ jobs:
       - name: Build Web Project
         run: npm run build
 
-      - name: Capacitor Sync
+      - name: Initialize and Sync Capacitor iOS
         run: |
+          # تثبيت الأدوات اللازمة داخل السيرفر
+          npm install @capacitor/cli @capacitor/core @capacitor/ios
+
+          # التأكد من وجود مجلد الـ ios، ولو مش موجود يتم إنشاؤه
+          if [ ! -d "ios" ]; then
+            npx cap add ios
+          else
+            echo "iOS folder already exists, syncing..."
+          fi
+
+          # عمل المزامنة لنقل ملفات الـ Web إلى الـ Native
           npx cap sync ios
 
-      - name: Build iOS App
+      - name: Build iOS App (Archive)
         run: |
           cd ios/App
-          xcodebuild -workspace App.xcworkspace -scheme App -sdk iphoneos -configuration Release archive -archivePath App.xcarchive
+          # بناء الـ Archive - لاحظ أن هذا البناء قد يفشل إذا لم تتوفر شهادات التوقيع
+          # استخدمنا أمر يكتفي بالبناء فقط للتأكد من سلامة الكود
+          xcodebuild -workspace App.xcworkspace \
+                     -scheme App \
+                     -sdk iphoneos \
+                     -configuration Release \
+                     archive -archivePath App.xcarchive \
+                     CODE_SIGNING_ALLOWED=NO
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-app-archive
+          path: ios/App/App.xcarchive
