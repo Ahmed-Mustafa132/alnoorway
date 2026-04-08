@@ -8,12 +8,12 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # حدثنا النسخة لتجنب التحذيرات
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4 # حدثنا النسخة لتجنب التحذيرات
         with:
-          node-version: 22 # تم التحديث للنسخة المطلوبة من Capacitor CLI
+          node-version: 22
 
       - name: Install Dependencies
         run: npm install
@@ -23,28 +23,24 @@ jobs:
 
       - name: Initialize and Sync Capacitor iOS
         run: |
-          # تثبيت أحدث إصدارات Capacitor لتجنب التعارض
           npm install @capacitor/cli@latest @capacitor/core@latest @capacitor/ios@latest
 
-          if [ ! -d "ios" ]; then
-            npx cap add ios
-          else
-            echo "iOS folder already exists, syncing..."
-          fi
-
+          # مسح مجلد ios القديم لو موجود لضمان بناء نظيف بالنسخة الجديدة
+          rm -rf ios
+          npx cap add ios
           npx cap sync ios
 
-      - name: Build iOS App (Archive)
+      - name: Build iOS App (Xcode Project)
         run: |
+          # في النسخة الجديدة، بنبني الـ Project نفسه مش الـ Workspace لو ملقيناهوش
           cd ios/App
-          # بناء الـ Archive مع تخطي التوقيع مؤقتاً للتأكد من سلامة الكود
-          xcodebuild -workspace App.xcworkspace \
-                     -scheme App \
-                     -sdk iphoneos \
-                     -configuration Release \
-                     archive -archivePath App.xcarchive \
-                     CODE_SIGNING_ALLOWED=NO \
-                     CODE_SIGNING_REQUIRED=NO
+
+          # أمر بناء مرن: بيجرب يبني الـ Workspace ولو ملقاهوش بيبني الـ Project
+          if [ -d "App.xcworkspace" ]; then
+            xcodebuild -workspace App.xcworkspace -scheme App -sdk iphoneos -configuration Release archive -archivePath App.xcarchive CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+          else
+            xcodebuild -project App.xcodeproj -scheme App -sdk iphoneos -configuration Release archive -archivePath App.xcarchive CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+          fi
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
