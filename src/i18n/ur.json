@@ -20,6 +20,8 @@
   "tech_docs": "تکنیکی دستاویزات",
   "advanced_analytics": "تجزیات",
   "logout": "لاگ آؤٹ",
+  "login_with_google": "گوگل کے ساتھ سائن ان کریں۔",
+  "login_with_apple": "ایپل کے ساتھ سائن ان کریں۔",
 
   "search_placeholder": "تلاش کریں...",
   "join_team": "ہماری ٹیم میں شامل ہوں",
@@ -307,6 +309,9 @@
   "share_article": "مضمون شیئر کریں",
   "signup_success": "اکاؤنٹ کامیابی سے بن گیا! اب آپ لاگ ان کر سکتے ہیں۔",
   "login_success": "لاگ ان کامیاب! خوش آمدید۔",
+  "continue_with_google": "گوگل کے ساتھ جاری رکھیں",
+  "continue_with_apple": "ایپل کے ساتھ جاری رکھیں",
+  "oauth_note": "جلدی اور محفوظ طریقے سے سائن ان کرنے کے لیے گوگل یا ایپل استعمال کریں۔",
   "processing": "کارروائی ہو رہی ہے...",
   "signup": "سائن اپ",
   "create_account": "اکاؤنٹ بنائیں",

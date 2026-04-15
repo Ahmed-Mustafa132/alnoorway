@@ -170,7 +170,8 @@
   "user": "Utilisateur",
   "not_logged_in": "Non connecté",
   "please_login_to_access_account": "Veuillez vous connecter pour accéder à votre compte",
-
+  "login_with_google": "Se connecter avec Google",
+  "login_with_apple": "Se connecter avec Apple",
   "total_users": "Total Utilisateurs",
   "total_views": "Total Vues",
   "total_likes": "Total J'aime",

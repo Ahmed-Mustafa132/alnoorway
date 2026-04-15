@@ -8,9 +8,9 @@ workflows:
         - appstore_credentials
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.osama.alnoorway
+        bundle_identifier: com.alnoorway.app # تم التعديل ليطابق حساب أبل
       vars:
-        XCODE_PROJECT: "$CM_BUILD_DIR/ios/App/App.xcodeproj"
+        XCODE_PROJECT: "ios/App/App.xcodeproj"
         XCODE_SCHEME: "App"
       xcode: latest
       cocoapods: default
@@ -44,8 +44,9 @@ workflows:
           echo "$APP_STORE_CONNECT_PRIVATE_KEY" > ~/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_IDENTIFIER}.p8
       - name: Upload to App Store Connect
         script: |
+          # استخدمنا find لضمان الوصول للملف المرفوع
           app-store-connect publish \
-            --path build/ios/ipa/App.ipa \
+            --path $(find build/ios/ipa -name "*.ipa" | head -n 1) \
             --apple-id 6758340330 \
             --key-id $APP_STORE_CONNECT_KEY_IDENTIFIER \
             --issuer-id $APP_STORE_CONNECT_ISSUER_ID \
@@ -57,4 +58,4 @@ workflows:
     publishing:
       email:
         recipients:
-          - osakr100@gmail.com
+          - ahmedmustafa0384@gmail.com

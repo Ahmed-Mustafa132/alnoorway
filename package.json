@@ -1,19 +1,8 @@
 {
-  "name": "alnoorway",
-  "version": "1.0.0",
-  "description": "",
-  "homepage": "https://github.com/Ahmed-Mustafa132/alnoorway#readme",
-  "bugs": {
-    "url": "https://github.com/Ahmed-Mustafa132/alnoorway/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Ahmed-Mustafa132/alnoorway.git"
-  },
-  "license": "ISC",
-  "author": "",
+  "name": "alnourway",
+  "private": true,
+  "version": "0.0.0",
   "type": "module",
-  "main": "eslint.config.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

@@ -61,6 +61,7 @@ export default function Admin() {
       // 4. حفظ بيانات المستخدم
       setUser({ ...authUser, role: profileData.role });
 
+
     } catch (error) {
       console.error("Error loading user:", error);
       window.location.href = '/';
@@ -393,7 +394,7 @@ export default function Admin() {
     {
       id: "scholars",
       title: t("scholars"),
-      icon: User,
+      icon: Users,
       entity: "Scholar",
       supportsBulkUpload: true,
       fields: [

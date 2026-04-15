@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { supabase } from "@/components/api/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, Mail, Phone, MessageSquare, BookOpen, Globe, Sparkles } from "lucide-react";
+import { User, BookOpen, Globe, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
 import ContactModal from "@/components/ContactModal";
 import OnlineIndicator from "@/components/OnlineIndicator";
@@ -13,20 +13,32 @@ export default function ContactScholar() {
   const { t } = useLanguage();
   const [showContactModal, setShowContactModal] = useState(false);
   const [selectedScholar, setSelectedScholar] = useState(null);
-
   const [onlineFilter, setOnlineFilter] = useState(false);
 
-  const { data: scholars, isLoading } = useQuery({
+  // 1. تعريف الوظيفة المساعدة في الأعلى لتجنب الـ ReferenceError
+  const isScholarOnline = (scholar) => {
+    // التحقق من حالة التواجد الحقيقية من قاعدة البيانات
+    return scholar?.is_available === true;
+  };
+
+  // 2. جلب البيانات باستخدام React Query
+  const { data: scholars = [], isLoading } = useQuery({
     queryKey: ['scholars_mufti'],
     queryFn: async () => {
-      // Fetch all scholars first, then we can simulate online status or filter
-      const { data, error } = await supabase.from('Scholar').select('*').eq('type', 'mufti');
-      if (error) throw error;
-      return data;
-    },
-    initialData: [],
+      const { data, error } = await supabase
+        .from('Scholar')
+        .select('*')
+        .eq('type', 'mufti');
+
+      if (error) {
+        console.error("Error fetching scholars:", error);
+        throw error;
+      }
+      return data || [];
+    }
   });
 
+  // 3. العمليات الحسابية والفلترة (تتم بعد التأكد من وجود المصفوفة)
   const onlineCount = scholars.filter(s => isScholarOnline(s)).length;
 
   const displayedScholars = onlineFilter
@@ -36,12 +48,6 @@ export default function ContactScholar() {
   const handleContact = (scholar) => {
     setSelectedScholar(scholar);
     setShowContactModal(true);
-  };
-
-  // محاكاة حالة Online (في التطبيق الحقيقي، ستأتي من قاعدة البيانات)
-  const isScholarOnline = (scholar) => {
-    // يمكن إضافة منطق حقيقي هنا - مثلاً التحقق من آخر نشاط
-    return Math.random() > 0.5;
   };
 
   return (
@@ -80,9 +86,7 @@ export default function ContactScholar() {
                 {onlineCount}
                 <span className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-400/50"></span>
               </span>
-              <span className="text-sm">
-                {t('online_now')}
-              </span>
+              <span className="text-sm">{t('online_now')}</span>
             </div>
           </div>
         </motion.div>
@@ -106,15 +110,11 @@ export default function ContactScholar() {
                     <CardHeader className="text-center pb-4 relative">
                       <div className="w-24 h-24 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center mx-auto mb-4 shadow-xl relative">
                         <User className="w-12 h-12 text-white" />
-                        <div className="absolute bottom-0 right-0">
-                          <OnlineIndicator isOnline={isOnline} size="lg" />
+                        <div className="absolute bottom-0 right-0">ذ
                         </div>
                       </div>
                       <CardTitle className="text-2xl mb-2">{scholar.name}</CardTitle>
-                      <span className={`inline-flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full ${isOnline
-                        ? 'text-emerald-600 bg-emerald-50'
-                        : 'text-red-600 bg-red-50'
-                        }`}>
+                      <span className={`inline-flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full ${isOnline ? 'text-emerald-600 bg-emerald-50' : 'text-red-600 bg-red-50'}`}>
                         <OnlineIndicator isOnline={isOnline} size="sm" />
                         {isOnline ? t('online') : t('offline')}
                       </span>
@@ -129,7 +129,6 @@ export default function ContactScholar() {
                           </div>
                         </div>
                       )}
-
                       {scholar.languages && scholar.languages.length > 0 && (
                         <div className="flex items-start gap-2">
                           <Globe className="w-5 h-5 text-emerald-600 mt-1 flex-shrink-0" />
@@ -145,11 +144,6 @@ export default function ContactScholar() {
                           </div>
                         </div>
                       )}
-
-                      {scholar.bio && (
-                        <p className="text-gray-600 text-sm leading-relaxed">{scholar.bio}</p>
-                      )}
-
                       <Button
                         onClick={() => handleContact(scholar)}
                         className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700"

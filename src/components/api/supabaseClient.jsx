@@ -8,3 +8,17 @@ if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KE
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+const supabaseRedirectTo = import.meta.env.VITE_SUPABASE_REDIRECT_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+
+export const signInWithProvider = async (provider) => {
+  return supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: supabaseRedirectTo,
+    },
+  });
+};
+
+export const signInWithGoogle = () => signInWithProvider('google');
+export const signInWithApple = () => signInWithProvider('apple');

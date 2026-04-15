@@ -106,7 +106,7 @@ export default function AIGuide() {
       if (error) throw error;
 
       // Parse response for recommendations
-      // Assuming res returns { text: "..." } or similar, adapting based on typical response
+      // Assuming res returns { text: "..." } or similar, adapting based on typic al response
       let content = res?.text || res || ""; // Fallback
 
       let recommendations = [];
