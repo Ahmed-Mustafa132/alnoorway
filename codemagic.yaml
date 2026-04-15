@@ -8,7 +8,7 @@ workflows:
         - appstore_credentials
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.alnoorway.app # تم التعديل ليطابق حساب أبل
+        bundle_identifier: com.osama.alnoorway # تم التعديل ليطابق حساب أبل
       vars:
         XCODE_PROJECT: "ios/App/App.xcodeproj"
         XCODE_SCHEME: "App"
