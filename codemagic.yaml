@@ -7,12 +7,8 @@ workflows:
       groups:
         - appstore_credentials
       ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.alnoorway.app
-        # إضافة المرجع للبروفايل اللي سميناه في الـ UI
         provisioning_profiles:
           - alnoorway_profile
-        # إضافة المرجع للشهادة (تأكد أن اسمها في الـ UI هو alnoorway_cert مثلاً)
         certificates:
           - alnoorway_cert
       vars:
@@ -45,4 +41,4 @@ workflows:
     publishing:
       email:
         recipients:
-          - ahmedmustafa0384@gmail.com
+          - osakr100@gmail.com
