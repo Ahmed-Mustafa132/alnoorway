@@ -4,58 +4,41 @@ workflows:
     max_build_duration: 60
     instance_type: mac_mini_m1
     environment:
+      # تأكد من ربط الـ API Key في إعدادات التطبيق تحت اسم هذه المجموعة
       groups:
-        - appstore_credentials
+        - appstore_credentials 
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.osama.alnoorway # تم التعديل ليطابق حساب أبل
+        bundle_identifier: com.alnoorway.app # تأكد أنه يطابق أبل
       vars:
         XCODE_PROJECT: "ios/App/App.xcodeproj"
         XCODE_SCHEME: "App"
+        APP_ID: "6758340330" # Apple ID بتاع تطبيقك
       xcode: latest
       cocoapods: default
-    triggering:
-      events:
-        - push
-      branch_patterns:
-        - pattern: main
-          include: true
     scripts:
       - name: Install dependencies
-        script: |
-          npm install
+        script: npm install
       - name: Build web app
-        script: |
-          npm run build
+        script: npm run build
       - name: Sync Capacitor iOS
-        script: |
-          npx cap sync ios
-      - name: Set up code signing settings on Xcode project
-        script: |
-          xcode-project use-profiles
+        script: npx cap sync ios
+      - name: Set up code signing
+        script: xcode-project use-profiles # سيبحث عن البروفايل في حسابك أوتوماتيكياً
       - name: Build ipa for distribution
         script: |
           xcode-project build-ipa \
             --project "$XCODE_PROJECT" \
             --scheme "$XCODE_SCHEME"
-      - name: Prepare API Key
+      - name: Publish to App Store Connect
         script: |
-          mkdir -p ~/private_keys
-          echo "$APP_STORE_CONNECT_PRIVATE_KEY" > ~/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_IDENTIFIER}.p8
-      - name: Upload to App Store Connect
-        script: |
-          # استخدمنا find لضمان الوصول للملف المرفوع
+          # الرفع التلقائي باستخدام الـ API Key المربوط
           app-store-connect publish \
             --path $(find build/ios/ipa -name "*.ipa" | head -n 1) \
-            --apple-id 6758340330 \
-            --key-id $APP_STORE_CONNECT_KEY_IDENTIFIER \
-            --issuer-id $APP_STORE_CONNECT_ISSUER_ID \
-            --private-key @file:~/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_IDENTIFIER}.p8 \
-            --testflight
+            --apple-id "$APP_ID"
     artifacts:
       - build/ios/ipa/*.ipa
-      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
     publishing:
       email:
         recipients:
-          - ahmedmustafa0384@gmail.com
+          - osakr100@gmail.com
