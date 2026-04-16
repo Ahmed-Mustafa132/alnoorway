@@ -7,10 +7,8 @@ workflows:
       groups:
         - appstore_credentials
       ios_signing:
-        provisioning_profiles:
-          - alnoorway_profile
-        certificates:
-          - alnoorway_cert
+        distribution_type: app_store
+        bundle_identifier: com.alnoorway.app
       vars:
         XCODE_PROJECT: "ios/App/App.xcodeproj"
         XCODE_SCHEME: "App"
