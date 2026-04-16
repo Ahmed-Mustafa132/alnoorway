@@ -4,16 +4,21 @@ workflows:
     max_build_duration: 60
     instance_type: mac_mini_m1
     environment:
-      # تأكد من ربط الـ API Key في إعدادات التطبيق تحت اسم هذه المجموعة
       groups:
-        - appstore_credentials 
+        - appstore_credentials
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.alnoorway.app # تأكد أنه يطابق أبل
+        bundle_identifier: com.alnoorway.app
+        # إضافة المرجع للبروفايل اللي سميناه في الـ UI
+        provisioning_profiles:
+          - alnoorway_profile
+        # إضافة المرجع للشهادة (تأكد أن اسمها في الـ UI هو alnoorway_cert مثلاً)
+        certificates:
+          - alnoorway_cert
       vars:
         XCODE_PROJECT: "ios/App/App.xcodeproj"
         XCODE_SCHEME: "App"
-        APP_ID: "6758340330" # Apple ID بتاع تطبيقك
+        APP_ID: "6758340330"
       xcode: latest
       cocoapods: default
     scripts:
@@ -24,7 +29,7 @@ workflows:
       - name: Sync Capacitor iOS
         script: npx cap sync ios
       - name: Set up code signing
-        script: xcode-project use-profiles # سيبحث عن البروفايل في حسابك أوتوماتيكياً
+        script: xcode-project use-profiles
       - name: Build ipa for distribution
         script: |
           xcode-project build-ipa \
@@ -32,7 +37,6 @@ workflows:
             --scheme "$XCODE_SCHEME"
       - name: Publish to App Store Connect
         script: |
-          # الرفع التلقائي باستخدام الـ API Key المربوط
           app-store-connect publish \
             --path $(find build/ios/ipa -name "*.ipa" | head -n 1) \
             --apple-id "$APP_ID"
@@ -41,4 +45,4 @@ workflows:
     publishing:
       email:
         recipients:
-          - osakr100@gmail.com
+          - ahmedmustafa0384@gmail.com
