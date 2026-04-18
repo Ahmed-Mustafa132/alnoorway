@@ -1,31 +1,29 @@
 workflows:
-  ios-capacitor-build:
-    name: iOS Capacitor Build
-    max_build_duration: 60
-    instance_type: mac_mini_m1
+  ios-alnoorway-auto:
+    name: AlNoorway iOS Auto Flow
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: codemagic
     environment:
-      groups:
-        - appstore_credentials
       ios_signing:
-        provisioning_profiles:
-          - alnoorway_profile
-        certificates:
-          - alnoorway_cert
+        distribution_type: app_store
+        bundle_identifier: com.alnoorway.app
       vars:
         XCODE_PROJECT: "ios/App/App.xcodeproj"
         XCODE_SCHEME: "App"
         APP_ID: "6758340330"
+      node: latest
       xcode: latest
-      cocoapods: default
     scripts:
       - name: Install dependencies
         script: npm install
-      - name: Build web app
-        script: npm run build
-      - name: Sync Capacitor iOS
-        script: npx cap sync ios
+      - name: Build web app and Sync
+        script: |
+          npm run build
+          npx cap sync ios
       - name: Set up code signing
-        script: xcode-project use-profiles
+        script: xcode-project use-profiles --bundle-id com.alnoorway.app
       - name: Build ipa for distribution
         script: |
           xcode-project build-ipa \
@@ -35,10 +33,12 @@ workflows:
         script: |
           app-store-connect publish \
             --path $(find build/ios/ipa -name "*.ipa" | head -n 1) \
-            --apple-id "$APP_ID"
+            --apple-id "$APP_ID" \
+            --testflight
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
       email:
         recipients:
           - osakr100@gmail.com
+          - ahmedmustafa0384@gmail.com
