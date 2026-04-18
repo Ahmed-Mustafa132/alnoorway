@@ -33,6 +33,7 @@ workflows:
         script: |
           app-store-connect publish \
             --path $(find build/ios/ipa -name "*.ipa" | head -n 1) \
+            --bundle-id "com.alnoorway.app" \
             --apple-id "$APP_ID" \
             --testflight
     artifacts:
