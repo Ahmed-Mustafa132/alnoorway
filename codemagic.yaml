@@ -31,9 +31,12 @@ workflows:
             --scheme "$XCODE_SCHEME"
       - name: Publish to App Store Connect
         script: |
+          # ابحث عن ملف الـ IPA الناتج
+          IPA_PATH=$(find build/ios/ipa -name "*.ipa" | head -n 1)
+
+          # الرفع بدون سطر الـ bundle-id اللي عامل المشكلة
           app-store-connect publish \
-            --path $(find build/ios/ipa -name "*.ipa" | head -n 1) \
-            --bundle-id "com.alnoorway.app" \
+            --path "$IPA_PATH" \
             --apple-id "$APP_ID" \
             --testflight
     artifacts:
