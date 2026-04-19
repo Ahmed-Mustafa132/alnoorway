@@ -12,7 +12,7 @@ workflows:
       vars:
         XCODE_PROJECT: "ios/App/App.xcodeproj"
         XCODE_SCHEME: "App"
-        APP_ID: "6762559077"
+        APP_ID: "6762559077" # اتأكدت إن ده الـ Apple ID الجديد بتاعك
       node: latest
       xcode: latest
     scripts:
@@ -31,14 +31,13 @@ workflows:
             --scheme "$XCODE_SCHEME"
       - name: Publish to App Store Connect
         script: |
-          # ابحث عن ملف الـ IPA الناتج
+          # البحث عن ملف الـ IPA
           IPA_PATH=$(find build/ios/ipa -name "*.ipa" | head -n 1)
-
-          # الرفع بدون سطر الـ bundle-id اللي عامل المشكلة
+          
+          # الرفع فقط للسيرفر بدون طلب مراجعة أوتوماتيكي
           app-store-connect publish \
             --path "$IPA_PATH" \
-            --apple-id "$APP_ID" \
-            --testflight
+            --apple-id "$APP_ID"
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
