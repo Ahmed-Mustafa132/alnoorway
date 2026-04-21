@@ -1,125 +1,73 @@
 /* eslint-disable no-restricted-globals */
 
-// 1. تعريف قائمة الملفات التي ينتجها Vite تلقائياً
-const precacheManifest = self.__WB_MANIFEST || [];
-const CACHE_NAME = "alnoorway-v6"; // تم الرفع لـ v6 لضمان تجاوز الكاش القديم
+const CACHE_NAME = "alnoorway-pro-v1"; // اسم جديد لضمان النظافة
 
 const APP_SHELL = [
   "/",
   "/index.html",
-  "/offline.html",
   "/manifest.json",
   "/favicon.ico",
+  // ضيف هنا أهم المسارات اللي المستخدم بيحتاجها أوفلاين
 ];
 
-// 2. مرحلة التثبيت: تنظيف القائمة وتخزينها
 self.addEventListener("install", (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log("Caching Assets...");
-
-      // توحيد جميع الروابط لصيغة المطلقة (Absolute URLs) قبل حذف التكرار
-      const allAssets = [
-        ...APP_SHELL,
-        ...precacheManifest.map((e) => (typeof e === "string" ? e : e.url)),
-      ].map((url) => new URL(url, self.location.origin).href);
-
-      const uniqueAssets = [...new Set(allAssets)];
-
-      return cache.addAll(uniqueAssets);
-    }),
+      // تخزين الهيكل الأساسي للتطبيق
+      return cache.addAll(APP_SHELL);
+    })
   );
 });
 
-// 3. مرحلة التفعيل: حذف الكاش القديم فوراً
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches
-      .keys()
-      .then((keys) =>
-        Promise.all(
-          keys.map((key) => {
-            if (key !== CACHE_NAME) {
-              console.log("Removing old cache:", key);
-              return caches.delete(key);
-            }
-          }),
-        ),
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) return caches.delete(key);
+        })
       )
-      .then(() => self.clients.claim()),
+    ).then(() => self.clients.claim())
   );
 });
 
-// 4. إدارة الطلبات (Fetch Strategy)
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // أ - طلبات التنقل (التعامل مع الصفحة البيضاء)
+  // 1. التعامل مع صفحات الملاحة (Offline Mode)
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request).catch(() => {
-        return caches.match("/index.html") || caches.match("/offline.html");
-      }),
+      fetch(request).catch(() => caches.match("/index.html"))
     );
     return;
   }
 
-  // ب - الأصول الخارجية (Images & Fonts)
-  if (
-    url.hostname.includes("cloudinary.com") ||
-    url.hostname.includes("gstatic.com") ||
-    url.hostname.includes("googleapis.com")
-  ) {
+  // 2. استراتيجية Stale-While-Revalidate لبيانات Supabase والمحتوى الثابت
+  // دي بتخلي التطبيق يفتح فوراً بالبيانات القديمة ويحدثها في الخلفية
+  if (url.hostname.includes("supabase.co") || url.pathname.includes("/assets/")) {
     event.respondWith(
-      caches.match(request).then((cached) => {
-        return (
-          cached ||
-          fetch(request).then((response) => {
-            if (response.ok && request.method === "GET") {
-              const clone = response.clone();
-              caches
-                .open(CACHE_NAME)
-                .then((cache) => cache.put(request, clone));
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.match(request).then((cachedResponse) => {
+          const fetchedResponse = fetch(request).then((networkResponse) => {
+            if (networkResponse.status === 200) {
+              cache.put(request, networkResponse.clone());
             }
-            return response;
-          })
-        );
-      }),
+            return networkResponse;
+          }).catch(() => cachedResponse); // لو مفيش نت خالص يرجع الكاش
+
+          return cachedResponse || fetchedResponse;
+        });
+      })
     );
     return;
   }
 
-  // ج - طلبات Supabase (Network First مع الرجوع للكاش)
-  if (url.hostname.includes("supabase.co")) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          if (response.status === 200 && request.method === "GET") {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-          }
-          return response;
-        })
-        .catch(() => caches.match(request)),
-    );
-    return;
-  }
-
-  // د - الملفات الثابتة (Static Assets)
+  // 3. أي طلبات أخرى (Cache First للملفات المحلية)
   event.respondWith(
-    caches.match(request).then((cached) => {
-      return (
-        cached ||
-        fetch(request).then((response) => {
-          if (response.ok && request.method === "GET") {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-          }
-          return response;
-        })
-      );
-    }),
+    caches.match(request).then((response) => {
+      return response || fetch(request);
+    })
   );
 });

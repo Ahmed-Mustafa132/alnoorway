@@ -8,6 +8,11 @@ import { BookOpen, Users, MapPin, Video, Heart, Sparkles, MessageCircle, CheckCi
 import { motion } from "framer-motion";
 import ContactModal from "@/components/ContactModal";
 import { useLanguage } from "@/contexts/LanguageContext";
+import pillars_of_islam_aex0p2 from "@/assets/pillars_of_islam_aex0p2.png";
+import Islamic_preacher_zuhvhn from "@/assets/Islamic_preacher_zuhvhn.png";
+import Islamic_Centers_q7ratq from "@/assets/Islamic_Centers_q7ratq.png";
+import Lecture_Library_ikrogf from "@/assets/Lecture_Library_ikrogf.png";
+import Stories_of_those_who_converted_to_Islam_zuqxga from "@/assets/Stories_of_those_who_converted_to_Islam_zuqxga.png";
 
 export default function LearnIslam() {
   const { t } = useLanguage();
@@ -19,7 +24,7 @@ export default function LearnIslam() {
       title: t('principles_title'),
       description: t('principles_desc'),
       color: "from-blue-100 to-blue-200",
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612734/pillars_of_islam_aex0p2.png",
+      image: pillars_of_islam_aex0p2,
       action: () => window.scrollTo({ top: document.getElementById('principles').offsetTop - 100, behavior: 'smooth' })
     },
     {
@@ -27,7 +32,7 @@ export default function LearnIslam() {
       title: t('contact_preacher'),
       description: t('contact_preacher_desc'),
       color: "from-emerald-100 to-emerald-200",
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612685/Islamic_preacher_zuhvhn.png",
+      image: Islamic_preacher_zuhvhn,
       link: createPageUrl("ContactPreacher")
     },
     {
@@ -35,7 +40,7 @@ export default function LearnIslam() {
       title: t('find_center'),
       description: t('find_center_desc'),
       color: "from-purple-100 to-purple-200",
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612647/Islamic_Centers_q7ratq.png",
+      image: Islamic_Centers_q7ratq,
       link: createPageUrl("IslamicCenters")
     },
     {
@@ -43,7 +48,7 @@ export default function LearnIslam() {
       title: t('lectures_library'),
       description: t('lectures_desc'),
       color: "from-rose-100 to-rose-200",
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612733/Lecture_Library_ikrogf.png",
+      image: Lecture_Library_ikrogf,
       link: createPageUrl("Lectures?category=learn_islam")
     },
     {
@@ -51,7 +56,7 @@ export default function LearnIslam() {
       title: t('convert_stories'),
       description: t('convert_stories_desc'),
       color: "from-amber-100 to-amber-200",
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612644/Stories_of_those_who_converted_to_Islam_zuqxga.png",
+      image: Stories_of_those_who_converted_to_Islam_zuqxga,
       link: createPageUrl("Stories?type=convert")
     }
   ];

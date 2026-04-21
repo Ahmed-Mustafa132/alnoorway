@@ -8,6 +8,15 @@ import { BookOpen, Heart, MessageSquare, Users, Globe, Calendar, Library, Video,
 import { supabase } from "@/components/api/supabaseClient";
 import AIRecommendations from "@/components/AIRecommendations";
 import { useLanguage } from "@/contexts/LanguageContext";
+import library_qeqidv from "@/assets/library_qeqidv.png";
+import azkar_xfmtkq from "@/assets/azkar_xfmtkq.png";
+import learn_islam_w24ajs from "@/assets/learn_islam_w24ajs.png";
+import repentance_pqgrov from "@/assets/repentance_pqgrov.png";
+import fatwa_ay8xyw from "@/assets/fatwa_ay8xyw.png";
+import reconciliation_yq58qe from "@/assets/reconciliation_yq58qe.png";
+import courses_kuv6yk from "@/assets/courses_kuv6yk.png";
+
+
 
 const verses = [
   { text: "إِنَّ مَعَ الْعُسْرِ يُسْرًا", ref: "سورة الشرح - آية 6" },
@@ -127,21 +136,21 @@ export default function Home() {
 
   const features = [
     {
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612733/learn_islam_w24ajs.png",
+      image: learn_islam_w24ajs,
       title: t('learn_islam'),
       description: t('learn_islam_desc'),
       color: "from-teal-100 to-teal-200",
       link: createPageUrl("LearnIslam")
     },
     {
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612737/repentance_pqgrov.png",
+      image: repentance_pqgrov,
       title: t('repentance'),
       description: t('repentance_desc'),
       color: "from-rose-100 to-rose-200",
       link: createPageUrl("Repentance")
     },
     {
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612644/fatwa_ay8xyw.png",
+      image: fatwa_ay8xyw,
       title: t('fatwa'),
       description: t('fatwa_desc'),
       color: "from-emerald-100 to-emerald-200",
@@ -150,7 +159,7 @@ export default function Home() {
       countLabel: t('contact_scholar')
     },
     {
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612738/reconciliation_yq58qe.png",
+      image: reconciliation_yq58qe,
       title: t('reconciliation'),
       description: t('reconciliation_desc'),
       color: "from-cyan-100 to-cyan-200",
@@ -166,7 +175,7 @@ export default function Home() {
       color: "from-teal-100 to-teal-200",
       iconColor: "text-teal-700",
       link: createPageUrl("QuranCourses"),
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612644/courses_kuv6yk.png",
+      image: courses_kuv6yk,
       show: true,
       onlineCount: onlineCount.teachers,
       countLabel: t('contact_teacher')
@@ -178,7 +187,7 @@ export default function Home() {
       color: "from-amber-100 to-amber-200",
       iconColor: "text-amber-700",
       link: createPageUrl("Azkar"),
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612644/azkar_xfmtkq.png",
+      image: azkar_xfmtkq,
       show: appSettings.features.azkar
     },
     {
@@ -188,7 +197,7 @@ export default function Home() {
       color: "from-indigo-100 to-indigo-200",
       iconColor: "text-indigo-700",
       link: createPageUrl("Library"),
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612734/library_qeqidv.png",
+      image: library_qeqidv,
       show: appSettings.features.library
     }
   ];

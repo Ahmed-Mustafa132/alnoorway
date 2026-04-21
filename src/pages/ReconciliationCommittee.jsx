@@ -7,6 +7,10 @@ import { Users, Award, Briefcase, GraduationCap, Heart, Sparkles, Shield, CheckC
 import { motion } from "framer-motion";
 import ReconciliationRequestModal from "@/components/ReconciliationRequestModal";
 import { useLanguage } from "@/contexts/LanguageContext";
+import Complete_confidentiality_ulurse from "@/assets/Complete_confidentiality_ulurse.png";
+import Impartiality_and_fairness_uutpgd from "@/assets/Impartiality_and_fairness_uutpgd.png";
+import High_expertise_nbdzp7 from "@/assets/High_expertise_nbdzp7.png";
+import High_success_rate_aqaxl6 from "@/assets/High_success_rate_aqaxl6.png";
 
 export default function ReconciliationCommittee() {
   const { t } = useLanguage();
@@ -45,25 +49,25 @@ export default function ReconciliationCommittee() {
       icon: Heart,
       title: t('confidentiality'),
       description: t('confidentiality_desc'),
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612644/Complete_confidentiality_ulurse.png"
+      image: Complete_confidentiality_ulurse
     },
     {
       icon: Shield,
       title: t('neutrality'),
       description: t('neutrality_desc'),
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612646/Impartiality_and_fairness_uutpgd.png"
+      image: Impartiality_and_fairness_uutpgd
     },
     {
       icon: Users,
       title: t('experience'),
       description: t('experience_desc'),
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612644/High_expertise_nbdzp7.png"
+      image: High_expertise_nbdzp7
     },
     {
       icon: CheckCircle,
       title: t('high_success'),
       description: t('high_success_desc'),
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612644/High_success_rate_aqaxl6.png"
+      image: High_success_rate_aqaxl6
     }
   ];
 

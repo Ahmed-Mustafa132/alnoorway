@@ -16,6 +16,9 @@ import RatingWidget from "@/components/RatingWidget";
 import CommentsSection from "@/components/CommentsSection";
 import ShareButtons from "@/components/ShareButtons";
 import { useLanguage } from "@/contexts/LanguageContext";
+import Contact_an_Islamic_mufti_glg2c4 from "@/assets/Contact_an_Islamic_mufti_glg2c4.png";
+import Ask_your_question_viityb from "@/assets/Ask_your_question_viityb.png";
+
 
 export default function Fatwa() {
   const { t } = useLanguage();
@@ -129,7 +132,7 @@ export default function Fatwa() {
       title: t('search_fatwa'),
       description: t('search_fatwa_desc'),
       color: "from-blue-100 to-blue-200",
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612644/ask_your_question_viityb.png",
+      image: Ask_your_question_viityb,
       action: () => document.getElementById('search-input')?.focus()
     },
     {
@@ -137,7 +140,7 @@ export default function Fatwa() {
       title: t('ask_question'),
       description: t('ask_question_desc'),
       color: "from-emerald-100 to-emerald-200",
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612644/ask_your_question_viityb.png",
+      image: Ask_your_question_viityb,
       action: () => setShowRequestModal(true)
     },
     {
@@ -145,7 +148,7 @@ export default function Fatwa() {
       title: t('contact_scholar'),
       description: "تحدث مباشرة مع عالم",
       color: "from-purple-100 to-purple-200",
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612644/Contact_an_Islamic_mufti_glg2c4.png",
+      image: Contact_an_Islamic_mufti_glg2c4,
       action: () => setShowContactModal(true),
       onlineCount: onlineMuftis,
       countLabel: t('contact_scholar')

@@ -8,6 +8,10 @@ import { motion } from "framer-motion";
 import ContactModal from "@/components/ContactModal";
 import { supabase } from "@/components/api/supabaseClient";
 import { useLanguage } from "@/contexts/LanguageContext";
+import Contact_an_Islamic_mufti_glg2c4 from "@/assets/Contact_an_Islamic_mufti_glg2c4.png";
+import Lectures_y0spuf from "@/assets/lectures_y0spuf.png";
+import Stories_of_Repentant_People_l4cj4l from "@/assets/Stories_of_Repentant_People_l4cj4l.png";
+
 
 export default function Repentance() {
   const { t } = useLanguage();
@@ -33,7 +37,7 @@ export default function Repentance() {
       title: t('contact_scholar'),
       description: t('contact_scholar_desc'),
       color: "from-emerald-100 to-emerald-200",
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612644/Contact_an_Islamic_mufti_glg2c4.png",
+      image: Contact_an_Islamic_mufti_glg2c4,
       link: createPageUrl("ContactScholar"),
       onlineCount: onlineScholars,
       countLabel: t('contact_scholar')
@@ -43,7 +47,7 @@ export default function Repentance() {
       title: t('lectures_library'),
       description: t('lectures_library_desc'),
       color: "from-rose-100 to-rose-200",
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612733/lectures_y0spuf.png",
+      image: Lectures_y0spuf,
       link: createPageUrl("Lectures?category=repentance")
     },
     {
@@ -51,7 +55,7 @@ export default function Repentance() {
       title: t('repentance_stories'),
       description: t('repentance_stories_desc'),
       color: "from-amber-100 to-amber-200",
-      image: "https://res.cloudinary.com/dufjbywcm/image/upload/v1769612738/Stories_of_Repentant_People_l4cj4l.png",
+      image: Stories_of_Repentant_People_l4cj4l,
       link: createPageUrl("Stories?type=repentance")
     }
   ];
