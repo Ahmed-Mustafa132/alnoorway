@@ -33,7 +33,7 @@ workflows:
         script: |
           # البحث عن ملف الـ IPA
           IPA_PATH=$(find build/ios/ipa -name "*.ipa" | head -n 1)
-          
+
           # الرفع فقط للسيرفر بدون طلب مراجعة أوتوماتيكي
           app-store-connect publish \
             --path "$IPA_PATH" \
