@@ -1,11 +1,23 @@
 import { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "com.alnoorway.app",
+  appId: "com.alnoorway.app", // تأكد إن ده الـ Bundle ID في Apple Developer
   appName: "Alnoorway",
   webDir: "dist",
   server: {
     androidScheme: "https",
+    iosScheme: "com.alnoorway.app", // خليه نفس الـ App ID عشان الـ Deep Linking
+  },
+  plugins: {
+    GoogleAuth: {
+      scopes: ["profile", "email"],
+      // الـ Client IDs دي بتجيبها من Google Cloud Console
+      iosClientId:
+        "829658324868-lrbdqm9ekjpaunpaecm4bk4stn16ifte.apps.googleusercontent.com",
+      serverClientId:
+        "829658324868-lrbdqm9ekjpaunpaecm4bk4stn16ifte.apps.googleusercontent.com",
+      forceCodeForRefreshToken: true,
+    },
   },
 };
 

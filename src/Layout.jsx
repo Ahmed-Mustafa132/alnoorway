@@ -47,13 +47,13 @@ function LayoutContent({ children, currentPageName }) {
     { titleKey: t("courses"), url: createPageUrl("Courses"), icon: GraduationCap, color: "text-teal-600" },
   ];
 
-  const getQuickLinks = (t) => [
+  const getQuickLinks = (t, user) => [
     { titleKey: t("contact_scholar"), url: createPageUrl("ContactScholar"), icon: UserIcon, color: "text-emerald-600" },
     { titleKey: t("contact_preacher"), url: createPageUrl("ContactPreacher"), icon: Users, color: "text-teal-600" },
     { titleKey: t("contact_teacher"), url: createPageUrl("ContactTeacher"), icon: BookOpen, color: "text-purple-600" },
     { titleKey: t("quran_courses"), url: createPageUrl("QuranCourses"), icon: GraduationCap, color: "text-teal-600" },
     { titleKey: t("recommendations"), url: createPageUrl("Recommendations"), icon: Star, color: "text-purple-600" },
-    { titleKey: t("settings"), url: createPageUrl("Settings"), icon: Settings, color: "text-gray-600" },
+    { titleKey: t("settings"), url: createPageUrl("Settings"), icon: Settings, color: "text-gray-600" }
   ];
 
   const location = useLocation();
@@ -275,10 +275,10 @@ function LayoutContent({ children, currentPageName }) {
                     Français
                   </button>
                   <button
-                    onClick={() => changeLanguage('zh')}
+                    onClick={() => changeLanguage('ur')}
                     className={`flex-1 min-w-[60px] px-2 py-1.5 text-xs rounded-lg transition-all ${language === 'zh' ? 'bg-emerald-600 text-white font-bold shadow-md' : 'hover:bg-gray-50 text-gray-600 dark:hover:bg-gray-800 dark:text-gray-300'}`}
                   >
-                    中文
+                    اردو
                   </button>
                 </div>
 

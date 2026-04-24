@@ -1,7 +1,10 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8' ?>
 <resources>
     <string name="app_name">طريق النور</string>
     <string name="title_activity_main">طريق النور</string>
     <string name="package_name">com.alnoorway.tareeqalnoor</string>
     <string name="custom_url_scheme">com.alnoorway.tareeqalnoor</string>
+    <string
+    name="server_client_id"
+  >829658324868-lrbdqm9ekjpaunpaecm4bk4stn16ifte.apps.googleusercontent.com</string>
 </resources>

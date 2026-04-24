@@ -73,6 +73,23 @@
 
     <key>ITSAppUsesNonExemptEncryption</key>
     <false />
+<key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string
+          >829658324868-lrbdqm9ekjpaunpaecm4bk4stn16ifte.apps.googleusercontent.com</string>
+                
+                <string>com.alnoorway.app</string>
+            </array>
+        </dict>
+    </array>
 
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>googlegmail</string>
+        <string>com.googleusercontent.apps</string>
+    </array>
 </dict>
 </plist>

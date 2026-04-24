@@ -15,7 +15,8 @@ export const signInWithProvider = async (provider) => {
   return supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: supabaseRedirectTo,
+      redirectTo: 'com.alnoorway.tareeqalnoor://home',
+      skipBrowserRedirect: false
     },
   });
 };

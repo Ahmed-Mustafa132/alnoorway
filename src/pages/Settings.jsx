@@ -135,6 +135,30 @@ export default function Settings() {
     { value: 'ur', label: t('languagesUr'), flag: '🇵🇰' },
   ];
 
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 p-4 md:p-6 flex items-center justify-center">
+        <Card className="border-0 shadow-xl bg-white/95 backdrop-blur-sm rounded-3xl max-w-md w-full mx-4">
+          <CardContent className="p-6 md:p-12 text-center">
+            <SettingsIcon className="w-12 h-12 md:w-16 md:h-16 text-gray-300 mx-auto mb-6" />
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
+              يرجى تسجيل الدخول
+            </h3>
+            <p className="text-gray-600 mb-8 text-sm md:text-base">
+              سجل الدخول للوصول إلى إعداداتك
+            </p>
+            <button
+              onClick={() => window.location.href = '/auth'}
+              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 py-4 md:py-6 text-base md:text-lg rounded-2xl text-white font-semibold"
+            >
+              تسجيل الدخول
+            </button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 p-4 md:p-6">
       <div className="max-w-4xl mx-auto">
@@ -417,7 +441,6 @@ export default function Settings() {
             </Card>
           </TabsContent>
         </Tabs>
-
         <Card className="border-0 shadow-xl bg-gradient-to-br from-red-500 to-red-600 text-white mt-6 md:mt-8">
           <CardContent className="p-4 md:p-6">
             <Button
