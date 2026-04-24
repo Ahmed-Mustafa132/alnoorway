@@ -10,9 +10,10 @@ workflows:
         distribution_type: app_store
         bundle_identifier: com.alnoorway.app
       vars:
-        XCODE_PROJECT: "ios/App/App.xcodeproj"
+        # لاحظ التعديل هنا: استخدمنا الـ Workspace بدل الـ Project
+        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
         XCODE_SCHEME: "App"
-        APP_ID: "6762559077" # اتأكدت إن ده الـ Apple ID الجديد بتاعك
+        APP_ID: "6762559077"
       node: latest
       xcode: latest
     scripts:
@@ -22,12 +23,16 @@ workflows:
         script: |
           npm run build
           npx cap sync ios
+      - name: Debug Path (للتأكد من المسار قبل البناء)
+        script: |
+          ls -R ios/App
       - name: Set up code signing
         script: xcode-project use-profiles
       - name: Build ipa for distribution
         script: |
+          # بناء الـ IPA باستخدام الـ Workspace وهو الأضمن في Capacitor
           xcode-project build-ipa \
-            --project "$XCODE_PROJECT" \
+            --workspace "$XCODE_WORKSPACE" \
             --scheme "$XCODE_SCHEME"
       - name: Publish to App Store Connect
         script: |
