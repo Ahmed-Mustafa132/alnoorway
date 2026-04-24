@@ -10,60 +10,44 @@ workflows:
         distribution_type: app_store
         bundle_identifier: com.alnoorway.app
       vars:
-        # المسارات المعدلة بناءً على هيكلية Capacitor القياسية
-        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
+        XCODE_PROJECT: "ios/App/App.xcodeproj"
         XCODE_SCHEME: "App"
         APP_ID: "6762559077"
       node: latest
-      xcode: 16.0 # نسخة مستقرة لضمان عدم حدوث تعارض مع مكتبات Capacitor
+      xcode: latest
     scripts:
       - name: Install dependencies
         script: npm install --legacy-peer-deps
-
-      - name: Build web app and Sync
+        
+      - name: Build web app and Capacitor Sync
         script: |
           npm run build
+          # الأمر ده هو اللي المفروض يكريت الـ Podfile لو مش موجود
           npx cap sync ios
-
+          
       - name: Install CocoaPods
         script: |
-          # هذه الخطوة ستقوم بإنشاء ملف الـ .xcworkspace المفقود وتحميل المكتبات (جوجل وآبل)
-          cd ios/App && pod install
-
-      - name: Debug Structure
-        script: |
-          # للتأكد من أن الملفات تم إنشاؤها بنجاح قبل البدء في البناء
-          ls -R ios/App/*.xcworkspace || echo "Workspace not found yet"
-
+          # هندخل للمسار ونأكد إن فيه ملف Podfile
+          cd ios/App
+          if [ ! -f "Podfile" ]; then
+            echo "Podfile missing, creating a basic one..."
+            npx cap add ios
+          fi
+          pod install
+          
       - name: Set up code signing
         script: xcode-project use-profiles
-
+        
       - name: Build ipa for distribution
         script: |
-          # البناء باستخدام الـ Workspace المولد
+          # هنبني بالـ Project مباشرة عشان نتفادى مشاكل الـ Workspace المفقود
           xcode-project build-ipa \
-            --workspace "$XCODE_WORKSPACE" \
+            --project "$XCODE_PROJECT" \
             --scheme "$XCODE_SCHEME"
-
+            
       - name: Publish to App Store Connect
         script: |
-          # البحث عن ملف الـ IPA الناتج
           IPA_PATH=$(find build/ios/ipa -name "*.ipa" | head -n 1)
-
-          if [ -z "$IPA_PATH" ]; then
-            echo "IPA file not found, check build logs."
-            exit 1
-          fi
-
-          # الرفع لـ TestFlight/App Store
-          app-store-connect publish \
-            --path "$IPA_PATH" \
-            --apple-id "$APP_ID"
-
+          app-store-connect publish --path "$IPA_PATH" --apple-id "$APP_ID"
     artifacts:
       - build/ios/ipa/*.ipa
-    publishing:
-      email:
-        recipients:
-          - osakr100@gmail.com
-          - ahmedmustafa0384@gmail.com
