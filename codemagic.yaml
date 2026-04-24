@@ -12,58 +12,32 @@ workflows:
       vars:
         XCODE_PROJECT: "ios/App/App.xcodeproj"
         XCODE_SCHEME: "App"
-        APP_ID: "6762559077"
+        APP_ID: "6762559077" # اتأكدت إن ده الـ Apple ID الجديد بتاعك
       node: latest
       xcode: latest
     scripts:
       - name: Install dependencies
-        script: npm install --legacy-peer-deps
-        
-      - name: Build web app and Capacitor Sync
+        script: npm install
+      - name: Build web app and Sync
         script: |
           npm run build
           npx cap sync ios
-          
-      - name: Create Podfile Manually
-        script: |
-          # هندخل للفولدر وننشئ ملف الـ Podfile يدويًا بمحتواه الصحيح
-          cd ios/App
-          cat <<EOF > Podfile
-          platform :ios, '14.0'
-          use_frameworks!
-
-          target 'App' do
-            pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
-            pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
-            pod 'CapacitorGoogleAuth', :path => '../../node_modules/@codetrix-studio/capacitor-google-auth'
-            pod 'CapacitorCommunityAppleSignIn', :path => '../../node_modules/@capacitor-community/apple-sign-in'
-            pod 'CapacitorDevice', :path => '../../node_modules/@capacitor/device'
-          end
-          EOF
-          
-      - name: Install CocoaPods
-        script: |
-          cd ios/App && pod install
-          
       - name: Set up code signing
         script: xcode-project use-profiles
-        
       - name: Build ipa for distribution
         script: |
-          # هنبني بالـ Project مباشرة عشان نتفادى أزمة الـ Workspace المفقود
           xcode-project build-ipa \
             --project "$XCODE_PROJECT" \
             --scheme "$XCODE_SCHEME"
-            
       - name: Publish to App Store Connect
         script: |
+          # البحث عن ملف الـ IPA
           IPA_PATH=$(find build/ios/ipa -name "*.ipa" | head -n 1)
-          if [ -n "$IPA_PATH" ]; then
-            app-store-connect publish --path "$IPA_PATH" --apple-id "$APP_ID"
-          else
-            echo "IPA file not found!"
-            exit 1
-          fi
+          
+          # الرفع فقط للسيرفر بدون طلب مراجعة أوتوماتيكي
+          app-store-connect publish \
+            --path "$IPA_PATH" \
+            --apple-id "$APP_ID"
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
