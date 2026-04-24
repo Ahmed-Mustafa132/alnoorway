@@ -10,39 +10,56 @@ workflows:
         distribution_type: app_store
         bundle_identifier: com.alnoorway.app
       vars:
-        # لاحظ التعديل هنا: استخدمنا الـ Workspace بدل الـ Project
+        # المسارات المعدلة بناءً على هيكلية Capacitor القياسية
         XCODE_WORKSPACE: "ios/App/App.xcworkspace"
         XCODE_SCHEME: "App"
         APP_ID: "6762559077"
       node: latest
-      xcode: latest
+      xcode: 15.4 # نسخة مستقرة لضمان عدم حدوث تعارض مع مكتبات Capacitor
     scripts:
       - name: Install dependencies
         script: npm install --legacy-peer-deps
+        
       - name: Build web app and Sync
         script: |
           npm run build
           npx cap sync ios
-      - name: Debug Path (للتأكد من المسار قبل البناء)
+          
+      - name: Install CocoaPods
         script: |
-          ls -R ios/App
+          # هذه الخطوة ستقوم بإنشاء ملف الـ .xcworkspace المفقود وتحميل المكتبات (جوجل وآبل)
+          cd ios/App && pod install
+          
+      - name: Debug Structure
+        script: |
+          # للتأكد من أن الملفات تم إنشاؤها بنجاح قبل البدء في البناء
+          ls -R ios/App/*.xcworkspace || echo "Workspace not found yet"
+          
       - name: Set up code signing
         script: xcode-project use-profiles
+        
       - name: Build ipa for distribution
         script: |
-          # بناء الـ IPA باستخدام الـ Workspace وهو الأضمن في Capacitor
+          # البناء باستخدام الـ Workspace المولد
           xcode-project build-ipa \
             --workspace "$XCODE_WORKSPACE" \
             --scheme "$XCODE_SCHEME"
+            
       - name: Publish to App Store Connect
         script: |
-          # البحث عن ملف الـ IPA
+          # البحث عن ملف الـ IPA الناتج
           IPA_PATH=$(find build/ios/ipa -name "*.ipa" | head -n 1)
+          
+          if [ -z "$IPA_PATH" ]; then
+            echo "IPA file not found, check build logs."
+            exit 1
+          fi
 
-          # الرفع فقط للسيرفر بدون طلب مراجعة أوتوماتيكي
+          # الرفع لـ TestFlight/App Store
           app-store-connect publish \
             --path "$IPA_PATH" \
             --apple-id "$APP_ID"
+            
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
