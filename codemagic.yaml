@@ -1,5 +1,5 @@
 workflows:
-  ios-alnoorway-auto: # رجعنا الاسم ده عشان كود ماجيك ميتوهش
+  ios-alnoorway-auto:
     name: AlNoorway iOS Appetize Build
     max_build_duration: 120
     instance_type: mac_mini_m2
@@ -14,10 +14,10 @@ workflows:
         script: |
           npm install @capacitor/core@7.6.2 @capacitor/ios@7.6.2 @capacitor/cli@7.6.2 @capacitor/android@7.0.0 --save-exact
           npm install --legacy-peer-deps
-
+        
       - name: Build web app
         script: npm run build
-
+        
       - name: Reset & Sync Capacitor
         script: |
           rm -rf ios
@@ -25,7 +25,7 @@ workflows:
           npx cap add ios
           npx cap sync ios
           rm -f ios/App/Package.swift
-
+          
       - name: Create Podfile and Install
         script: |
           cd ios/App
@@ -47,20 +47,28 @@ workflows:
           end
           EOF
           pod install
-
+          
       - name: Build for Simulator (Appetize)
         script: |
+          # بناء التطبيق وتحديد مخرجات واضحة
           xcodebuild -workspace "$XCODE_WORKSPACE" \
                      -scheme "$XCODE_SCHEME" \
                      -configuration Debug \
                      -sdk iphonesimulator \
-                     -derivedDataPath build
-
-          cd build/Build/Products/Debug-iphonesimulator
-          zip -r ../../../appetize_bundle.zip App.app
-
+                     -derivedDataPath derived_data
+          
+          # البحث عن ملف الـ .app وضغطه أينما كان داخل المجلد
+          APP_PATH=$(find derived_data/Build/Products -name "*.app" | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "Error: .app file not found!"
+            exit 1
+          fi
+          
+          # ضغط الملف في المسار الرئيسي لـ Codemagic
+          zip -r appetize_bundle.zip "$APP_PATH"
+          
     artifacts:
-      - appetize_bundle.zip
+      - "*.zip" # كدة Codemagic هيدور على أي ملف zip تم إنشاؤه
     publishing:
       email:
         recipients:
