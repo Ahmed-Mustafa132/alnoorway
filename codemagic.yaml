@@ -26,8 +26,9 @@ workflows:
         script: |
           rm -rf ios
           npx cap add ios
-          # أمر سحري لتعطيل الـ Swift Package Manager ومنع التضارب
-          npx cap sync ios --no-update
+          npx cap sync ios
+          # مسح ملف الـ Package لمنع تضارب الـ Swift Package Manager (SPM)
+          rm -f ios/App/Package.swift
 
       - name: Create Podfile and Install
         script: |
@@ -41,6 +42,7 @@ workflows:
             pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
             pod 'CapacitorCommunityAppleSignIn', :path => '../../node_modules/@capacitor-community/apple-sign-in'
             pod 'CapacitorDevice', :path => '../../node_modules/@capacitor/device'
+            # الربط المباشر بالاسم والمسار الذي تأكدنا منه يدوياً
             pod 'CodetrixStudioCapacitorGoogleAuth', :path => '../../node_modules/@codetrix-studio/capacitor-google-auth/CodetrixStudioCapacitorGoogleAuth.podspec'
           end
           EOF
@@ -51,18 +53,17 @@ workflows:
 
       - name: Build ipa for distribution
         script: |
-          # نستخدم أمر البناء مع إضافة -disablePackageRepositoryCache لتجنب تعليقة الـ SPM
+          # بناء الـ Archive مع إجبار Xcode على تجاهل أي Packages خارجية
           xcodebuild -workspace ios/App/App.xcworkspace \
                      -scheme "$XCODE_SCHEME" \
                      -sdk iphoneos \
                      -configuration Release \
                      -destination 'generic/platform=iOS' \
                      archive -archivePath $(pwd)/build/ios/xcarchive/App.xcarchive \
-                     -useModernBuildSystem=YES \
                      -resolvePackageDependencies=NO \
                      SKIP_INSTALL=NO
 
-          # استخراج الـ IPA
+          # استخراج الـ IPA من الـ Archive
           xcode-project build-ipa \
             --workspace "ios/App/App.xcworkspace" \
             --scheme "$XCODE_SCHEME"
@@ -78,3 +79,8 @@ workflows:
           fi
     artifacts:
       - build/ios/ipa/*.ipa
+    publishing:
+      email:
+        recipients:
+          - osakr100@gmail.com
+          - ahmedmustafa0384@gmail.com
