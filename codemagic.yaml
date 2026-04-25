@@ -24,7 +24,6 @@ workflows:
 
       - name: Re-sync Capacitor
         script: |
-          # تنظيف كامل للمشروع لضمان بناء نظيف
           rm -rf ios
           npx cap add ios
           npx cap sync ios
@@ -37,18 +36,13 @@ workflows:
           use_frameworks!
 
           target 'App' do
-            # مكتبات كاباسيتور الأساسية
             pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
             pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
-            
-            # مكتبة Apple Sign-in
             pod 'CapacitorCommunityAppleSignIn', :path => '../../node_modules/@capacitor-community/apple-sign-in'
-            
-            # مكتبة الجهاز (Device)
             pod 'CapacitorDevice', :path => '../../node_modules/@capacitor/device'
             
-            # التعديل الذهبي بناءً على ملاحظتك الدقيقة لاسم الملف
-            pod 'CapacitorGoogleAuth', :path => '../../node_modules/@codetrix-studio/capacitor-google-auth/CodetrixStudioCapacitorGoogleAuth.podspec'
+            # الربط المباشر باستخدام الاسم الرسمي الموجود داخل الـ podspec
+            pod 'CodetrixStudioCapacitorGoogleAuth', :path => '../../node_modules/@codetrix-studio/capacitor-google-auth/CodetrixStudioCapacitorGoogleAuth.podspec'
           end
           EOF
 
@@ -77,4 +71,5 @@ workflows:
     publishing:
       email:
         recipients:
+          - osakr100@gmail.com
           - ahmedmustafa0384@gmail.com
