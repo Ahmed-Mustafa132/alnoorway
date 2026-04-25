@@ -22,9 +22,8 @@ workflows:
       - name: Build web app
         script: npm run build
 
-      - name: Re-sync Capacitor (لضمان تحديث مسارات Xcode)
+      - name: Re-sync Capacitor
         script: |
-          # سنقوم بمسح الفولدر وإعادة بنائه داخل السيرفر لضمان سلامة المسارات
           rm -rf ios
           npx cap add ios
           npx cap sync ios
@@ -32,16 +31,16 @@ workflows:
       - name: Create Podfile and Install
         script: |
           cd ios/App
-          # كتابة ملف الـ Podfile يدوياً لضمان وجوده
+          # استخدام استراتيجية "auto-include" لضمان إيجاد كل المكتبات برمجياً
           cat <<EOF > Podfile
           platform :ios, '14.0'
           use_frameworks!
+
+          # هذا السطر يخبر CocoaPods بالبحث عن المكتبات في مكانها الصحيح آلياً
+          require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'
+
           target 'App' do
-            pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
-            pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
-            pod 'CapacitorGoogleAuth', :path => '../../node_modules/@codetrix-studio/capacitor-google-auth'
-            pod 'CapacitorCommunityAppleSignIn', :path => '../../node_modules/@capacitor-community/apple-sign-in'
-            pod 'CapacitorDevice', :path => '../../node_modules/@capacitor/device'
+            cap_all_pods
           end
           EOF
           pod install
@@ -51,7 +50,6 @@ workflows:
 
       - name: Build ipa for distribution
         script: |
-          # البناء عبر الـ Workspace الذي تم توليده بواسطة pod install
           xcode-project build-ipa \
             --workspace "ios/App/App.xcworkspace" \
             --scheme "$XCODE_SCHEME"
@@ -62,5 +60,3 @@ workflows:
           if [ -n "$IPA_PATH" ]; then
             app-store-connect publish --path "$IPA_PATH" --apple-id "$APP_ID"
           fi
-    artifacts:
-      - build/ios/ipa/*.ipa
