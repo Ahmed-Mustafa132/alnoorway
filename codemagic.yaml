@@ -32,8 +32,7 @@ workflows:
         script: |
           cd ios/App
           cat <<EOF > Podfile
-          # رفعنا النسخة لـ 15.0 عشان تتوافق مع Capacitor 8
-          platform :ios, '15.0'
+          platform :ios, '17.0'
           use_frameworks!
 
           target 'App' do
@@ -41,12 +40,10 @@ workflows:
             pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
             pod 'CapacitorCommunityAppleSignIn', :path => '../../node_modules/@capacitor-community/apple-sign-in'
             pod 'CapacitorDevice', :path => '../../node_modules/@capacitor/device'
-            
-            # الاسم والمسار اللي اتأكدنا منهم
             pod 'CodetrixStudioCapacitorGoogleAuth', :path => '../../node_modules/@codetrix-studio/capacitor-google-auth/CodetrixStudioCapacitorGoogleAuth.podspec'
           end
           EOF
-
+          pod repo update
           pod install
 
       - name: Set up code signing
@@ -54,9 +51,11 @@ workflows:
 
       - name: Build ipa for distribution
         script: |
+          # التعديل هنا: تحديد الـ workspace والـ scheme والـ configuration بوضوح
           xcode-project build-ipa \
             --workspace "ios/App/App.xcworkspace" \
-            --scheme "$XCODE_SCHEME"
+            --scheme "$XCODE_SCHEME" \
+            --configuration Release
 
       - name: Publish to App Store Connect
         script: |
