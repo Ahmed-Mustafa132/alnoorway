@@ -24,7 +24,7 @@ workflows:
 
       - name: Re-sync Capacitor
         script: |
-          # تنظيف كامل للمشروع لضمان عدم وجود ملفات قديمة تالفة
+          # تنظيف كامل للمشروع لضمان بناء نظيف
           rm -rf ios
           npx cap add ios
           npx cap sync ios
@@ -32,7 +32,6 @@ workflows:
       - name: Create Podfile and Install
         script: |
           cd ios/App
-          # كتابة ملف الـ Podfile بتحديد المسارات المباشرة للمكتبات
           cat <<EOF > Podfile
           platform :ios, '14.0'
           use_frameworks!
@@ -48,12 +47,11 @@ workflows:
             # مكتبة الجهاز (Device)
             pod 'CapacitorDevice', :path => '../../node_modules/@capacitor/device'
             
-            # الحل النهائي لمكتبة جوجل: الإشارة مباشرة لملف الـ .podspec
-            pod 'CapacitorGoogleAuth', :path => '../../node_modules/@codetrix-studio/capacitor-google-auth/CapacitorGoogleAuth.podspec'
+            # التعديل الذهبي بناءً على ملاحظتك الدقيقة لاسم الملف
+            pod 'CapacitorGoogleAuth', :path => '../../node_modules/@codetrix-studio/capacitor-google-auth/CodetrixStudioCapacitorGoogleAuth.podspec'
           end
           EOF
 
-          # تنفيذ التثبيت
           pod install
 
       - name: Set up code signing
@@ -61,7 +59,6 @@ workflows:
 
       - name: Build ipa for distribution
         script: |
-          # البناء باستخدام الـ Workspace المولد من الـ Pods
           xcode-project build-ipa \
             --workspace "ios/App/App.xcworkspace" \
             --scheme "$XCODE_SCHEME"
@@ -72,7 +69,7 @@ workflows:
           if [ -n "$IPA_PATH" ]; then
             app-store-connect publish --path "$IPA_PATH" --apple-id "$APP_ID"
           else
-            echo "Error: IPA file not found. Build process might have failed."
+            echo "Error: IPA file not found."
             exit 1
           fi
     artifacts:
