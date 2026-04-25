@@ -27,22 +27,21 @@ workflows:
           rm -rf ios
           npx cap add ios
           npx cap sync ios
-          # مسح ملف الـ Package لمنع تضارب الـ Swift Package Manager (SPM)
+          # مسح ملف الـ Package لمنع أي تضارب مع نظام SPM
           rm -f ios/App/Package.swift
 
       - name: Create Podfile and Install
         script: |
           cd ios/App
           cat <<EOF > Podfile
-          platform :ios, '17.0'
+          platform :ios, '15.0'
           use_frameworks!
 
           target 'App' do
             pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
             pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
             pod 'CapacitorCommunityAppleSignIn', :path => '../../node_modules/@capacitor-community/apple-sign-in'
-            pod 'CapacitorDevice', :path => '../../node_modules/@capacitor/device'
-            # الربط المباشر بالاسم والمسار الذي تأكدنا منه يدوياً
+            # تم حذف CapacitorDevice لإنهاء تضارب الإصدارات
             pod 'CodetrixStudioCapacitorGoogleAuth', :path => '../../node_modules/@codetrix-studio/capacitor-google-auth/CodetrixStudioCapacitorGoogleAuth.podspec'
           end
           EOF
@@ -53,7 +52,7 @@ workflows:
 
       - name: Build ipa for distribution
         script: |
-          # بناء الـ Archive مع إجبار Xcode على تجاهل أي Packages خارجية
+          # بناء الـ Archive مع تعطيل الـ Package Resolution
           xcodebuild -workspace ios/App/App.xcworkspace \
                      -scheme "$XCODE_SCHEME" \
                      -sdk iphoneos \
@@ -63,7 +62,7 @@ workflows:
                      -resolvePackageDependencies=NO \
                      SKIP_INSTALL=NO
 
-          # استخراج الـ IPA من الـ Archive
+          # استخراج الـ IPA
           xcode-project build-ipa \
             --workspace "ios/App/App.xcworkspace" \
             --scheme "$XCODE_SCHEME"
@@ -82,5 +81,4 @@ workflows:
     publishing:
       email:
         recipients:
-          - osakr100@gmail.com
           - ahmedmustafa0384@gmail.com

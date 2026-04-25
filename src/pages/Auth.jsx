@@ -8,9 +8,8 @@ import { toast } from "sonner";
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Loader2 } from 'lucide-react';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
-import { SignInWithApple } from '@capacitor-community/apple-sign-in'; // إضافة مكتبة آبل
+import { SignInWithApple } from '@capacitor-community/apple-sign-in';
 import { Capacitor } from '@capacitor/core';
-import { Device } from '@capacitor/device'; // مكتبة لمعرفة نوع الجهاز بدقة
 
 export default function AuthPage() {
   const { t } = useLanguage();
@@ -21,7 +20,7 @@ export default function AuthPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // تهيئة جوجل للموبايل
+    // تهيئة جوجل للموبايل فقط
     if (Capacitor.isNativePlatform()) {
       GoogleAuth.initialize({
         clientId: '829658324868-lrbdqm9ekjpaunpaecm4bk4stn16ifte.apps.googleusercontent.com',
@@ -31,11 +30,10 @@ export default function AuthPage() {
     }
   }, []);
 
-  // --- الدالة الشاملة التي طلبتها للفصل بين الأجهزة ---
   const performUnifiedAuth = async (provider) => {
     setLoading(true);
-    const info = await Device.getInfo();
-    const platform = info.platform; // 'ios' | 'android' | 'web'
+    // البديل الذكي لـ @capacitor/device هو استخدام Core مباشرة
+    const platform = Capacitor.getPlatform(); // 'ios' | 'android' | 'web'
 
     try {
       // 1. التعامل مع الويب (Web)
@@ -59,11 +57,11 @@ export default function AuthPage() {
         handleSuccess();
       }
 
-      // 3. تسجيل الدخول بآبل (Native iOS - هذا ما طلبته آبل للقبول)
+      // 3. تسجيل الدخول بآبل (Native iOS فقط)
       if (provider === 'apple') {
         if (platform === 'ios') {
           const appleResult = await SignInWithApple.authorize({
-            clientId: 'com.alnoorway.tareeqalnoor', // تأكد أن هذا هو الـ Bundle ID الصحيح
+            clientId: 'com.alnoorway.app', // تأكد من مطابقة الـ Bundle ID في Xcode
             redirectURI: 'https://raxudhplkjawspqajjqu.supabase.co/auth/v1/callback',
             scopes: 'email name',
           });
@@ -75,8 +73,11 @@ export default function AuthPage() {
           if (error) throw error;
           handleSuccess();
         } else {
-          // أندرويد لا يدعم Native Apple Sign-in غالباً بنفس الطريقة، نستخدم الويب
-          const { error } = await supabase.auth.signInWithOAuth({ provider: 'apple' });
+          // أندرويد أو غيره يستخدم الويب لآبل
+          const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'apple',
+            options: { redirectTo: window.location.origin }
+          });
           if (error) throw error;
         }
       }
@@ -84,7 +85,7 @@ export default function AuthPage() {
       console.error(`${provider} Auth Error:`, error);
       toast.error(error.message || "حدث خطأ أثناء تسجيل الدخول");
     } finally {
-      if (Capacitor.isNativePlatform()) setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -93,7 +94,6 @@ export default function AuthPage() {
     navigate('/');
   };
 
-  // دوال الأزرار الآن أصبحت بسيطة جداً
   const handleGoogleLogin = () => performUnifiedAuth('google');
   const handleAppleLogin = () => performUnifiedAuth('apple');
 
@@ -104,7 +104,7 @@ export default function AuthPage() {
       if (isSignUp) {
         const { error } = await supabase.auth.signUp({
           email, password,
-          options: { emailRedirectTo: 'com.alnoorway.tareeqalnoor://home' }
+          options: { emailRedirectTo: 'com.alnoorway.app://home' }
         });
         if (error) throw error;
         toast.success(t('signup_success'));
