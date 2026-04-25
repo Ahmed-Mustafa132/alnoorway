@@ -26,16 +26,8 @@ workflows:
         script: |
           rm -rf ios
           npx cap add ios
-          # تعطيل الـ Swift Package Manager لمنع تضارب الإصدارات
-          npx cap build ios --no-update
-          npx cap sync ios
-
-      - name: Check Files Location (For Ahmed)
-        script: |
-          echo "--- عرض مجلد node_modules للمكتبة المطلوبة ---"
-          ls -R node_modules/@codetrix-studio/capacitor-google-auth | grep .podspec
-          echo "--- عرض مجلد ios/App للتأكد من الـ Workspace ---"
-          ls -R ios/App
+          # أمر سحري لتعطيل الـ Swift Package Manager ومنع التضارب
+          npx cap sync ios --no-update
 
       - name: Create Podfile and Install
         script: |
@@ -59,17 +51,18 @@ workflows:
 
       - name: Build ipa for distribution
         script: |
-          # محاولة البناء مع تجاهل حل الـ Package Dependencies يدوياً لأننا نستخدم Pods
+          # نستخدم أمر البناء مع إضافة -disablePackageRepositoryCache لتجنب تعليقة الـ SPM
           xcodebuild -workspace ios/App/App.xcworkspace \
                      -scheme "$XCODE_SCHEME" \
                      -sdk iphoneos \
                      -configuration Release \
-                     archive -archivePath $(pwd)/build/ios/xcarchive/App.xcarchive \
                      -destination 'generic/platform=iOS' \
-                     -allowProvisioningUpdates \
+                     archive -archivePath $(pwd)/build/ios/xcarchive/App.xcarchive \
+                     -useModernBuildSystem=YES \
+                     -resolvePackageDependencies=NO \
                      SKIP_INSTALL=NO
 
-          # استكمال توليد الـ IPA
+          # استخراج الـ IPA
           xcode-project build-ipa \
             --workspace "ios/App/App.xcworkspace" \
             --scheme "$XCODE_SCHEME"
