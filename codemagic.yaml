@@ -31,17 +31,20 @@ workflows:
       - name: Create Podfile and Install
         script: |
           cd ios/App
-          # إنشاء الـ Podfile مع المسارات الصحيحة لنسخة Capacitor 8
+          # استخدام الهيكلية الأساسية المضمونة لـ Capacitor
           cat <<EOF > Podfile
           platform :ios, '14.0'
           use_frameworks!
 
-          # تأكد من المسار الصحيح لملفات المساعدة
-          require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'
-
           target 'App' do
-            # نستخدم الدالة الأساسية لتحميل الـ Pods الخاصة بـ Capacitor والـ Plugins
-            install_capacitor_pods
+            # تحميل مكتبات كاباسيتور الأساسية
+            pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
+            pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
+
+            # تحميل الـ Plugins اللي ظهرت في الـ Log عندك
+            pod 'CapacitorCommunityAppleSignIn', :path => '../../node_modules/@capacitor-community/apple-sign-in'
+            pod 'CapacitorDevice', :path => '../../node_modules/@capacitor/device'
+            pod 'CapacitorGoogleAuth', :path => '../../node_modules/@codetrix-studio/capacitor-google-auth'
           end
           EOF
           pod install
@@ -51,6 +54,7 @@ workflows:
 
       - name: Build ipa for distribution
         script: |
+          # البناء باستخدام الـ Workspace (لأن الـ pods بتنشئه)
           xcode-project build-ipa \
             --workspace "ios/App/App.xcworkspace" \
             --scheme "$XCODE_SCHEME"
