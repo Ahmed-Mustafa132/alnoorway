@@ -18,67 +18,61 @@ workflows:
     scripts:
       - name: Install dependencies
         script: npm install --legacy-peer-deps
-        
+
       - name: Build web app
         script: npm run build
-        
+
       - name: Re-sync Capacitor
         script: |
-          # مسح وإعادة بناء فولدر iOS لضمان نظافة البيئة
+          # تنظيف كامل للمشروع لضمان عدم وجود ملفات قديمة تالفة
           rm -rf ios
           npx cap add ios
           npx cap sync ios
-          
+
       - name: Create Podfile and Install
         script: |
           cd ios/App
+          # كتابة ملف الـ Podfile بتحديد المسارات المباشرة للمكتبات
           cat <<EOF > Podfile
           platform :ios, '14.0'
           use_frameworks!
 
-          # دالة ذكية للبحث عن مسار الـ podspec أوتوماتيكياً داخل node_modules
-          def find_podspec_path(name)
-            # محاولة البحث في المسار المباشر
-            path = File.expand_path("../../node_modules/#{name}", Dir.pwd)
-            return path if File.exist?(File.join(path, "#{name.split('/').last}.podspec"))
-            
-            # محاولة البحث في كل المجلدات الفرعية لو فشل المسار المباشر
-            spec_file = Dir.glob(File.expand_path("../../node_modules/**/#{name.split('/').last}.podspec", Dir.pwd)).first
-            return File.dirname(spec_file) if spec_file
-            
-            # مسار احتياطي أخير
-            File.expand_path("../../node_modules/#{name}", Dir.pwd)
-          end
-
           target 'App' do
+            # مكتبات كاباسيتور الأساسية
             pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
             pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
             
-            # استدعاء المكتبات المطلوبة لتخطي رفض آبل
-            pod 'CapacitorCommunityAppleSignIn', :path => find_podspec_path('@capacitor-community/apple-sign-in')
-            pod 'CapacitorDevice', :path => find_podspec_path('@capacitor/device')
-            pod 'CapacitorGoogleAuth', :path => find_podspec_path('@codetrix-studio/capacitor-google-auth')
+            # مكتبة Apple Sign-in
+            pod 'CapacitorCommunityAppleSignIn', :path => '../../node_modules/@capacitor-community/apple-sign-in'
+            
+            # مكتبة الجهاز (Device)
+            pod 'CapacitorDevice', :path => '../../node_modules/@capacitor/device'
+            
+            # الحل النهائي لمكتبة جوجل: الإشارة مباشرة لملف الـ .podspec
+            pod 'CapacitorGoogleAuth', :path => '../../node_modules/@codetrix-studio/capacitor-google-auth/CapacitorGoogleAuth.podspec'
           end
           EOF
+
+          # تنفيذ التثبيت
           pod install
-          
+
       - name: Set up code signing
         script: xcode-project use-profiles
-        
+
       - name: Build ipa for distribution
         script: |
-          # البناء باستخدام الـ Workspace الذي تم توليده
+          # البناء باستخدام الـ Workspace المولد من الـ Pods
           xcode-project build-ipa \
             --workspace "ios/App/App.xcworkspace" \
             --scheme "$XCODE_SCHEME"
-            
+
       - name: Publish to App Store Connect
         script: |
           IPA_PATH=$(find build/ios/ipa -name "*.ipa" | head -n 1)
           if [ -n "$IPA_PATH" ]; then
             app-store-connect publish --path "$IPA_PATH" --apple-id "$APP_ID"
           else
-            echo "IPA file not found, build might have failed."
+            echo "Error: IPA file not found. Build process might have failed."
             exit 1
           fi
     artifacts:
