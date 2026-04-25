@@ -18,22 +18,32 @@ workflows:
     scripts:
       - name: Install dependencies
         script: npm install --legacy-peer-deps
-        
+
       - name: Build web app
         script: npm run build
-        
+
       - name: Re-sync Capacitor
         script: |
           rm -rf ios
           npx cap add ios
+          # تعطيل الـ Swift Package Manager لمنع تضارب الإصدارات
+          npx cap build ios --no-update
           npx cap sync ios
-          
+
+      - name: Check Files Location (For Ahmed)
+        script: |
+          echo "--- عرض مجلد node_modules للمكتبة المطلوبة ---"
+          ls -R node_modules/@codetrix-studio/capacitor-google-auth | grep .podspec
+          echo "--- عرض مجلد ios/App للتأكد من الـ Workspace ---"
+          ls -R ios/App
+
       - name: Create Podfile and Install
         script: |
           cd ios/App
           cat <<EOF > Podfile
           platform :ios, '17.0'
           use_frameworks!
+
           target 'App' do
             pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
             pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
@@ -42,32 +52,28 @@ workflows:
             pod 'CodetrixStudioCapacitorGoogleAuth', :path => '../../node_modules/@codetrix-studio/capacitor-google-auth/CodetrixStudioCapacitorGoogleAuth.podspec'
           end
           EOF
-          pod repo update
           pod install
-          
+
       - name: Set up code signing
         script: xcode-project use-profiles
-        
+
       - name: Build ipa for distribution
         script: |
-          # 1. تعريف المتغيرات
-          WORKSPACE="ios/App/App.xcworkspace"
-          SCHEME="App"
-          
-          # 2. تنظيف المشروع وبناء الـ Archive (الطريقة الرسمية)
-          xcodebuild -workspace "$WORKSPACE" \
-                     -scheme "$SCHEME" \
+          # محاولة البناء مع تجاهل حل الـ Package Dependencies يدوياً لأننا نستخدم Pods
+          xcodebuild -workspace ios/App/App.xcworkspace \
+                     -scheme "$XCODE_SCHEME" \
                      -sdk iphoneos \
                      -configuration Release \
                      archive -archivePath $(pwd)/build/ios/xcarchive/App.xcarchive \
-                     DEVELOPMENT_TEAM=6P74F96A93 \
+                     -destination 'generic/platform=iOS' \
+                     -allowProvisioningUpdates \
                      SKIP_INSTALL=NO
-          
-          # 3. تصدير الـ IPA من الـ Archive
+
+          # استكمال توليد الـ IPA
           xcode-project build-ipa \
-            --workspace "$WORKSPACE" \
-            --scheme "$SCHEME"
-            
+            --workspace "ios/App/App.xcworkspace" \
+            --scheme "$XCODE_SCHEME"
+
       - name: Publish to App Store Connect
         script: |
           IPA_PATH=$(find build/ios/ipa -name "*.ipa" | head -n 1)
@@ -79,7 +85,3 @@ workflows:
           fi
     artifacts:
       - build/ios/ipa/*.ipa
-    publishing:
-      email:
-        recipients:
-          - ahmedmustafa0384@gmail.com
