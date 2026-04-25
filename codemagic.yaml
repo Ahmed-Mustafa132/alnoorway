@@ -12,35 +12,55 @@ workflows:
       vars:
         XCODE_PROJECT: "ios/App/App.xcodeproj"
         XCODE_SCHEME: "App"
-        APP_ID: "6762559077" # اتأكدت إن ده الـ Apple ID الجديد بتاعك
+        APP_ID: "6762559077"
       node: latest
       xcode: latest
     scripts:
       - name: Install dependencies
         script: npm install --legacy-peer-deps
-      - name: Build web app and Sync
+
+      - name: Build web app
+        script: npm run build
+
+      - name: Re-sync Capacitor (لضمان تحديث مسارات Xcode)
         script: |
-          npm run build
+          # سنقوم بمسح الفولدر وإعادة بنائه داخل السيرفر لضمان سلامة المسارات
+          rm -rf ios
+          npx cap add ios
           npx cap sync ios
+
+      - name: Create Podfile and Install
+        script: |
+          cd ios/App
+          # كتابة ملف الـ Podfile يدوياً لضمان وجوده
+          cat <<EOF > Podfile
+          platform :ios, '14.0'
+          use_frameworks!
+          target 'App' do
+            pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
+            pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
+            pod 'CapacitorGoogleAuth', :path => '../../node_modules/@codetrix-studio/capacitor-google-auth'
+            pod 'CapacitorCommunityAppleSignIn', :path => '../../node_modules/@capacitor-community/apple-sign-in'
+            pod 'CapacitorDevice', :path => '../../node_modules/@capacitor/device'
+          end
+          EOF
+          pod install
+
       - name: Set up code signing
         script: xcode-project use-profiles
+
       - name: Build ipa for distribution
         script: |
+          # البناء عبر الـ Workspace الذي تم توليده بواسطة pod install
           xcode-project build-ipa \
-            --project "$XCODE_PROJECT" \
+            --workspace "ios/App/App.xcworkspace" \
             --scheme "$XCODE_SCHEME"
+
       - name: Publish to App Store Connect
         script: |
-          # البحث عن ملف الـ IPA
           IPA_PATH=$(find build/ios/ipa -name "*.ipa" | head -n 1)
-
-          # الرفع فقط للسيرفر بدون طلب مراجعة أوتوماتيكي
-          app-store-connect publish \
-            --path "$IPA_PATH" \
-            --apple-id "$APP_ID"
+          if [ -n "$IPA_PATH" ]; then
+            app-store-connect publish --path "$IPA_PATH" --apple-id "$APP_ID"
+          fi
     artifacts:
       - build/ios/ipa/*.ipa
-    publishing:
-      email:
-        recipients:
-          - ahmedmustafa0384@gmail.com
