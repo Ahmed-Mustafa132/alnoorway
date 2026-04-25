@@ -1,43 +1,55 @@
 workflows:
   ios-alnoorway-auto:
-    name: AlNoorway iOS Appetize Build
+    name: AlNoorway iOS Auto Flow
     max_build_duration: 120
     instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: noourway
     environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.alnoorway.app
       vars:
-        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
+        XCODE_PROJECT: "ios/App/App.xcodeproj"
         XCODE_SCHEME: "App"
+        APP_ID: "6762559077"
       node: latest
       xcode: latest
     scripts:
       - name: Force Downgrade & Install
         script: |
+          # إجبار المشروع على إصدارات متوافقة (Version 7) لضمان الاستقرار
           npm install @capacitor/core@7.6.2 @capacitor/ios@7.6.2 @capacitor/cli@7.6.2 @capacitor/android@7.0.0 --save-exact
           npm install --legacy-peer-deps
-        
+
       - name: Build web app
         script: npm run build
-        
+
       - name: Reset & Sync Capacitor
         script: |
           rm -rf ios
           export CAPACITOR_PROJECT_USE_SPM=false
           npx cap add ios
           npx cap sync ios
+          # تنظيف أي ملفات زائدة قد تسبب تضارب
           rm -f ios/App/Package.swift
-          
+          rm -rf ios/App/App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm
+
       - name: Create Podfile and Install
         script: |
           cd ios/App
           cat <<EOF > Podfile
           platform :ios, '14.0'
           use_frameworks!
+
           target 'App' do
             pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
             pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
             pod 'CapacitorCommunityAppleSignIn', :path => '../../node_modules/@capacitor-community/apple-sign-in'
             pod 'CodetrixStudioCapacitorGoogleAuth', :path => '../../node_modules/@codetrix-studio/capacitor-google-auth/CodetrixStudioCapacitorGoogleAuth.podspec'
           end
+
+          # سكريبت لتوحيد إصدار iOS لجميع المكتبات لمنع تضارب الـ Deployment Target
           post_install do |installer|
             installer.pods_project.targets.each do |target|
               target.build_configurations.each do |config|
@@ -47,28 +59,33 @@ workflows:
           end
           EOF
           pod install
-          
-      - name: Build for Simulator (Appetize)
+
+      - name: Set up code signing
+        script: xcode-project use-profiles
+
+      - name: Build ipa for distribution
         script: |
-          # بناء التطبيق وتحديد مخرجات واضحة
-          xcodebuild -workspace "$XCODE_WORKSPACE" \
+          xcodebuild -workspace ios/App/App.xcworkspace \
                      -scheme "$XCODE_SCHEME" \
-                     -configuration Debug \
-                     -sdk iphonesimulator \
-                     -derivedDataPath derived_data
-          
-          # البحث عن ملف الـ .app وضغطه أينما كان داخل المجلد
-          APP_PATH=$(find derived_data/Build/Products -name "*.app" | head -n 1)
-          if [ -z "$APP_PATH" ]; then
-            echo "Error: .app file not found!"
-            exit 1
+                     -sdk iphoneos \
+                     -configuration Release \
+                     -destination 'generic/platform=iOS' \
+                     archive -archivePath $(pwd)/build/ios/xcarchive/App.xcarchive \
+                     -resolvePackageDependencies=NO \
+                     SKIP_INSTALL=NO
+
+          xcode-project build-ipa \
+            --workspace "ios/App/App.xcworkspace" \
+            --scheme "$XCODE_SCHEME"
+
+      - name: Publish to App Store Connect
+        script: |
+          IPA_PATH=\$(find build/ios/ipa -name "*.ipa" | head -n 1)
+          if [ -n "\$IPA_PATH" ]; then
+            app-store-connect publish --path "\$IPA_PATH" --apple-id "\$APP_ID"
           fi
-          
-          # ضغط الملف في المسار الرئيسي لـ Codemagic
-          zip -r appetize_bundle.zip "$APP_PATH"
-          
     artifacts:
-      - "*.zip" # كدة Codemagic هيدور على أي ملف zip تم إنشاؤه
+      - build/ios/ipa/*.ipa
     publishing:
       email:
         recipients:

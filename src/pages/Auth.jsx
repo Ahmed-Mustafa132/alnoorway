@@ -34,7 +34,6 @@ export default function AuthPage() {
     setLoading(true);
     // البديل الذكي لـ @capacitor/device هو استخدام Core مباشرة
     const platform = Capacitor.getPlatform(); // 'ios' | 'android' | 'web'
-
     try {
       // 1. التعامل مع الويب (Web)
       if (platform === 'web') {
