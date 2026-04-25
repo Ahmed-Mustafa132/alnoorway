@@ -31,16 +31,17 @@ workflows:
       - name: Create Podfile and Install
         script: |
           cd ios/App
-          # استخدام استراتيجية "auto-include" لضمان إيجاد كل المكتبات برمجياً
+          # إنشاء الـ Podfile مع المسارات الصحيحة لنسخة Capacitor 8
           cat <<EOF > Podfile
           platform :ios, '14.0'
           use_frameworks!
 
-          # هذا السطر يخبر CocoaPods بالبحث عن المكتبات في مكانها الصحيح آلياً
+          # تأكد من المسار الصحيح لملفات المساعدة
           require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'
 
           target 'App' do
-            cap_all_pods
+            # نستخدم الدالة الأساسية لتحميل الـ Pods الخاصة بـ Capacitor والـ Plugins
+            install_capacitor_pods
           end
           EOF
           pod install
