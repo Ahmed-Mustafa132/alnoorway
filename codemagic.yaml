@@ -32,7 +32,8 @@ workflows:
         script: |
           cd ios/App
           cat <<EOF > Podfile
-          platform :ios, '14.0'
+          # رفعنا النسخة لـ 15.0 عشان تتوافق مع Capacitor 8
+          platform :ios, '15.0'
           use_frameworks!
 
           target 'App' do
@@ -41,7 +42,7 @@ workflows:
             pod 'CapacitorCommunityAppleSignIn', :path => '../../node_modules/@capacitor-community/apple-sign-in'
             pod 'CapacitorDevice', :path => '../../node_modules/@capacitor/device'
             
-            # الربط المباشر باستخدام الاسم الرسمي الموجود داخل الـ podspec
+            # الاسم والمسار اللي اتأكدنا منهم
             pod 'CodetrixStudioCapacitorGoogleAuth', :path => '../../node_modules/@codetrix-studio/capacitor-google-auth/CodetrixStudioCapacitorGoogleAuth.podspec'
           end
           EOF
@@ -71,5 +72,4 @@ workflows:
     publishing:
       email:
         recipients:
-          - osakr100@gmail.com
           - ahmedmustafa0384@gmail.com
