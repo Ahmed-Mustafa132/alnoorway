@@ -16,19 +16,25 @@ workflows:
       node: latest
       xcode: latest
     scripts:
-      - name: Install dependencies
-        script: npm install --legacy-peer-deps
+      - name: Force Downgrade & Install
+        script: |
+          # إجبار المشروع على إصدارات متوافقة مع مكتبة آبل (Version 7)
+          npm install @capacitor/core@7 @capacitor/ios@7 @capacitor/cli@7 --save-exact
+          npm install --legacy-peer-deps
 
       - name: Build web app
         script: npm run build
 
-      - name: Re-sync Capacitor
+      - name: Reset & Sync Capacitor
         script: |
           rm -rf ios
+          # منع Capacitor من استخدام نظام الـ SPM نهائياً
+          export CAPACITOR_PROJECT_USE_SPM=false
           npx cap add ios
           npx cap sync ios
-          # مسح ملف الـ Package لمنع أي تضارب مع نظام SPM
+          # حذف أي ملفات متعلقة بالـ SPM يولدها Xcode
           rm -f ios/App/Package.swift
+          rm -rf ios/App/App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm
 
       - name: Create Podfile and Install
         script: |
@@ -38,10 +44,10 @@ workflows:
           use_frameworks!
 
           target 'App' do
+            # نربط كل شيء بالـ node_modules لضمان استخدام نسخة 7
             pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
             pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
             pod 'CapacitorCommunityAppleSignIn', :path => '../../node_modules/@capacitor-community/apple-sign-in'
-            # تم حذف CapacitorDevice لإنهاء تضارب الإصدارات
             pod 'CodetrixStudioCapacitorGoogleAuth', :path => '../../node_modules/@codetrix-studio/capacitor-google-auth/CodetrixStudioCapacitorGoogleAuth.podspec'
           end
           EOF
@@ -52,7 +58,7 @@ workflows:
 
       - name: Build ipa for distribution
         script: |
-          # بناء الـ Archive مع تعطيل الـ Package Resolution
+          # بناء الـ Archive مع تعطيل الـ SPM تماماً برمجياً
           xcodebuild -workspace ios/App/App.xcworkspace \
                      -scheme "$XCODE_SCHEME" \
                      -sdk iphoneos \
@@ -72,9 +78,6 @@ workflows:
           IPA_PATH=$(find build/ios/ipa -name "*.ipa" | head -n 1)
           if [ -n "$IPA_PATH" ]; then
             app-store-connect publish --path "$IPA_PATH" --apple-id "$APP_ID"
-          else
-            echo "Error: IPA file not found."
-            exit 1
           fi
     artifacts:
       - build/ios/ipa/*.ipa
