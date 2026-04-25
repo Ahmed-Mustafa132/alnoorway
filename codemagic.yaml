@@ -18,16 +18,16 @@ workflows:
     scripts:
       - name: Install dependencies
         script: npm install --legacy-peer-deps
-
+        
       - name: Build web app
         script: npm run build
-
+        
       - name: Re-sync Capacitor
         script: |
           rm -rf ios
           npx cap add ios
           npx cap sync ios
-
+          
       - name: Create Podfile and Install
         script: |
           cd ios/App
@@ -45,20 +45,20 @@ workflows:
           EOF
           pod repo update
           pod install
-
+          
       - name: Set up code signing
         script: xcode-project use-profiles
-
+        
       - name: Build ipa for distribution
         script: |
-          # التعديل هنا: تحديد الـ workspace والـ scheme والـ configuration بوضوح
+          # العودة للأمر المدعوم رسمياً مع تحديد مسار الـ Workspace بدقة
           xcode-project build-ipa \
             --workspace "ios/App/App.xcworkspace" \
-            --scheme "$XCODE_SCHEME" \
-            --configuration Release
-
+            --scheme "$XCODE_SCHEME"
+            
       - name: Publish to App Store Connect
         script: |
+          # البحث عن الـ IPA الناتج ورفعه
           IPA_PATH=$(find build/ios/ipa -name "*.ipa" | head -n 1)
           if [ -n "$IPA_PATH" ]; then
             app-store-connect publish --path "$IPA_PATH" --apple-id "$APP_ID"
