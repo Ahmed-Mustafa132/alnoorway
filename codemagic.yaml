@@ -34,7 +34,6 @@ workflows:
           cat <<EOF > Podfile
           platform :ios, '17.0'
           use_frameworks!
-
           target 'App' do
             pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
             pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
@@ -51,14 +50,26 @@ workflows:
         
       - name: Build ipa for distribution
         script: |
-          # العودة للأمر المدعوم رسمياً مع تحديد مسار الـ Workspace بدقة
+          # 1. تعريف المتغيرات
+          WORKSPACE="ios/App/App.xcworkspace"
+          SCHEME="App"
+          
+          # 2. تنظيف المشروع وبناء الـ Archive (الطريقة الرسمية)
+          xcodebuild -workspace "$WORKSPACE" \
+                     -scheme "$SCHEME" \
+                     -sdk iphoneos \
+                     -configuration Release \
+                     archive -archivePath $(pwd)/build/ios/xcarchive/App.xcarchive \
+                     DEVELOPMENT_TEAM=6P74F96A93 \
+                     SKIP_INSTALL=NO
+          
+          # 3. تصدير الـ IPA من الـ Archive
           xcode-project build-ipa \
-            --workspace "ios/App/App.xcworkspace" \
-            --scheme "$XCODE_SCHEME"
+            --workspace "$WORKSPACE" \
+            --scheme "$SCHEME"
             
       - name: Publish to App Store Connect
         script: |
-          # البحث عن الـ IPA الناتج ورفعه
           IPA_PATH=$(find build/ios/ipa -name "*.ipa" | head -n 1)
           if [ -n "$IPA_PATH" ]; then
             app-store-connect publish --path "$IPA_PATH" --apple-id "$APP_ID"
