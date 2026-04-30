@@ -20,10 +20,10 @@ workflows:
         script: |
           npm install @capacitor/core@7.6.2 @capacitor/ios@7.6.2 @capacitor/cli@7.6.2 @capacitor/android@7.0.0 --save-exact
           npm install --legacy-peer-deps
-        
+      - name: Generate Assets
+        script: npx @capacitor/assets generate --ios
       - name: Build web app
         script: npm run build
-        
       - name: Reset & Sync Capacitor
         script: |
           rm -rf ios
@@ -31,7 +31,8 @@ workflows:
           npx cap add ios
           npx cap sync ios
           rm -f ios/App/Package.swift
-          
+      - name: Generate Assets
+        script: npx @capacitor/assets generate --ios
       - name: Create Podfile and Install
         script: |
           cd ios/App
@@ -61,7 +62,7 @@ workflows:
                      -configuration Debug \
                      -sdk iphonesimulator \
                      -derivedDataPath derived_data
-          
+
           APP_PATH=$(find derived_data/Build/Products -name "*.app" | head -n 1)
           zip -r appetize_bundle.zip "$APP_PATH"
 
@@ -79,7 +80,7 @@ workflows:
           xcode-project build-ipa \
             --workspace "$XCODE_WORKSPACE" \
             --scheme "$XCODE_SCHEME"
-            
+
       - name: Publish to App Store Connect
         script: |
           IPA_PATH=$(find build/ios/ipa -name "*.ipa" | head -n 1)
