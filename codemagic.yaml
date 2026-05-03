@@ -26,11 +26,8 @@ workflows:
         script: npm run build
       - name: Reset & Sync Capacitor
         script: |
-          rm -rf ios
           export CAPACITOR_PROJECT_USE_SPM=false
-          npx cap add ios
           npx cap sync ios
-          rm -f ios/App/Package.swift
       - name: Generate Assets
         script: npx @capacitor/assets generate --ios
       - name: Create Podfile and Install
