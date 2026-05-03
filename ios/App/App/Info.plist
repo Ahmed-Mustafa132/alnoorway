@@ -53,7 +53,8 @@
     <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-            <string>com.googleusercontent.apps.YOUR_CLIENT_ID_REVERSED</string>
+            <string
+          >com.googleusercontent.apps.827572291550-8oqmpspdhbo71qn2frbgl55u2e6srqci</string>
         </array>
     </dict>
 </array>
