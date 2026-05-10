@@ -13,7 +13,7 @@ const config: CapacitorConfig = {
       scopes: ["profile", "email"],
       // الـ Client IDs دي بتجيبها من Google Cloud Console
       iosClientId:
-        "apps.googleusercontent.com.829658324868-lrbdqm9ekjpaunpaecm4bk4stn16ifte",
+        "com.googleusercontent.apps.827572291550-8oqmpspdhbo71qn2frbgl55u2e6srqci",
       serverClientId:
         "829658324868-lrbdqm9ekjpaunpaecm4bk4stn16ifte.apps.googleusercontent.com",
       forceCodeForRefreshToken: true,
