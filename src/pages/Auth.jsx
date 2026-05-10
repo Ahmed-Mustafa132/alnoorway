@@ -24,7 +24,7 @@ export default function AuthPage() {
     if (Capacitor.isNativePlatform()) {
       GoogleAuth.initialize({
         clientId: '829658324868-lrbdqm9ekjpaunpaecm4bk4stn16ifte.apps.googleusercontent.com',
-        iosClientId: 'apps.googleusercontent.com.829658324868-lrbdqm9ekjpaunpaecm4bk4stn16ifte', // أضف هذا السطر تحديداً للـ iOS
+        iosClientId: 'com.googleusercontent.apps.829658324868-lrbdqm9ekjpaunpaecm4bk4stn16ifte', // أضف هذا السطر تحديداً للـ iOS
         scopes: ['profile', 'email'],
         grantOfflineAccess: true,
       });
