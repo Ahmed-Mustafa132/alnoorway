@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Loader2 } from 'lucide-react';
-import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+// import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { SignInWithApple } from '@capacitor-community/apple-sign-in';
 import { Capacitor } from '@capacitor/core';
 
@@ -22,12 +22,12 @@ export default function AuthPage() {
   useEffect(() => {
     // تهيئة جوجل للموبايل فقط
     if (Capacitor.isNativePlatform()) {
-      GoogleAuth.initialize({
-        clientId: '829658324868-lrbdqm9ekjpaunpaecm4bk4stn16ifte.apps.googleusercontent.com',
-        iosClientId: 'com.googleusercontent.apps.829658324868-lrbdqm9ekjpaunpaecm4bk4stn16ifte', // أضف هذا السطر تحديداً للـ iOS
-        scopes: ['profile', 'email'],
-        grantOfflineAccess: true,
-      });
+      // GoogleAuth.initialize({
+      //   clientId: '829658324868-lrbdqm9ekjpaunpaecm4bk4stn16ifte.apps.googleusercontent.com',
+      //   iosClientId: 'com.googleusercontent.apps.829658324868-lrbdqm9ekjpaunpaecm4bk4stn16ifte', // أضف هذا السطر تحديداً للـ iOS
+      //   scopes: ['profile', 'email'],
+      //   grantOfflineAccess: true,
+      // });
     }
   }, []);
 
@@ -47,15 +47,15 @@ export default function AuthPage() {
       }
 
       // 2. تسجيل الدخول بجوجل (Native Android & iOS)
-      if (provider === 'google') {
-        const googleUser = await GoogleAuth.signIn();
-        const { data, error } = await supabase.auth.signInWithIdToken({
-          provider: 'google',
-          token: googleUser.authentication.idToken,
-        });
-        if (error) throw error;
-        handleSuccess();
-      }
+      // if (provider === 'google') {
+      //   const googleUser = await GoogleAuth.signIn();
+      //   const { data, error } = await supabase.auth.signInWithIdToken({
+      //     provider: 'google',
+      //     token: googleUser.authentication.idToken,
+      //   });
+      //   if (error) throw error;
+      //   handleSuccess();
+      // }
 
       // 3. تسجيل الدخول بآبل (Native iOS فقط)
       if (provider === 'apple') {
@@ -94,7 +94,7 @@ export default function AuthPage() {
     navigate('/');
   };
 
-  const handleGoogleLogin = () => performUnifiedAuth('google');
+  // const handleGoogleLogin = () => performUnifiedAuth('google');
   const handleAppleLogin = () => performUnifiedAuth('apple');
 
   const handleAuth = async (e) => {
@@ -146,10 +146,10 @@ export default function AuthPage() {
           </form>
 
           <div className="mt-6 grid grid-cols-2 gap-4">
-            <Button variant="outline" onClick={handleGoogleLogin} disabled={loading} className="flex gap-2">
+            {/* <Button variant="outline" onClick={handleGoogleLogin} disabled={loading} className="flex gap-2">
               <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" className="w-4" alt="Google" />
               Google
-            </Button>
+            </Button> */}
             <Button variant="outline" onClick={handleAppleLogin} disabled={loading} className="bg-black text-white hover:bg-slate-800 flex gap-2">
               <svg className="w-4 h-4" viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" /></svg>
               Apple
