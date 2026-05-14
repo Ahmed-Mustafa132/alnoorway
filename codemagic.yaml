@@ -3,33 +3,46 @@ workflows:
     name: AlNoorway iOS Full Build & Publish
     max_build_duration: 120
     instance_type: mac_mini_m2
+
     integrations:
       app_store_connect: noourway
+
     environment:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.alnoorway.app
+
       vars:
         XCODE_PROJECT: "ios/App/App.xcodeproj"
         XCODE_SCHEME: "App"
         APP_ID: "6762559077"
+
       node: latest
       xcode: latest
+
     scripts:
-      - name: Force Downgrade & Install
+      - name: Force Install Dependencies
         script: |
-          npm install @capacitor/core@7.6.2 @capacitor/ios@7.6.2 @capacitor/cli@7.6.2 @capacitor/android@7.0.0 --save-exact
+          npm install @capacitor/core@7.6.2 @capacitor/ios@7.6.2 @capacitor/cli@7.6.2 --save-exact
           npm install --legacy-peer-deps
 
-      - name: Build web app
-        script: npm run build
-
-      - name: Reset & Sync Capacitor
+      - name: Build Web App
         script: |
-          export CAPACITOR_PROJECT_USE_SPM=true
+          npm run build
+
+      - name: Sync Capacitor iOS
+        script: |
           npx cap sync ios
+
+      - name: Install CocoaPods
+        script: |
+          cd ios/App
+          pod install
+
       - name: Setup Apple Sign In Entitlements
         script: |
+          mkdir -p ios/App/App
+
           cat > ios/App/App/App.entitlements <<EOF
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
@@ -55,7 +68,7 @@ workflows:
           if "CODE_SIGN_ENTITLEMENTS" not in content:
               content = re.sub(
                   r'CODE_SIGN_STYLE = Automatic;',
-                  'CODE_SIGN_STYLE = Automatic;\n\t\t\t\tCODE_SIGN_ENTITLEMENTS = App/App.entitlements;',
+                  'CODE_SIGN_STYLE = Automatic;\\n\\t\\t\\t\\tCODE_SIGN_ENTITLEMENTS = App/App.entitlements;',
                   content
               )
 
@@ -64,12 +77,13 @@ workflows:
 
           print("✅ Apple Sign In entitlement configured")
           PYTHON
-      - name: Generate Assets
-        script: npx @capacitor/assets generate --ios
 
-      - name: Build for Simulator (Appetize)
+      - name: Generate iOS Assets
         script: |
-          # بناء نسخة مخصصة للمحاكي (Simulator)
+          npx @capacitor/assets generate --ios
+
+      - name: Build Simulator App (Appetize)
+        script: |
           xcodebuild build \
             -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME" \
@@ -79,20 +93,19 @@ workflows:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO
 
-          # استخراج ملف الـ .app وضغطه بطريقة تضمن وجوده في الـ Artifacts
-          mkdir -p appetize_build
           APP_PATH=$(find derived_data/Build/Products -name "*.app" -type d | head -n 1)
+
           if [ -n "$APP_PATH" ]; then
             echo "Found app at: $APP_PATH"
-            # ضغط المجلد مباشرة في المكان الرئيسي
             zip -r appetize_bundle.zip "$APP_PATH"
           else
-            echo "Error: .app file not found!"
+            echo "❌ .app file not found"
             exit 1
           fi
 
-      - name: Set up code signing
-        script: xcode-project use-profiles
+      - name: Set Up Code Signing
+        script: |
+          xcode-project use-profiles
 
       - name: Increment Build Number
         script: |
@@ -108,16 +121,20 @@ workflows:
       - name: Publish to App Store Connect
         script: |
           IPA_PATH=$(find build/ios/ipa -name "*.ipa" | head -n 1)
+
           if [ -n "$IPA_PATH" ]; then
-            app-store-connect publish --path "$IPA_PATH" --apple-id "$APP_ID"
+            app-store-connect publish \
+              --path "$IPA_PATH" \
+              --apple-id "$APP_ID"
           else
-            echo "IPA not found, skipping publish"
+            echo "❌ IPA not found"
             exit 1
           fi
 
     artifacts:
       - build/ios/ipa/*.ipa
-      - "*.zip" # هذا سيجلب أي ملف zip يتم إنشاؤه في المجلد الرئيسي
+      - "*.zip"
+
     publishing:
       email:
         recipients:
