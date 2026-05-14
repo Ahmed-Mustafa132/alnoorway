@@ -28,7 +28,42 @@ workflows:
         script: |
           export CAPACITOR_PROJECT_USE_SPM=true
           npx cap sync ios
+      - name: Setup Apple Sign In Entitlements
+        script: |
+          cat > ios/App/App/App.entitlements <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+          "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>com.apple.developer.applesignin</key>
+              <array>
+                  <string>Default</string>
+              </array>
+          </dict>
+          </plist>
+          EOF
 
+          python3 - <<'PYTHON'
+          import re
+
+          path = "ios/App/App.xcodeproj/project.pbxproj"
+
+          with open(path, "r") as f:
+              content = f.read()
+
+          if "CODE_SIGN_ENTITLEMENTS" not in content:
+              content = re.sub(
+                  r'CODE_SIGN_STYLE = Automatic;',
+                  'CODE_SIGN_STYLE = Automatic;\n\t\t\t\tCODE_SIGN_ENTITLEMENTS = App/App.entitlements;',
+                  content
+              )
+
+          with open(path, "w") as f:
+              f.write(content)
+
+          print("✅ Apple Sign In entitlement configured")
+          PYTHON
       - name: Generate Assets
         script: npx @capacitor/assets generate --ios
 
