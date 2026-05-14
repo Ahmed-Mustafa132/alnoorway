@@ -34,11 +34,20 @@ workflows:
         script: |
           npx cap sync ios
 
-      - name: Install CocoaPods
+      - name: Install CocoaPods Dependencies
         script: |
           cd ios/App
-          pod install
+          pod deintegrate
+          rm -rf Pods
+          rm -rf ~/Library/Caches/CocoaPods
+          rm -rf Podfile.lock
 
+          pod install --repo-update
+
+      - name: Verify Capacitor iOS
+        script: |
+          ls ios/App/Pods
+          ls ios/App/Pods/Capacitor
       - name: Setup Apple Sign In Entitlements
         script: |
           mkdir -p ios/App/App
