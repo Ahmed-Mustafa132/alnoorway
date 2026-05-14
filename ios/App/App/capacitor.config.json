@@ -1,0 +1,21 @@
+{
+	"appId": "com.alnoorway.app",
+	"appName": "Alnoorway",
+	"webDir": "dist",
+	"server": {
+		"androidScheme": "https",
+		"iosScheme": "com.alnoorway.app"
+	},
+	"plugins": {
+		"Assets": {
+			"inputs": {
+				"icon": "resources/icon.png",
+				"splash": "resources/icon.png"
+			}
+		}
+	},
+	"packageClassList": [
+		"SignInWithApple",
+		"GoogleAuth"
+	]
+}
